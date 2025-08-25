@@ -26,6 +26,7 @@ async def test_list_tools(mcp_client):
         "count_nodes",
         "get_node_properties_keys",
         "get_relationship_properties_keys",
+        "get_node_labels",
         # Centrality algorithms
         "article_rank",
         "articulation_points",
@@ -112,3 +113,14 @@ async def test_get_relationship_properties_keys(mcp_client):
     properties_keys = json.loads(result_text)
 
     assert properties_keys == ["distance", "line", "time"]
+
+
+@pytest.mark.asyncio
+async def test_get_node_labels(mcp_client):
+    result = await mcp_client.call_tool("get_node_labels")
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+    properties_keys = json.loads(result_text)
+
+    assert properties_keys == ["UndergroundStation"]

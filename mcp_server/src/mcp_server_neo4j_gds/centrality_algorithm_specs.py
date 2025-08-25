@@ -60,6 +60,11 @@ centrality_tool_definitions = [
                     "Supported values are None, MinMax, Max, Mean, Log, and StdScore. "
                     "To apply scaler-specific configuration, use the Map syntax: {scaler: 'name', ...}.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run the article rank on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
             "required": [],
         },
