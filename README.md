@@ -58,7 +58,7 @@ To load the London underground example dataset:
    ```
 5. Load the London Underground dataset with the following command:
    ```bash
-   python import_data.py
+   python import_data.py --undirected
    ```
 Connect to your DB and querying the graph from [Neo4j workspace](https://workspace-preview.neo4j.io/workspace/), 
 you should see:
