@@ -1,4 +1,4 @@
-# Changelog - [0.3.0] - yyyy-mm-dd
+# Changelog - [0.3.0] - 2025-08-26
 
 ### New Features
 1. Add a new get_relationship_properties_keys tool.
