@@ -16,6 +16,7 @@ classifiers = [
 dependencies = [
     "graphdatascience>=1.16",
     "mcp[cli]>=1.11.0",
+    "snowflake-connector-python==3.17.3",
 ]
 
 [project.urls]
