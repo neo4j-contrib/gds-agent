@@ -4,7 +4,7 @@
 
 
 ### Bug Fixes
-
+1. Fix a bug where disconnected nodes were not projected.
 
 ### Other Changes
 

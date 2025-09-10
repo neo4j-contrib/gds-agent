@@ -113,7 +113,8 @@ def projected_graph(gds, undirected=False):
         # Use separate data and additional configuration parameters
         if additional_config:
             project_query = f"""
-                       MATCH (n)-[r]->(m)
+                       MATCH (n)
+                       OPTIONAL MATCH (n)-[r]->(m)
                        WITH n, r, m
                        RETURN gds.graph.project(
                            $graph_name,
@@ -130,7 +131,8 @@ def projected_graph(gds, undirected=False):
             )
         else:
             projection_query = f"""
-                       MATCH (n)-[r]->(m)
+                       MATCH (n)
+                       OPTIONAL MATCH (n)-[r]->(m)
                        WITH n, r, m
                        RETURN gds.graph.project(
                            $graph_name,
