@@ -296,7 +296,7 @@ async def test_minimum_directed_steiner_tree(mcp_client):
         "minimum_directed_steiner_tree",
         {
             "sourceNode": "Green Park",
-            "targetNodes": ["Regent's Park", "Picadilly Circus", "Knightsbridge"],
+            "targetNodes": ["Regent's Park", "Piccadilly Circus", "Knightsbridge"],
             "nodeIdentifierProperty": "name",
             "relationshipWeightProperty": "time",
         },
