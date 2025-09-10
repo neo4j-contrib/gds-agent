@@ -134,7 +134,7 @@ async def main(db_url: str, username: str, password: str, database: str = None):
                 write_stream,
                 InitializationOptions(
                     server_name="neo4j_gds",
-                    server_version="0.1.0",
+                    server_version="0.3.0",
                     capabilities=server.get_capabilities(
                         notification_options=NotificationOptions(),
                         experimental_capabilities={},
