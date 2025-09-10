@@ -15,7 +15,7 @@ def translate_identifiers_to_ids(
             query = f"""
                     UNWIND $names AS name
                     MATCH (s)
-                    WHERE toLower(s.{node_identifier_property}) CONTAINS toLower(name)
+                    WHERE toLower(s.{node_identifier_property}) = toLower(name)
                     RETURN id(s) as node_id
                     """
             df = gds.run_cypher(
@@ -30,7 +30,7 @@ def translate_identifiers_to_ids(
             # Handle single  node name
             query = f"""
                     MATCH (s)
-                    WHERE toLower(s.{node_identifier_property}) CONTAINS toLower($name)
+                    WHERE toLower(s.{node_identifier_property}) = toLower($name)
                     RETURN id(s) as node_id
                     """
             df = gds.run_cypher(
@@ -77,7 +77,7 @@ def filter_identifiers(
     query = f"""
             UNWIND $names AS name
             MATCH (s)
-            WHERE toLower(s.{node_identifier_property}) CONTAINS toLower(name)
+            WHERE toLower(s.{node_identifier_property}) = toLower(name)
             RETURN id(s) as node_id
             """
     df = gds.run_cypher(

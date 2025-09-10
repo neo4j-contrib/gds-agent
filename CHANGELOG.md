@@ -5,6 +5,7 @@
 
 ### Bug Fixes
 1. Fix a bug where disconnected nodes were not projected.
+1. Fix a bug where multiple nodes containing the identifying name could be nondeterministically matched. The user must now specify the exact name.
 
 ### Other Changes
 
