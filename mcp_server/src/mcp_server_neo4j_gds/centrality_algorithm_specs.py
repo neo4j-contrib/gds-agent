@@ -190,6 +190,10 @@ centrality_tool_definitions = [
                     "type": "string",
                     "description": "The orientation used to compute node degrees. Supported orientations are NATURAL (for out-degree), REVERSE (for in-degree) and UNDIRECTED (for both in-degree and out-degree) ",
                 },
+                "relationshipWeightProperty": {
+                    "type": "string",
+                    "description": "Property of the relationship to use for weighting. If not specified, all relationships are treated equally.",
+                },
             },
             "required": [],
         },

@@ -213,6 +213,7 @@ class DegreeCentralityHandler(AlgorithmHandler):
             nodes=arguments.get("nodes"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             orientation=arguments.get("orientation"),
+            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
         )
 
 
