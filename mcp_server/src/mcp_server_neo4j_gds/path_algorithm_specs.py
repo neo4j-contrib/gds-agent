@@ -23,6 +23,11 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Property of the relationship to use for path finding",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Dijkstra on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
             "required": ["start_node", "end_node", "nodeIdentifierProperty"],
         },
@@ -53,6 +58,11 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Delta-Stepping on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
             "required": ["sourceNode", "nodeIdentifierProperty"],
         },
@@ -77,6 +87,11 @@ path_tool_definitions = [
                 "relationshipWeightProperty": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Dijkstra on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
             },
             "required": ["sourceNode", "nodeIdentifierProperty"],
@@ -120,6 +135,11 @@ path_tool_definitions = [
                 "relationshipWeightProperty": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run A* on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
             },
             "required": [
@@ -166,6 +186,11 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Yens on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
             "required": ["sourceNode", "targetNode", "nodeIdentifierProperty"],
         },
@@ -198,6 +223,11 @@ path_tool_definitions = [
                     "type": "string",
                     "enum": ["minimum", "maximum"],
                     "description": "If specified, the parameter dictates whether to find the minimum or the maximum weight spanning tree. By default, a minimum weight spanning tree is returned. Permitted values are 'minimum' and 'maximum'.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Prim on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
             },
             "required": ["sourceNode", "nodeIdentifierProperty"],
@@ -244,6 +274,11 @@ path_tool_definitions = [
                     "type": "boolean",
                     "description": "If specified, the algorithm will try to improve the outcome via an additional post-processing heuristic.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Steiner-Tree on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
             "required": ["sourceNode", "targetNodes", "nodeIdentifierProperty"],
         },
@@ -271,6 +306,11 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "The name of node property that denotes a node's prize.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Prize Collecting Steiner Tree on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
             "required": ["prizeProperty"],
         },
@@ -289,7 +329,12 @@ path_tool_definitions = [
                 "relationshipWeightProperty": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
-                }
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run APSP on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
             "required": [],
         },
@@ -343,6 +388,11 @@ path_tool_definitions = [
                     "type": "integer",
                     "description": "The number of random walks to complete before starting training.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Random Walk on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
             "required": [],
         },
@@ -374,6 +424,11 @@ path_tool_definitions = [
                     "type": "integer",
                     "description": "The maximum distance from the source node at which nodes are visited.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run BFS on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
             "required": ["sourceNode", "nodeIdentifierProperty"],
         },
@@ -404,6 +459,11 @@ path_tool_definitions = [
                 "maxDepth": {
                     "type": "integer",
                     "description": "The maximum distance from the source node at which nodes are visited.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run DFS on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
             },
             "required": ["sourceNode", "nodeIdentifierProperty"],
@@ -437,6 +497,11 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Bellman-Ford on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
             "required": ["sourceNode", "nodeIdentifierProperty"],
         },
@@ -464,6 +529,11 @@ path_tool_definitions = [
                 "relationshipWeightProperty": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run longest path on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
             },
             "required": [],
