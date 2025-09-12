@@ -239,6 +239,8 @@ async def test_degree_centrality(mcp_client):
         {
             "nodes": ["King's Cross St. Pancras", "Oxford Circus"],
             "nodeIdentifierProperty": "name",
+            "orientation": "NATURAL",
+            "relationshipWeightProperty": "distance",
         },
     )
 
