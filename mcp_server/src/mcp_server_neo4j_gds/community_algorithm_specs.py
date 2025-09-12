@@ -17,6 +17,11 @@ community_tool_definitions = [
                     "description": "The relationship property that holds the weight of the relationships. "
                     "If not provided, all relationships are considered to have a weight of 1.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run conductance on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
             "required": ["communityProperty"],
         },
@@ -54,6 +59,11 @@ community_tool_definitions = [
                     "type": "integer",
                     "description": "The number of leaf nodes of the supporting tree data structure.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run HDBSCAN on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
             "required": ["nodeProperty"],
         },
@@ -74,6 +84,11 @@ community_tool_definitions = [
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run K Core decomposition on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
             },
             "required": [],
@@ -96,6 +111,11 @@ community_tool_definitions = [
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run K-1 Coloring on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
                 "maxIterations": {
                     "type": "integer",
@@ -131,6 +151,11 @@ community_tool_definitions = [
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run K-Means on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
                 "k": {
                     "type": "integer",
@@ -202,6 +227,11 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Label Propagation on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
         },
     ),
@@ -248,6 +278,11 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Leiden on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
         },
     ),
@@ -276,6 +311,11 @@ community_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "Optional list of node names to filter results. Only nodes whose names (based on nodeIdentifierProperty) contain any of these values will be included in the results. Requires nodeIdentifierProperty to be specified.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Local Clustering Coefficient on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
             },
         },
@@ -325,6 +365,11 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Louvain on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
         },
     ),
@@ -343,6 +388,11 @@ community_tool_definitions = [
                 "relationshipWeightProperty": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Modularity on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
             },
             "required": ["communityProperty"],
@@ -385,6 +435,11 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run modularity optimization on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
         },
     ),
@@ -403,6 +458,11 @@ community_tool_definitions = [
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run SCC on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
             },
         },
@@ -431,6 +491,11 @@ community_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "Optional list of node names to filter results. Only nodes whose names (based on nodeIdentifierProperty) contain any of these values will be included in the results. Requires nodeIdentifierProperty to be specified.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Triangle Count on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
             },
         },
@@ -469,6 +534,11 @@ community_tool_definitions = [
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run WCC on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
             },
         },
@@ -510,6 +580,11 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Max-K-Cut  on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
         },
     ),
@@ -538,6 +613,11 @@ community_tool_definitions = [
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run SLLPA on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
             },
         },

@@ -64,6 +64,11 @@ similarity_tool_definitions = [
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Node Similarity on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
         },
     ),
@@ -144,6 +149,11 @@ similarity_tool_definitions = [
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run k-nearest neighbors on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
             },
             "required": ["nodeProperties"],

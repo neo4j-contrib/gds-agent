@@ -60,6 +60,11 @@ centrality_tool_definitions = [
                     "Supported values are None, MinMax, Max, Mean, Log, and StdScore. "
                     "To apply scaler-specific configuration, use the Map syntax: {scaler: 'name', ...}.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run the article rank on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
             },
             "required": [],
         },
@@ -73,6 +78,11 @@ centrality_tool_definitions = [
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Articulation points on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
             },
             "required": [],
@@ -88,6 +98,11 @@ centrality_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "List of node names to filter betweenness centrality results for.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Betweenness Centrality on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
                 "nodeIdentifierProperty": {
                     "type": "string",
@@ -111,6 +126,11 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Bridges on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
@@ -126,6 +146,11 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run CELF on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
                 "seedSetSize": {
                     "type": "integer",
                     "description": "The number of nodes that maximize the expected spread in the network.",
@@ -159,6 +184,11 @@ centrality_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "List of node names to filter closeness centrality results for.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run closeness centrality on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
@@ -185,6 +215,11 @@ centrality_tool_definitions = [
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run Degree Centrality on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
                 "orientation": {
                     "type": "string",
@@ -216,6 +251,11 @@ centrality_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "List of node names to filter eigenvector centrality results for.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run eigenvector centrality on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
                 "nodeIdentifierProperty": {
                     "type": "string",
@@ -274,6 +314,11 @@ centrality_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "List of node names to filter PageRank results for.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run PageRank on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
@@ -327,6 +372,11 @@ centrality_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "List of node names to filter harmonic centrality results for.",
                 },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run harmonic centrality on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
@@ -351,6 +401,11 @@ centrality_tool_definitions = [
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run hits on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
                 "hitsIterations": {
                     "type": "integer",

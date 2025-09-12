@@ -46,35 +46,35 @@ logger = logging.getLogger("mcp_server_neo4j_gds")
 
 
 @contextmanager
-def projected_graph(gds, undirected=False):
+def projected_graph(gds, node_labels=None, undirected=False):
     """
     Project a graph from the database.
 
     Args:
         gds: GraphDataScience instance
+        node_labels: specifies node labels to project. If empty, all nodes are projected. Default is []
         undirected: If True, project as undirected graph. Default is False (directed).
     """
+    if node_labels is None:
+        node_labels = []
     graph_name = f"temp_graph_{uuid.uuid4().hex[:8]}"
+
     try:
         # Get relationship properties (non-string)
         rel_properties = get_relationship_properties_keys(gds)
-        valid_rel_properties = {}
-        for i in range(len(rel_properties)):
-            pi = gds.run_cypher(
-                f"MATCH (n)-[r]->(m) RETURN distinct r.{rel_properties[i]} IS :: STRING AS ISSTRING"
-            )
-            if pi.shape[0] == 1 and bool(pi["ISSTRING"][0]) is False:
-                valid_rel_properties[rel_properties[i]] = f"r.{rel_properties[i]}"
+        valid_rel_properties = validate_rel_properties(gds, rel_properties, node_labels)
         rel_prop_map = ", ".join(f"{prop}: r.{prop}" for prop in valid_rel_properties)
 
         # Get node properties and validate to see which are compatible with GDS
         node_properties = get_node_properties_keys(gds)
-        valid_node_projection_properties = validate_properties(gds, node_properties)
-        node_prop_map_source = create_projection_properties(
-            valid_node_projection_properties, "n"
+        valid_node_projection_properties = validate_node_properties(
+            gds, node_properties
         )
-        node_prop_map_target = create_projection_properties(
-            valid_node_projection_properties, "m"
+        node_prop_map_source = create_source_projection_properties(
+            valid_node_projection_properties
+        )
+        node_prop_map_target = create_target_projection_properties(
+            valid_node_projection_properties
         )
 
         logger.info(f"Node property map source: '{node_prop_map_source}'")
@@ -87,6 +87,9 @@ def projected_graph(gds, undirected=False):
             "targetNodeLabels: labels(m)",
             "relationshipType: type(r)",
         ]
+
+        # create projection query for node/rel entities
+        match_proj_query = create_projection_query(node_labels)
 
         if node_prop_map_source or node_prop_map_target:
             data_config_parts.extend(
@@ -113,8 +116,7 @@ def projected_graph(gds, undirected=False):
         # Use separate data and additional configuration parameters
         if additional_config:
             project_query = f"""
-                       MATCH (n)
-                       OPTIONAL MATCH (n)-[r]->(m)
+                       {match_proj_query}
                        WITH n, r, m
                        RETURN gds.graph.project(
                            $graph_name,
@@ -131,8 +133,7 @@ def projected_graph(gds, undirected=False):
             )
         else:
             projection_query = f"""
-                       MATCH (n)
-                       OPTIONAL MATCH (n)-[r]->(m)
+                       {match_proj_query}
                        WITH n, r, m
                        RETURN gds.graph.project(
                            $graph_name,
@@ -149,6 +150,17 @@ def projected_graph(gds, undirected=False):
         yield G
     finally:
         gds.graph.drop(graph_name)
+
+
+def get_node_labels(gds: GraphDataScience):
+    query = """
+                MATCH (n)
+                RETURN DISTINCT labels(n) as labels
+                """
+    df = gds.run_cypher(query)
+    if df.empty:
+        return []
+    return df["labels"].iloc[0]
 
 
 def count_nodes(gds: GraphDataScience):
@@ -178,14 +190,57 @@ def get_relationship_properties_keys(gds: GraphDataScience):
     return df["properties_keys"].iloc[0]
 
 
-def validate_properties(gds: GraphDataScience, node_properties):
+def create_projection_query(node_labels):
+    if len(node_labels) > 0:
+        match_proj_query = f"""
+               MATCH (n)
+               OPTIONAL
+               MATCH (n)-[r]->(m)
+               WHERE ANY(l IN labels(n) WHERE l IN {node_labels})
+                 AND ANY(l IN labels(m) WHERE l IN {node_labels})
+
+               """
+    else:
+        match_proj_query = """MATCH (n) OPTIONAL MATCH (n)-[r]->(m)"""
+    return match_proj_query
+
+
+def validate_rel_properties(gds: GraphDataScience, rel_properties, node_labels=None):
+    if len(node_labels) > 0:
+        match_rel_query = f"""
+            MATCH (n)-[r]->(m)
+            WHERE ANY(l IN labels(n) WHERE l IN {node_labels})
+              AND ANY(l IN labels(m) WHERE l IN {node_labels})
+
+            """
+    else:
+        match_rel_query = """MATCH (n)-[r]->(m)"""
+    valid_rel_properties = {}
+    for i in range(len(rel_properties)):
+        pi = gds.run_cypher(
+            f"{match_rel_query} RETURN distinct r.{rel_properties[i]} IS :: STRING AS ISSTRING"
+        )
+        if pi.shape[0] == 1 and bool(pi["ISSTRING"][0]) is False:
+            valid_rel_properties[rel_properties[i]] = f"r.{rel_properties[i]}"
+    return valid_rel_properties
+
+
+def validate_node_properties(gds: GraphDataScience, node_properties, node_labels=None):
+    if node_labels is None:
+        node_labels = []
+
     projectable_properties = {}
+
     for i in range(len(node_properties)):
         # Check property types and whether all values are whole numbers
+        if len(node_labels) > 0:
+            match_node_query = f"MATCH (n) WHERE ANY(l IN labels(n) WHERE l IN {node_labels}) AND n.{node_properties[i]} IS NOT NULL"
+        else:
+            match_node_query = f"MATCH (n) WHERE n.{node_properties[i]} IS NOT NULL"
+
         type_check = gds.run_cypher(
             f"""
-            MATCH (n) 
-            WHERE n.{node_properties[i]} IS NOT NULL
+            {match_node_query}
             WITH n.{node_properties[i]} AS prop
             RETURN 
                 prop IS :: LIST<FLOAT NOT NULL> AS IS_LIST_FLOAT,
@@ -224,6 +279,14 @@ def validate_properties(gds: GraphDataScience, node_properties):
                         projectable_properties[node_properties[i]] = "INTEGER_LIST"
 
     return projectable_properties
+
+
+def create_source_projection_properties(projectable_properties):
+    return create_projection_properties(projectable_properties, "n")
+
+
+def create_target_projection_properties(projectable_properties):
+    return create_projection_properties(projectable_properties, "m")
 
 
 def create_projection_properties(projectable_properties, variable):

@@ -14,7 +14,12 @@ from .centrality_algorithm_specs import centrality_tool_definitions
 from .community_algorithm_specs import community_tool_definitions
 from .path_algorithm_specs import path_tool_definitions
 from .registry import AlgorithmRegistry
-from .gds import count_nodes, get_node_properties_keys, get_relationship_properties_keys
+from .gds import (
+    count_nodes,
+    get_node_properties_keys,
+    get_relationship_properties_keys,
+    get_node_labels,
+)
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
 
@@ -89,6 +94,13 @@ async def main(db_url: str, username: str, password: str, database: str = None):
                             "type": "object",
                         },
                     ),
+                    types.Tool(
+                        name="get_node_labels",
+                        description="""Get all node labels in the database""",
+                        inputSchema={
+                            "type": "object",
+                        },
+                    ),
                 ]
                 + centrality_tool_definitions
                 + community_tool_definitions
@@ -118,7 +130,9 @@ async def main(db_url: str, username: str, password: str, database: str = None):
             elif name == "get_relationship_properties_keys":
                 result = get_relationship_properties_keys(gds)
                 return [types.TextContent(type="text", text=serialize_result(result))]
-
+            elif name == "get_node_labels":
+                result = get_node_labels(gds)
+                return [types.TextContent(type="text", text=serialize_result(result))]
             else:
                 handler = AlgorithmRegistry.get_handler(name, gds)
                 result = handler.execute(arguments or {})
