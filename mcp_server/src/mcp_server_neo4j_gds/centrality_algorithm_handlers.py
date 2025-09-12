@@ -187,31 +187,80 @@ class ClosenessCentralityHandler(AlgorithmHandler):
 
 class DegreeCentralityHandler(AlgorithmHandler):
     def degree_centrality(self, **kwargs):
-        with projected_graph(self.gds) as G:
-            params = {
-                k: v
-                for k, v in kwargs.items()
-                if v is not None and k not in ["nodes", "nodeIdentifierProperty"]
+        # with projected_graph(self.gds) as G:
+        #     params = {
+        #         k: v
+        #         for k, v in kwargs.items()
+        #         if v is not None and k not in ["nodes", "nodeIdentifierProperty"]
+        #     }
+        #     logger.info(f"Degree centrality parameters: {params}")
+        #     centrality = self.gds.degree.stream(G, **params)
+
+        # # Add node names to the results if nodeIdentifierProperty is provided
+        # node_identifier_property = kwargs.get("nodeIdentifierProperty")
+        # translate_ids_to_identifiers(self.gds, node_identifier_property, centrality)
+
+        # # Filter results by node names if provided
+        # node_names = kwargs.get("nodes", None)
+        # centrality = filter_identifiers(
+        #     self.gds, node_identifier_property, node_names, centrality
+        # )
+        orientation = kwargs.get("orientation")
+        if orientation is None:
+            relationships_dict = """
+            {
+                'RELATIONSHIPS': {
+                    'sourceTable': 'NODES',
+                    'targetTable': 'NODES',
+                }
             }
-            logger.info(f"Degree centrality parameters: {params}")
-            centrality = self.gds.degree.stream(G, **params)
+            """
+        else:
+            relationships_dict = f"""
+            {{
+                'RELATIONSHIPS': {{
+                    'sourceTable': 'NODES',
+                    'targetTable': 'NODES',
+                    'orientation': '{orientation}'
+                }}
+            }}
+            """
 
-        # Add node names to the results if nodeIdentifierProperty is provided
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        translate_ids_to_identifiers(self.gds, node_identifier_property, centrality)
+        relationshipWeightProperty = kwargs.get("relationshipWeightProperty")
+        if relationshipWeightProperty is None:
+            compute_dict = """
+            { }
+            """
+        else:
+            compute_dict = f"""
+            {{
+                'relationshipWeightProperty': '{relationshipWeightProperty}'
+            }}
+            """
 
-        # Filter results by node names if provided
-        node_names = kwargs.get("nodes", None)
-        centrality = filter_identifiers(
-            self.gds, node_identifier_property, node_names, centrality
-        )
+        res = self.gds.sql(
+                f"""
+                CALL Neo4j_Graph_Analytics.graph.degree('CPU_X64_XS', {{
+                    'defaultTablePrefix': 'EXAMPLE_DB.PUBLIC',
+                    'project': {{
+                        'nodeTables': [ 'NODES' ],
+                        'relationshipTables': {relationships_dict}
+                    }},
+                    'compute': {compute_dict},
+                    'write': [{{
+                        'nodeLabel': 'NODES',
+                        'outputTable': 'NODES_DEGREE_CENTRALITY'
+                    }}]
+                }});
+                """
+        ).collect()
 
-        return centrality
+        logger.info(f"Degree centrality execution: {res}")
+        output_table = self.gds.table("EXAMPLE_DB.PUBLIC.NODES_DEGREE_CENTRALITY")
+        return output_table.to_pandas()
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.degree_centrality(
-            nodes=arguments.get("nodes"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             orientation=arguments.get("orientation"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
         )

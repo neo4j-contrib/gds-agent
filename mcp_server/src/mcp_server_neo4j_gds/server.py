@@ -8,7 +8,7 @@ import mcp.server.stdio
 import pandas as pd
 import json
 from graphdatascience import GraphDataScience
-
+from snowflake.snowpark import Session
 from .similarity_algorithm_specs import similarity_tool_definitions
 from .centrality_algorithm_specs import centrality_tool_definitions
 from .community_algorithm_specs import community_tool_definitions
@@ -56,7 +56,12 @@ async def main(db_url: str, username: str, password: str, database: str = None):
                 db_url, auth=(username, password), aura_ds=False, database=database
             )
         else:
-            gds = GraphDataScience(db_url, auth=(username, password), aura_ds=False)
+            if db_url:
+                gds = GraphDataScience(db_url, auth=(username, password), aura_ds=False)
+            else:
+                gds = Session.builder.config("connection_name", "snowflake-gds-mcp").create()
+                print(gds.sql("SELECT 1;").collect())
+                logger.info("Successfully connected to Snowflake database")
         logger.info("Successfully connected to Neo4j database")
     except Exception as e:
         logger.error(f"Failed to connect to Neo4j database: {e}")
