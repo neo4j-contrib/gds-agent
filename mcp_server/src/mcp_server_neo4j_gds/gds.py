@@ -223,6 +223,7 @@ def validate_rel_properties(gds: GraphDataScience, rel_properties, node_labels=N
             f"""
             {match_rel_query} 
             WITH r.{rel_properties[i]}  AS prop
+            WHERE prop IS NOT NULL
             WITH 
             CASE 
                 WHEN prop IS :: FLOAT THEN 1
@@ -253,6 +254,7 @@ def validate_node_properties(gds: GraphDataScience, node_properties, node_labels
             f"""
             {match_node_query}
             WITH n.{node_properties[i]} AS prop
+            WHERE prop IS NOT NULL
             RETURN 
                 prop IS :: LIST<FLOAT NOT NULL> AS IS_LIST_FLOAT,
                 prop IS :: LIST<INTEGER NOT NULL> AS IS_LIST_INTEGER,
