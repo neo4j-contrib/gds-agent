@@ -194,6 +194,7 @@ def create_projection_query(node_labels):
     if len(node_labels) > 0:
         match_proj_query = f"""
                MATCH (n)
+               WHERE ANY(l IN labels(n) WHERE l IN {node_labels})
                OPTIONAL
                MATCH (n)-[r]->(m)
                WHERE ANY(l IN labels(n) WHERE l IN {node_labels})
