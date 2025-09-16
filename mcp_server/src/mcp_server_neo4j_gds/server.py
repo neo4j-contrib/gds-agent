@@ -20,6 +20,7 @@ from .gds import (
     get_node_properties_keys,
     get_relationship_properties_keys,
     get_node_labels,
+    get_relationship_types,
 )
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
@@ -102,6 +103,21 @@ async def main(db_url: str, username: str, password: str, database: str = None):
                             "type": "object",
                         },
                     ),
+                    types.Tool(
+                        name="get_relationship_types",
+                        description="""Get relationship types in the database.""",
+                        inputSchema={
+                            "type": "object",
+                            "properties": {
+                                "nodeLabels": {
+                                    "type": "array",
+                                    "items": {"type": "string"},
+                                    "description": "Ignore relationships whose source and target node is not in the specified node labels. To use this parameter, use get_node_labels first.",
+                                },
+                            },
+                            "required": [],
+                        },
+                    ),
                 ]
                 + centrality_tool_definitions
                 + community_tool_definitions
@@ -134,6 +150,13 @@ async def main(db_url: str, username: str, password: str, database: str = None):
             elif name == "get_node_labels":
                 result = get_node_labels(gds)
                 return [types.TextContent(type="text", text=serialize_result(result))]
+            elif name == "get_relationship_types":
+                if "nodeLabels" in arguments:
+                    result = get_relationship_types(gds, arguments["nodeLabels"])
+                else:
+                    result = get_relationship_types(gds)
+                return [types.TextContent(type="text", text=serialize_result(result))]
+
             else:
                 handler = AlgorithmRegistry.get_handler(name, gds)
                 result = handler.execute(arguments or {})

@@ -8,23 +8,29 @@ logger = logging.getLogger("mcp_server_neo4j_gds")
 
 
 @contextmanager
-def projected_graph(gds, node_labels=None, undirected=False):
+def projected_graph(gds, node_labels=None, relationship_types=None, undirected=False):
     """
     Project a graph from the database.
 
     Args:
         gds: GraphDataScience instance
         node_labels: specifies node labels to project. If empty, all nodes are projected. Default is []
+        relationship_types: specifies relationship types to project. If empty, all relationships are projected. Default is [].
         undirected: If True, project as undirected graph. Default is False (directed).
     """
+    if relationship_types is None:
+        relationship_types = []
     if node_labels is None:
         node_labels = []
+
     graph_name = f"temp_graph_{uuid.uuid4().hex[:8]}"
 
     try:
         # Get relationship properties (non-string)
-        rel_properties = get_relationship_properties_keys(gds)
-        valid_rel_properties = validate_rel_properties(gds, rel_properties, node_labels)
+        rel_properties = get_relationship_properties_keys(gds, relationship_types)
+        valid_rel_properties = validate_rel_properties(
+            gds, rel_properties, node_labels, relationship_types
+        )
         rel_prop_map = ", ".join(f"{prop}: r.{prop}" for prop in valid_rel_properties)
 
         # Get node properties and validate to see which are compatible with GDS
@@ -51,7 +57,7 @@ def projected_graph(gds, node_labels=None, undirected=False):
         ]
 
         # create projection query for node/rel entities
-        match_proj_query = create_projection_query(node_labels)
+        match_proj_query = create_projection_query(node_labels, relationship_types)
 
         if node_prop_map_source or node_prop_map_target:
             data_config_parts.extend(
@@ -118,7 +124,7 @@ def get_node_labels(gds: GraphDataScience):
     query = """
                 MATCH (n)
                 RETURN DISTINCT labels(n) as labels
-                """
+            """
     df = gds.run_cypher(query)
     if df.empty:
         return []
@@ -142,44 +148,64 @@ def get_node_properties_keys(gds: GraphDataScience):
 
 
 def get_relationship_properties_keys(gds: GraphDataScience):
-    query = """
-        MATCH (n)-[r]->(m)
-        RETURN DISTINCT keys(properties(r)) AS properties_keys
-        """
+    rel_query = create_relationship_cypher_match_query([], [])
+    query = rel_query + " RETURN DISTINCT keys(properties(r)) AS properties_keys"
+
     df = gds.run_cypher(query)
     if df.empty:
         return []
     return df["properties_keys"].iloc[0]
 
 
-def create_projection_query(node_labels):
-    if len(node_labels) > 0:
-        match_proj_query = f"""
-               MATCH (n)
-               WHERE ANY(l IN labels(n) WHERE l IN {node_labels})
-               OPTIONAL
-               MATCH (n)-[r]->(m)
-               WHERE ANY(l IN labels(n) WHERE l IN {node_labels})
-                 AND ANY(l IN labels(m) WHERE l IN {node_labels})
+def get_relationship_types(gds: GraphDataScience, node_labels=None):
+    if node_labels is None:
+        node_labels = []
+    query = (
+        create_relationship_cypher_match_query(node_labels, [])
+        + " RETURN DISTINCT TYPE(r) as relationship_types"
+    )
 
-               """
-    else:
-        match_proj_query = """MATCH (n) OPTIONAL MATCH (n)-[r]->(m)"""
+    df = gds.run_cypher(query)
+    if df.empty:
+        return []
+    return df["relationship_types"].iloc[0]
+
+
+def create_projection_query(node_labels, rel_types):
+    node_query = create_node_cypher_match_query(node_labels)
+    rel_query = create_relationship_cypher_match_query(node_labels, rel_types)
+    match_proj_query = f"{node_query} OPTIONAL {rel_query}"
     return match_proj_query
 
 
-def validate_rel_properties(gds: GraphDataScience, rel_properties, node_labels=None):
+def create_node_cypher_match_query(node_labels):
+    if len(node_labels) > 0:
+        match_query = f"MATCH (n) WHERE ANY(l IN labels(n) WHERE l IN {node_labels})"
+    else:
+        match_query = "MATCH (n)"
+    return match_query
+
+
+def create_relationship_cypher_match_query(node_labels, relationship_types):
+    label_constraint = f"ANY(l IN labels(n) WHERE l IN {node_labels}) AND ANY(l IN labels(m) WHERE l IN {node_labels})"
+    type_constraint = f"type(r) IN {relationship_types}"
+    match_query = f"MATCH (n)-[r]->(m)"
+    if len(node_labels) > 0 and len(relationship_types) > 0:
+        return match_query + f" WHERE {label_constraint} AND {type_constraint}"
+    elif len(relationship_types) > 0:
+        return match_query + f" WHERE {type_constraint}"
+    else:
+        return match_query
+
+
+def validate_rel_properties(
+    gds: GraphDataScience, rel_properties, node_labels=None, rel_types=None
+):
+    if rel_types is None:
+        rel_types = []
     if node_labels is None:
         node_labels = []
-    if len(node_labels) > 0:
-        match_rel_query = f"""
-            MATCH (n)-[r]->(m)
-            WHERE ANY(l IN labels(n) WHERE l IN {node_labels})
-              AND ANY(l IN labels(m) WHERE l IN {node_labels})
-
-            """
-    else:
-        match_rel_query = """MATCH (n)-[r]->(m)"""
+    match_rel_query = create_relationship_cypher_match_query(node_labels, rel_types)
     valid_rel_properties = {}
     for i in range(len(rel_properties)):
         pi = gds.run_cypher(
@@ -208,10 +234,7 @@ def validate_node_properties(gds: GraphDataScience, node_properties, node_labels
 
     for i in range(len(node_properties)):
         # Check property types and whether all values are whole numbers
-        if len(node_labels) > 0:
-            match_node_query = f"MATCH (n) WHERE ANY(l IN labels(n) WHERE l IN {node_labels}) AND n.{node_properties[i]} IS NOT NULL"
-        else:
-            match_node_query = f"MATCH (n) WHERE n.{node_properties[i]} IS NOT NULL"
+        match_node_query = create_node_cypher_match_query(node_labels)
 
         type_check = gds.run_cypher(
             f"""

@@ -27,6 +27,7 @@ async def test_list_tools(mcp_client):
         "get_node_properties_keys",
         "get_relationship_properties_keys",
         "get_node_labels",
+        "get_relationship_types",
         # Centrality algorithms
         "article_rank",
         "articulation_points",
