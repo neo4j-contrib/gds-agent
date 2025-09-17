@@ -142,6 +142,51 @@ def test_node_projection_properties_with_node_labels(neo4j_container):
 
 
 @pytest.mark.asyncio
+def test_rel_projection_properties(neo4j_container):
+    """Import test data into Neo4j."""
+    # Set environment variables for the import script
+    os.environ["NEO4J_URI"] = neo4j_container
+    os.environ["NEO4J_USERNAME"] = NEO4J_USER
+    os.environ["NEO4J_PASSWORD"] = NEO4J_PASSWORD
+
+    driver = GraphDatabase.driver(neo4j_container, auth=(NEO4J_USER, NEO4J_PASSWORD))
+    existing_count1 = -1
+    existing_count2 = -2
+    gds = GraphDataScience(driver)
+    with driver.session() as session:
+        session.run("CREATE (:Foo)-[:R{ prop_ok1: 2.0}]->(:Foo)")
+        session.run("CREATE (:Foo)-[:R{ prop_ok2: 2}]->(:Foo)")
+        session.run("CREATE (:Foo)-[:R{ prop_bad: 2.0}]->(:Foo)")
+        session.run("CREATE (:Foo)-[:R{ prop_bad: 'Foo'}]->(:Foo)")
+
+        res = session.run("MATCH (n) WHERE 'Foo' IN labels(n) RETURN count(n) as count")
+        existing_count1 = res.single()["count"]
+
+    # do validations
+    from mcp_server.src.mcp_server_neo4j_gds.gds import validate_rel_properties
+
+    projection_properties = validate_rel_properties(
+        gds, ["prop_ok1", "prop_ok2", "prop_bad"]
+    )
+
+    # remove data
+    with driver.session() as session:
+        session.run("MATCH (n:Foo)  DETACH DELETE n")
+
+        res = session.run("MATCH (n) WHERE 'Foo' IN labels(n) RETURN count(n) as count")
+        existing_count2 = res.single()["count"]
+
+    driver.close()
+
+    # assertions at the end to ensure failures do not affect other tests
+    assert existing_count1 == 8
+    assert existing_count2 == 0
+    assert "prop_ok1" in projection_properties
+    assert "prop_ok2" in projection_properties
+    assert "prop_bad" not in projection_properties
+
+
+@pytest.mark.asyncio
 def test_rel_projection_properties_with_node_labels(neo4j_container):
     """Import test data into Neo4j."""
     # Set environment variables for the import script

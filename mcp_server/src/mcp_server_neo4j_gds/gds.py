@@ -207,6 +207,8 @@ def create_projection_query(node_labels):
 
 
 def validate_rel_properties(gds: GraphDataScience, rel_properties, node_labels=None):
+    if node_labels is None:
+        node_labels = []
     if len(node_labels) > 0:
         match_rel_query = f"""
             MATCH (n)-[r]->(m)
@@ -219,17 +221,27 @@ def validate_rel_properties(gds: GraphDataScience, rel_properties, node_labels=N
     valid_rel_properties = {}
     for i in range(len(rel_properties)):
         pi = gds.run_cypher(
-            f"{match_rel_query} RETURN distinct r.{rel_properties[i]} IS :: STRING AS ISSTRING"
+            f"""
+            {match_rel_query} 
+            WITH r.{rel_properties[i]}  AS prop
+            WHERE prop IS NOT NULL
+            WITH 
+            CASE 
+                WHEN prop IS :: FLOAT THEN 1
+                WHEN prop IS :: INTEGER THEN 1
+            ELSE 2
+            END AS INVALID_PROP_TYPE
+            RETURN distinct(INVALID_PROP_TYPE)
+            """
         )
-        if pi.shape[0] == 1 and bool(pi["ISSTRING"][0]) is False:
-            valid_rel_properties[rel_properties[i]] = f"r.{rel_properties[i]}"
+        if pi.shape[0] == 1 and int(pi["INVALID_PROP_TYPE"][0]) == 1:
+            valid_rel_properties[rel_properties[i]] = f"toFloat(r.{rel_properties[i]}"
     return valid_rel_properties
 
 
 def validate_node_properties(gds: GraphDataScience, node_properties, node_labels=None):
     if node_labels is None:
         node_labels = []
-
     projectable_properties = {}
 
     for i in range(len(node_properties)):
@@ -243,6 +255,7 @@ def validate_node_properties(gds: GraphDataScience, node_properties, node_labels
             f"""
             {match_node_query}
             WITH n.{node_properties[i]} AS prop
+            WHERE prop IS NOT NULL
             RETURN 
                 prop IS :: LIST<FLOAT NOT NULL> AS IS_LIST_FLOAT,
                 prop IS :: LIST<INTEGER NOT NULL> AS IS_LIST_INTEGER,
@@ -283,14 +296,14 @@ def validate_node_properties(gds: GraphDataScience, node_properties, node_labels
 
 
 def create_source_projection_properties(projectable_properties):
-    return create_projection_properties(projectable_properties, "n")
+    return create_node_projection_properties(projectable_properties, "n")
 
 
 def create_target_projection_properties(projectable_properties):
-    return create_projection_properties(projectable_properties, "m")
+    return create_node_projection_properties(projectable_properties, "m")
 
 
-def create_projection_properties(projectable_properties, variable):
+def create_node_projection_properties(projectable_properties, variable):
     valid_node_properties = {}
     for prop in projectable_properties:
         property_type = projectable_properties[prop]
