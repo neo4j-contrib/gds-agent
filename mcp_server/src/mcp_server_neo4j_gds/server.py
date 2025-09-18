@@ -24,6 +24,7 @@ from .gds import (
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
 
+
 def serialize_result(result: Any) -> str:
     """Serialize results to string without truncation, handling DataFrames specially"""
     if isinstance(result, pd.DataFrame):

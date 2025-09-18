@@ -6,6 +6,7 @@ import logging
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
 
+
 @contextmanager
 def projected_graph(gds, node_labels=None, undirected=False):
     """

@@ -10,11 +10,12 @@ import asyncio
 import argparse
 
 
-
 logger = logging.getLogger("mcp_server_neo4j_gds")
 logger.handlers.clear()
 handler = logging.StreamHandler(sys.stderr)
-handler.setFormatter(logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+handler.setFormatter(
+    logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+)
 logger.addHandler(handler)
 logger.setLevel(logging.INFO)
 logger.propagate = False
@@ -44,7 +45,6 @@ def main():
     )
 
     args = parser.parse_args()
-
 
     asyncio.run(
         server.main(
