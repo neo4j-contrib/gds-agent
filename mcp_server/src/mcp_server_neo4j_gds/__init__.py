@@ -1,8 +1,6 @@
 import logging
 import os
-import platform
 import sys
-import signal
 from dotenv import load_dotenv
 
 from . import server
