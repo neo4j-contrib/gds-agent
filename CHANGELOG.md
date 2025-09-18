@@ -1,4 +1,4 @@
-# Changelog - [0.4.0] - yyyy-mm-dd
+# Changelog - [0.4.0] - 2025-09-18
 
 ### New Features
 
