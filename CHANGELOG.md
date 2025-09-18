@@ -9,6 +9,7 @@
 3. Support weighted degree centrality. 
 4. Support projecting specific node labels.
 5. Fix a bug where projection would fail loading non-numbers relationship properties. 
+6. Fix duplicate logging.
 
 ### Other Changes
 

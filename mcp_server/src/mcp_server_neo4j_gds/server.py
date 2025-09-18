@@ -1,4 +1,5 @@
 # server.py
+import contextlib
 import logging
 from mcp.server import NotificationOptions, Server
 from mcp.server.models import InitializationOptions
@@ -22,7 +23,6 @@ from .gds import (
 )
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
-
 
 def serialize_result(result: Any) -> str:
     """Serialize results to string without truncation, handling DataFrames specially"""
@@ -154,11 +154,17 @@ async def main(db_url: str, username: str, password: str, database: str = None):
                         experimental_capabilities={},
                     ),
                 ),
-                raise_exceptions=True,
+                raise_exceptions=False,
             )
+    except Exception as e:
+        # Log shutdown info - connection errors are expected, others may need attention
+        if isinstance(e, (BrokenPipeError, ConnectionResetError, OSError)):
+            logger.info("Server shutdown (client disconnected)")
+        else:
+            logger.info(f"Server shutdown with error: {e}")
     finally:
-        logger.info("Closing GDS connection as MCP server is shutting down.")
-        gds.close()
+        with contextlib.suppress(Exception):
+            gds.close()
 
 
 if __name__ == "__main__":
