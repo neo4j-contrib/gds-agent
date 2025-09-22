@@ -147,8 +147,10 @@ def get_node_properties_keys(gds: GraphDataScience):
     return df["properties_keys"].iloc[0]
 
 
-def get_relationship_properties_keys(gds: GraphDataScience):
-    rel_query = create_relationship_cypher_match_query([], [])
+def get_relationship_properties_keys(gds: GraphDataScience, relationshipTypes=None):
+    if relationshipTypes is None:
+        relationshipTypes = []
+    rel_query = create_relationship_cypher_match_query([], relationshipTypes)
     query = rel_query + " RETURN DISTINCT keys(properties(r)) AS properties_keys"
 
     df = gds.run_cypher(query)
@@ -189,11 +191,13 @@ def create_node_cypher_match_query(node_labels):
 def create_relationship_cypher_match_query(node_labels, relationship_types):
     label_constraint = f"ANY(l IN labels(n) WHERE l IN {node_labels}) AND ANY(l IN labels(m) WHERE l IN {node_labels})"
     type_constraint = f"type(r) IN {relationship_types}"
-    match_query = f"MATCH (n)-[r]->(m)"
+    match_query = "MATCH (n)-[r]->(m)"
     if len(node_labels) > 0 and len(relationship_types) > 0:
         return match_query + f" WHERE {label_constraint} AND {type_constraint}"
     elif len(relationship_types) > 0:
         return match_query + f" WHERE {type_constraint}"
+    elif len(node_labels) > 0:
+        return match_query + f" WHERE {label_constraint}"
     else:
         return match_query
 
