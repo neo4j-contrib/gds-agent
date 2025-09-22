@@ -65,6 +65,11 @@ centrality_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run the article rank on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run article rank on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                },
             },
             "required": [],
         },
@@ -84,6 +89,11 @@ centrality_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run Articulation points on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run Articulation Points on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                }
             },
             "required": [],
         },
@@ -103,6 +113,11 @@ centrality_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run Betweenness Centrality on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run Betweenness Centrality on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
                 "nodeIdentifierProperty": {
                     "type": "string",
@@ -131,6 +146,11 @@ centrality_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run Bridges on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run Bridges on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                },
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
@@ -150,6 +170,11 @@ centrality_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run CELF on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run CELF on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
                 "seedSetSize": {
                     "type": "integer",
@@ -189,6 +214,11 @@ centrality_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run closeness centrality on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run closeness centrality on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                },
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
@@ -220,6 +250,11 @@ centrality_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run Degree Centrality on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run Degree Centrality on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
                 "orientation": {
                     "type": "string",
@@ -256,6 +291,11 @@ centrality_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run eigenvector centrality on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run eigenvector centrality on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
                 "nodeIdentifierProperty": {
                     "type": "string",
@@ -319,6 +359,11 @@ centrality_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run PageRank on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run PageRank on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                },
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
@@ -377,6 +422,11 @@ centrality_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run harmonic centrality on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run harmonic centrality on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                },
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
@@ -406,6 +456,11 @@ centrality_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run hits on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run hits on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
                 "hitsIterations": {
                     "type": "integer",

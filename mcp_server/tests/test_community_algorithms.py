@@ -111,7 +111,12 @@ async def test_local_clustering_coefficient(mcp_client):
 @pytest.mark.asyncio
 async def test_louvain(mcp_client):
     result_with_names = await mcp_client.call_tool(
-        "louvain", {"nodeIdentifierProperty": "name", "maxLevels": 10}
+        "louvain",
+        {
+            "nodeIdentifierProperty": "name",
+            "maxLevels": 10,
+            "relationship_types": ["LINK"],
+        },
     )
 
     assert len(result_with_names) == 1

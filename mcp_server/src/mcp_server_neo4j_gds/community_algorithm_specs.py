@@ -22,6 +22,11 @@ community_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run conductance on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run conductance on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                }
             },
             "required": ["communityProperty"],
         },
@@ -90,6 +95,11 @@ community_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run K Core decomposition on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
+"relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run K Core decomposition on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                }
             },
             "required": [],
         },
@@ -116,6 +126,11 @@ community_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run K-1 Coloring on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run K-1 Coloring on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
                 "maxIterations": {
                     "type": "integer",
@@ -232,6 +247,11 @@ community_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run Label Propagation on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run Label Propagation on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                }
             },
         },
     ),
@@ -283,6 +303,11 @@ community_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run Leiden on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run Leiden on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                }
             },
         },
     ),
@@ -316,6 +341,11 @@ community_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run Local Clustering Coefficient on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run Local Clustering Coefficient on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
             },
         },
@@ -370,6 +400,11 @@ community_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run Louvain on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run Louvain on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                },
             },
         },
     ),
@@ -393,6 +428,11 @@ community_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run Modularity on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run Modularity on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
             },
             "required": ["communityProperty"],
@@ -440,6 +480,11 @@ community_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run modularity optimization on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run modularity optimization on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                },
             },
         },
     ),
@@ -463,6 +508,11 @@ community_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run SCC on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run SCC on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
             },
         },
@@ -497,6 +547,11 @@ community_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run Triangle Count on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run Triangle Count on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                }
             },
         },
     ),
@@ -540,6 +595,11 @@ community_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run WCC on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run WCC on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                }
             },
         },
     ),
@@ -585,6 +645,11 @@ community_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run Max-K-Cut  on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run Max-K-Cut on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                }
             },
         },
     ),
@@ -619,6 +684,11 @@ community_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run SLLPA on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run SLLPA on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                }
             },
         },
     ),
