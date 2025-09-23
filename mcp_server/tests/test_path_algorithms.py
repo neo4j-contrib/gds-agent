@@ -11,6 +11,8 @@ async def test_find_shortest_path(mcp_client):
             "end_node": "Westbourne Park",
             "nodeIdentifierProperty": "name",
             "relationship_property": "time",
+            "relTypes": ["LINK"],
+            "nodeLabels": ["UndergroundStation"],
         },
     )
 
@@ -253,6 +255,8 @@ async def test_minimum_weight_spanning_tree(mcp_client):
             "sourceNode": "Canada Water",
             "nodeIdentifierProperty": "name",
             "relationshipWeightProperty": "time",
+            "relTypes": ["LINK"],
+            "nodeLabels": ["UndergroundStation"],
         },
     )
 
@@ -494,6 +498,8 @@ async def test_depth_first_search(mcp_client):
             "sourceNode": "Bayswater",
             "nodeIdentifierProperty": "name",
             "maxDepth": 3,
+            "relTypes": ["LINK"],
+            "nodeLabels": ["UndergroundStation"],
         },
     )
 
