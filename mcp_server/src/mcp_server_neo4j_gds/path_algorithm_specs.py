@@ -258,7 +258,7 @@ path_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The relationships types used to project and run Prim on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                }
+                },
             },
             "required": ["sourceNode", "nodeIdentifierProperty"],
         },
@@ -313,7 +313,7 @@ path_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The relationships types used to project and run Steiner-Tree on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                }
+                },
             },
             "required": ["sourceNode", "targetNodes", "nodeIdentifierProperty"],
         },
@@ -350,7 +350,7 @@ path_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The relationships types used to project and run Prize Collecting Steiner Tree on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                }
+                },
             },
             "required": ["prizeProperty"],
         },
@@ -379,7 +379,7 @@ path_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The relationships types used to project and run APSP on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                }
+                },
             },
             "required": [],
         },
@@ -442,7 +442,7 @@ path_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The relationships types used to project and run Random Walk on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                }
+                },
             },
             "required": [],
         },
@@ -483,7 +483,7 @@ path_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The relationships types used to project and run BFS on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                }
+                },
             },
             "required": ["sourceNode", "nodeIdentifierProperty"],
         },
@@ -524,9 +524,8 @@ path_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The relationships types used to project and run DFS on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                }
+                },
             },
-
             "required": ["sourceNode", "nodeIdentifierProperty"],
         },
     ),
@@ -567,7 +566,7 @@ path_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The relationships types used to project and run Bellman-Ford on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                }
+                },
             },
             "required": ["sourceNode", "nodeIdentifierProperty"],
         },
@@ -605,7 +604,7 @@ path_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The relationships types used to project and run longest path on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                }
+                },
             },
             "required": [],
         },

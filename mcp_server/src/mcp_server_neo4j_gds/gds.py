@@ -8,6 +8,35 @@ logger = logging.getLogger("mcp_server_neo4j_gds")
 
 
 @contextmanager
+def projected_graph_from_params(gds, node_labels=None, undirected=False, **kwargs):
+    """
+    Project a graph from the database, delegating to projected_graph.
+
+    Supports both:
+    - Positional node_labels as the 2nd argument.
+    - nodeLabels/relTypes passed either directly as kwargs or nested under a 'kwargs' dict.
+
+    Returns the projected GDS graph. The caller is responsible for dropping it
+    (e.g., gds.graph.drop(G)).
+    """
+    # Unwrap if the caller passed a nested 'kwargs' dict
+    params = (
+        kwargs.get("kwargs")
+        if "kwargs" in kwargs and isinstance(kwargs.get("kwargs"), dict)
+        else kwargs
+    )
+
+    # Prefer explicit node_labels positional arg, fall back to params["nodeLabels"]
+    nodeLabels = params.get("nodeLabels", node_labels)
+    relTypes = params.get("relTypes")
+
+    with projected_graph(
+        gds, node_labels=nodeLabels, relationship_types=relTypes, undirected=undirected
+    ) as G:
+        yield G
+
+
+@contextmanager
 def projected_graph(gds, node_labels=None, relationship_types=None, undirected=False):
     """
     Project a graph from the database.
@@ -34,7 +63,7 @@ def projected_graph(gds, node_labels=None, relationship_types=None, undirected=F
         rel_prop_map = ", ".join(f"{prop}: r.{prop}" for prop in valid_rel_properties)
 
         # Get node properties and validate to see which are compatible with GDS
-        node_properties = get_node_properties_keys(gds)
+        node_properties = get_node_properties_keys(gds, node_labels)
         valid_node_projection_properties = validate_node_properties(
             gds, node_properties
         )
@@ -136,11 +165,13 @@ def count_nodes(gds: GraphDataScience):
         return G.node_count()
 
 
-def get_node_properties_keys(gds: GraphDataScience):
-    query = """
-        MATCH (n)
-        RETURN DISTINCT keys(properties(n)) AS properties_keys
-        """
+def get_node_properties_keys(gds: GraphDataScience, node_labels=None):
+    if node_labels is None:
+        node_labels = []
+    nodelabels_query = create_node_cypher_match_query(node_labels)
+    query = (
+        nodelabels_query + """RETURN DISTINCT keys(properties(n)) AS properties_keys"""
+    )
     df = gds.run_cypher(query)
     if df.empty:
         return []

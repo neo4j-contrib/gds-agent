@@ -93,7 +93,7 @@ centrality_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The relationships types used to project and run Articulation Points on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                }
+                },
             },
             "required": [],
         },
