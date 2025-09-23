@@ -5,7 +5,6 @@ from .node_translator import (
     translate_ids_to_identifiers,
 )
 
-
 from .algorithm_handler import AlgorithmHandler, clean_params
 from .gds import projected_graph_from_params
 

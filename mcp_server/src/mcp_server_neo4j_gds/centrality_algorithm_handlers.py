@@ -1,8 +1,9 @@
 import logging
 from typing import Any, Dict
 
-from .algorithm_handler import AlgorithmHandler
-from .gds import projected_graph
+from .algorithm_handler import AlgorithmHandler, clean_params
+from .gds import projected_graph_from_params
+
 from .node_translator import (
     filter_identifiers,
     translate_ids_to_identifiers,
@@ -14,26 +15,32 @@ logger = logging.getLogger("mcp_server_neo4j_gds")
 
 class ArticleRankHandler(AlgorithmHandler):
     def article_rank(self, **kwargs):
-        with projected_graph(self.gds) as G:
-            # If any optional parameter is not None, use that parameter
-            args = locals()
-            params = {
-                k: v
-                for k, v in kwargs.items()
-                if v is not None
-                and k not in ["nodes", "nodeIdentifierProperty", "sourceNodes"]
-            }
-            node_names = kwargs.get("nodes", None)
-            node_identifier_property = kwargs.get("nodeIdentifierProperty")
-            source_nodes = kwargs.get("sourceNodes", None)
+        node_names = kwargs.get("nodes", None)
+        node_identifier_property = kwargs.get("nodeIdentifierProperty")
+        source_nodes = kwargs.get("sourceNodes", None)
 
+        with projected_graph_from_params(self.gds, kwargs=kwargs) as G:
+            gds_params = clean_params(
+                kwargs,
+                [
+                    "nodes",
+                    "nodeIdentifierProperty",
+                    "sourceNodes",
+                    "nodeLabels",
+                    "relTypes",
+                ],
+            )
             # Handle sourceNodes - convert names to IDs if nodeIdentifierProperty is provided
             translate_identifiers_to_ids(
-                self.gds, source_nodes, "sourceNodes", node_identifier_property, params
+                self.gds,
+                source_nodes,
+                "sourceNodes",
+                node_identifier_property,
+                gds_params,
             )
 
-            logger.info(f"ArticleRank parameters: {params}")
-            article_ranks = self.gds.articleRank.stream(G, **params)
+            logger.info(f"ArticleRank parameters: {gds_params}")
+            article_ranks = self.gds.articleRank.stream(G, **gds_params)
 
         translate_ids_to_identifiers(self.gds, node_identifier_property, article_ranks)
 
@@ -53,12 +60,14 @@ class ArticleRankHandler(AlgorithmHandler):
             dampingFactor=arguments.get("dampingFactor"),
             maxIterations=arguments.get("maxIterations"),
             tolerance=arguments.get("tolerance"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
 class ArticulationPointsHandler(AlgorithmHandler):
     def articulation_points(self, **kwargs):
-        with projected_graph(self.gds, undirected=True) as G:
+        with projected_graph_from_params(self.gds, undirected=True, kwargs=kwargs) as G:
             articulation_points = self.gds.articulationPoints.stream(G)
 
         # Add node names to the results if nodeIdentifierProperty is provided
@@ -70,20 +79,20 @@ class ArticulationPointsHandler(AlgorithmHandler):
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.articulation_points(
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty")
+            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
 class BetweennessCentralityHandler(AlgorithmHandler):
     def betweenness_centrality(self, **kwargs):
-        with projected_graph(self.gds) as G:
-            params = {
-                k: v
-                for k, v in kwargs.items()
-                if v is not None and k not in ["nodes", "nodeIdentifierProperty"]
-            }
-            logger.info(f"Betweenness centrality parameters: {params}")
-            centrality = self.gds.betweenness.stream(G, **params)
+        with projected_graph_from_params(self.gds, kwargs=kwargs) as G:
+            gds_params = clean_params(
+                kwargs, ["nodes", "nodeIdentifierProperty", "nodeLabels", "relTypes"]
+            )
+            logger.info(f"Betweenness centrality parameters: {gds_params}")
+            centrality = self.gds.betweenness.stream(G, **gds_params)
 
         # Add node names to the results if nodeIdentifierProperty is provided
         node_identifier_property = kwargs.get("nodeIdentifierProperty")
@@ -103,12 +112,14 @@ class BetweennessCentralityHandler(AlgorithmHandler):
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             samplingSize=arguments.get("samplingSize"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
 class BridgesHandler(AlgorithmHandler):
     def bridges(self, **kwargs):
-        with projected_graph(self.gds, undirected=True) as G:
+        with projected_graph_from_params(self.gds, undirected=True, kwargs=kwargs) as G:
             bridges_result = self.gds.bridges.stream(G)
 
         # Add node names to the results if nodeIdentifierProperty is provided
@@ -124,20 +135,20 @@ class BridgesHandler(AlgorithmHandler):
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.bridges(
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty")
+            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
 class CELFHandler(AlgorithmHandler):
     def celf(self, **kwargs):
-        with projected_graph(self.gds) as G:
-            params = {
-                k: v
-                for k, v in kwargs.items()
-                if v is not None and k not in ["nodeIdentifierProperty"]
-            }
-            logger.info(f"CELF parameters: {params}")
-            result = self.gds.influenceMaximization.celf.stream(G, **params)
+        with projected_graph_from_params(self.gds, kwargs=kwargs) as G:
+            gds_params = clean_params(
+                kwargs, ["nodeIdentifierProperty", "nodeLabels", "relTypes"]
+            )
+            logger.info(f"CELF parameters: {gds_params}")
+            result = self.gds.influenceMaximization.celf.stream(G, **gds_params)
 
         # Add node names to the results if nodeIdentifierProperty is provided
         node_identifier_property = kwargs.get("nodeIdentifierProperty")
@@ -151,19 +162,19 @@ class CELFHandler(AlgorithmHandler):
             monteCarloSimulations=arguments.get("monteCarloSimulations"),
             propagationProbability=arguments.get("propagationProbability"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
 class ClosenessCentralityHandler(AlgorithmHandler):
     def closeness_centrality(self, **kwargs):
-        with projected_graph(self.gds) as G:
-            params = {
-                k: v
-                for k, v in kwargs.items()
-                if v is not None and k not in ["nodes", "nodeIdentifierProperty"]
-            }
-            logger.info(f"Closeness centrality parameters: {params}")
-            centrality = self.gds.closeness.stream(G, **params)
+        with projected_graph_from_params(self.gds, kwargs=kwargs) as G:
+            gds_params = clean_params(
+                kwargs, ["nodes", "nodeIdentifierProperty", "nodeLabels", "relTypes"]
+            )
+            logger.info(f"Closeness centrality parameters: {gds_params}")
+            centrality = self.gds.closeness.stream(G, **gds_params)
 
         # Add node names to the results if nodeIdentifierProperty is provided
         node_identifier_property = kwargs.get("nodeIdentifierProperty")
@@ -182,19 +193,19 @@ class ClosenessCentralityHandler(AlgorithmHandler):
             nodes=arguments.get("nodes"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             useWassermanFaust=arguments.get("useWassermanFaust"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
 class DegreeCentralityHandler(AlgorithmHandler):
     def degree_centrality(self, **kwargs):
-        with projected_graph(self.gds) as G:
-            params = {
-                k: v
-                for k, v in kwargs.items()
-                if v is not None and k not in ["nodes", "nodeIdentifierProperty"]
-            }
-            logger.info(f"Degree centrality parameters: {params}")
-            centrality = self.gds.degree.stream(G, **params)
+        with projected_graph_from_params(self.gds, kwargs=kwargs) as G:
+            gds_params = clean_params(
+                kwargs, ["nodes", "nodeIdentifierProperty", "nodeLabels", "relTypes"]
+            )
+            logger.info(f"Degree centrality parameters: {gds_params}")
+            centrality = self.gds.degree.stream(G, **gds_params)
 
         # Add node names to the results if nodeIdentifierProperty is provided
         node_identifier_property = kwargs.get("nodeIdentifierProperty")
@@ -214,28 +225,38 @@ class DegreeCentralityHandler(AlgorithmHandler):
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             orientation=arguments.get("orientation"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
 class EigenvectorCentralityHandler(AlgorithmHandler):
     def eigenvector_centrality(self, **kwargs):
-        with projected_graph(self.gds) as G:
-            params = {
-                k: v
-                for k, v in kwargs.items()
-                if v is not None
-                and k not in ["nodes", "nodeIdentifierProperty", "sourceNodes"]
-            }
+        with projected_graph_from_params(self.gds, kwargs=kwargs) as G:
+            gds_params = clean_params(
+                kwargs,
+                [
+                    "nodes",
+                    "nodeIdentifierProperty",
+                    "sourceNodes",
+                    "nodeLabels",
+                    "relTypes",
+                ],
+            )
             node_identifier_property = kwargs.get("nodeIdentifierProperty")
             source_nodes = kwargs.get("sourceNodes", None)
 
             # Handle sourceNodes - convert names to IDs if nodeIdentifierProperty is provided
             translate_identifiers_to_ids(
-                self.gds, source_nodes, "sourceNodes", node_identifier_property, params
+                self.gds,
+                source_nodes,
+                "sourceNodes",
+                node_identifier_property,
+                gds_params,
             )
 
-            logger.info(f"Eigenvector centrality parameters: {params}")
-            centrality = self.gds.eigenvector.stream(G, **params)
+            logger.info(f"Eigenvector centrality parameters: {gds_params}")
+            centrality = self.gds.eigenvector.stream(G, **gds_params)
 
         # Add node names to the results if nodeIdentifierProperty is provided
         node_identifier_property = kwargs.get("nodeIdentifierProperty")
@@ -258,27 +279,37 @@ class EigenvectorCentralityHandler(AlgorithmHandler):
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
             sourceNodes=arguments.get("sourceNodes"),
             scaler=arguments.get("scaler"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
 class PageRankHandler(AlgorithmHandler):
     def pagerank(self, **kwargs):
-        with projected_graph(self.gds) as G:
-            params = {
-                k: v
-                for k, v in kwargs.items()
-                if v is not None
-                and k not in ["nodes", "nodeIdentifierProperty", "sourceNodes"]
-            }
+        with projected_graph_from_params(self.gds, kwargs=kwargs) as G:
+            gds_params = clean_params(
+                kwargs,
+                [
+                    "nodes",
+                    "nodeIdentifierProperty",
+                    "sourceNodes",
+                    "nodeLabels",
+                    "relTypes",
+                ],
+            )
             node_identifier_property = kwargs.get("nodeIdentifierProperty")
             source_nodes = kwargs.get("sourceNodes", None)
 
             # Handle sourceNodes - convert names to IDs if nodeIdentifierProperty is provided
             translate_identifiers_to_ids(
-                self.gds, source_nodes, "sourceNodes", node_identifier_property, params
+                self.gds,
+                source_nodes,
+                "sourceNodes",
+                node_identifier_property,
+                gds_params,
             )
-            logger.info(f"Pagerank parameters: {params}")
-            pageranks = self.gds.pageRank.stream(G, **params)
+            logger.info(f"Pagerank parameters: {gds_params}")
+            pageranks = self.gds.pageRank.stream(G, **gds_params)
 
         # Add node names to the results if nodeIdentifierProperty is provided
         node_identifier_property = kwargs.get("nodeIdentifierProperty")
@@ -300,12 +331,14 @@ class PageRankHandler(AlgorithmHandler):
             dampingFactor=arguments.get("dampingFactor"),
             maxIterations=arguments.get("maxIterations"),
             tolerance=arguments.get("tolerance"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
 class HarmonicCentralityHandler(AlgorithmHandler):
     def harmonic_centrality(self, **kwargs):
-        with projected_graph(self.gds) as G:
+        with projected_graph_from_params(self.gds, kwargs=kwargs) as G:
             centrality = self.gds.closeness.harmonic.stream(G)
 
         # Add node names to the results if nodeIdentifierProperty is provided
@@ -323,19 +356,19 @@ class HarmonicCentralityHandler(AlgorithmHandler):
         return self.harmonic_centrality(
             nodes=arguments.get("nodes"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
 class HITSHandler(AlgorithmHandler):
     def hits(self, **kwargs):
-        with projected_graph(self.gds) as G:
-            params = {
-                k: v
-                for k, v in kwargs.items()
-                if v is not None and k not in ["nodes", "nodeIdentifierProperty"]
-            }
-            logger.info(f"HITS parameters: {params}")
-            result = self.gds.hits.stream(G, **params)
+        with projected_graph_from_params(self.gds, kwargs=kwargs) as G:
+            gds_params = clean_params(
+                kwargs, ["nodes", "nodeIdentifierProperty", "nodeLabels", "relTypes"]
+            )
+            logger.info(f"HITS parameters: {gds_params}")
+            result = self.gds.hits.stream(G, **gds_params)
 
         # Add node names to the results if nodeIdentifierProperty is provided
         node_identifier_property = kwargs.get("nodeIdentifierProperty")
@@ -356,4 +389,6 @@ class HITSHandler(AlgorithmHandler):
             authProperty=arguments.get("authProperty"),
             hubProperty=arguments.get("hubProperty"),
             partitioning=arguments.get("partitioning"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
