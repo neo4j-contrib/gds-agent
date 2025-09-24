@@ -4,7 +4,13 @@ import pytest
 @pytest.mark.asyncio
 async def test_node_similarity(mcp_client):
     result = await mcp_client.call_tool(
-        "node_similarity", {"nodeIdentifierProperty": "name", "topN": 35}
+        "node_similarity",
+        {
+            "nodeIdentifierProperty": "name",
+            "topN": 35,
+            "relTypes": ["LINK"],
+            "nodeLabels": ["UndergroundStation"],
+        },
     )
 
     assert len(result) == 1
@@ -101,7 +107,13 @@ async def test_filtered_node_similarity(mcp_client):
 async def test_k_nearest_neighbors(mcp_client):
     result = await mcp_client.call_tool(
         "k_nearest_neighbors",
-        {"nodeIdentifierProperty": "name", "topK": 3, "nodeProperties": "rail"},
+        {
+            "nodeIdentifierProperty": "name",
+            "topK": 3,
+            "nodeProperties": "rail",
+            "relTypes": ["LINK"],
+            "nodeLabels": ["UndergroundStation"],
+        },
     )
 
     assert len(result) == 1

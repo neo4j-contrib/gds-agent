@@ -200,7 +200,7 @@ def test_rel_projection_properties_with_node_labels(neo4j_container):
     gds = GraphDataScience(driver)
     with driver.session() as session:
         session.run("CREATE (:Foo)-[:REL1{ prop: 2.0}] ->(:Foo)")
-        session.run("CREATE (:Bar)-[:REL2{ prop: 'foo'}]->(:Bar)")
+        session.run("CREATE (:Bar)-[:REL2{ prop:'foo'}]->(:Bar)")
 
         res = session.run(
             "MATCH (n) WHERE 'Foo' IN labels(n) OR 'Bar' IN labels(n) RETURN count(n) as count"
@@ -230,3 +230,104 @@ def test_rel_projection_properties_with_node_labels(neo4j_container):
     assert existing_count2 == 0
     assert "prop" in projection_properties_foo
     assert "prop" not in projection_properties_bar
+
+
+@pytest.mark.asyncio
+def test_rel_projection_properties_with_rel_types(neo4j_container):
+    """Import test data into Neo4j."""
+    # Set environment variables for the import script
+    os.environ["NEO4J_URI"] = neo4j_container
+    os.environ["NEO4J_USERNAME"] = NEO4J_USER
+    os.environ["NEO4J_PASSWORD"] = NEO4J_PASSWORD
+
+    driver = GraphDatabase.driver(neo4j_container, auth=(NEO4J_USER, NEO4J_PASSWORD))
+    existing_count1 = -1
+    existing_count2 = -2
+    gds = GraphDataScience(driver)
+    with driver.session() as session:
+        session.run("CREATE (:Foo)-[:REL1{ prop: 2.0}] ->(:Foo)")
+        session.run("CREATE (:Foo)-[:REL2{ prop: 'foo'}]->(:Foo)")
+
+        res = session.run("MATCH (n) WHERE 'Foo' IN labels(n) RETURN count(n) as count")
+        existing_count1 = res.single()["count"]
+
+    # do validations
+    from mcp_server.src.mcp_server_neo4j_gds.gds import validate_rel_properties
+
+    projection_properties_rel1 = validate_rel_properties(gds, ["prop"], [], ["REL1"])
+    projection_properties_rel2 = validate_rel_properties(gds, ["prop"], [], ["REL2"])
+
+    # remove data
+    with driver.session() as session:
+        session.run("MATCH (n:Foo)  DETACH DELETE n")
+
+        res = session.run("MATCH (n) WHERE 'Foo' IN labels(n) RETURN count(n) as count")
+        existing_count2 = res.single()["count"]
+
+    driver.close()
+
+    # assertions at the end to ensure failures do not affect other tests
+    assert existing_count1 == 4
+    assert existing_count2 == 0
+    assert "prop" in projection_properties_rel1
+    assert "prop" not in projection_properties_rel2
+
+
+@pytest.mark.asyncio
+def test_projection_with_labels_and_types(neo4j_container):
+    """Import test data into Neo4j."""
+    # Set environment variables for the import script
+    os.environ["NEO4J_URI"] = neo4j_container
+    os.environ["NEO4J_USERNAME"] = NEO4J_USER
+    os.environ["NEO4J_PASSWORD"] = NEO4J_PASSWORD
+
+    driver = GraphDatabase.driver(neo4j_container, auth=(NEO4J_USER, NEO4J_PASSWORD))
+    existing_count2 = -2
+    gds = GraphDataScience(driver)
+    with driver.session() as session:
+        session.run("CREATE (:Foo{prop1:1.0})-[:REL1{ relprop1: 2.0}] ->(:Foo)")
+        session.run("CREATE (:Foo{prop1:1})-[:REL2{ relprop1: 2.0}] ->(:Bar)")
+        session.run(
+            "CREATE (:Bar)-[:REL3{ prop: 2.0, relprop2:2.0}] ->(:IGNOREME{prop2:[4]})"
+        )
+
+    from mcp_server.src.mcp_server_neo4j_gds.gds import projected_graph_from_params
+
+    with projected_graph_from_params(
+        gds,
+        ["Foo"],
+        undirected=False,
+        relTypes=["REL1", "REL2"],
+        nodeLabels=["Foo", "Bar"],
+    ) as G:
+        node_count = G.node_count()
+        node_labels = set(G.node_labels())
+        rel_count = G.relationship_count()
+        rel_types = set(G.relationship_types())
+        node_props = list(G.node_properties())
+        rel_props = list(G.relationship_properties())
+
+    with driver.session() as session:
+        session.run("MATCH (n:Foo)  DETACH DELETE n")
+        session.run("MATCH (n:Bar)  DETACH DELETE n")
+        session.run("MATCH (n:IGNOREME)  DETACH DELETE n")
+
+        res = session.run(
+            "MATCH (n) WHERE 'Foo' IN labels(n) OR 'Bar' IN labels(n) OR 'IGNOREME' IN labels(n) RETURN count(n) as count"
+        )
+        existing_count2 = res.single()["count"]
+
+    driver.close()
+    # assertions at the end to ensure failures do not affect other tests
+    assert existing_count2 == 0
+
+    assert node_count == 5
+    assert node_labels == {"Foo", "Bar"}
+    assert node_props == [["prop1"], ["prop1"]]
+
+    assert rel_count == 2
+    assert rel_types == {"REL1", "REL2"}
+    assert rel_props == [["relprop1"], ["relprop1"]]
+
+    list_result = gds.graph.list()
+    assert len(list_result) == 0

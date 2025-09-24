@@ -4,7 +4,12 @@ import pytest
 @pytest.mark.asyncio
 async def test_conductance(mcp_client):
     result = await mcp_client.call_tool(
-        "conductance", {"communityProperty": "total_lines"}
+        "conductance",
+        {
+            "communityProperty": "total_lines",
+            "relTypes": ["LINK"],
+            "nodeLabels": ["UndergroundStation"],
+        },
     )
 
     assert len(result) == 1
@@ -25,7 +30,12 @@ async def test_hdbscan(mcp_client):
 @pytest.mark.asyncio
 async def test_k_core_decomposition(mcp_client):
     result_with_names = await mcp_client.call_tool(
-        "k_core_decomposition", {"nodeIdentifierProperty": "name"}
+        "k_core_decomposition",
+        {
+            "nodeIdentifierProperty": "name",
+            "relTypes": ["LINK"],
+            "nodeLabels": ["UndergroundStation"],
+        },
     )
 
     assert len(result_with_names) == 1
@@ -111,7 +121,13 @@ async def test_local_clustering_coefficient(mcp_client):
 @pytest.mark.asyncio
 async def test_louvain(mcp_client):
     result_with_names = await mcp_client.call_tool(
-        "louvain", {"nodeIdentifierProperty": "name", "maxLevels": 10}
+        "louvain",
+        {
+            "nodeIdentifierProperty": "name",
+            "maxLevels": 10,
+            "relTypes": ["LINK"],
+            "nodeLabels": ["UndergroundStation"],
+        },
     )
 
     assert len(result_with_names) == 1

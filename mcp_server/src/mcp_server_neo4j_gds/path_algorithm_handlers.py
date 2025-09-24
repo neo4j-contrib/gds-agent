@@ -2,8 +2,8 @@ import logging
 from typing import Dict, Any
 
 
-from .algorithm_handler import AlgorithmHandler
-from .gds import projected_graph
+from .algorithm_handler import AlgorithmHandler, clean_params
+from .gds import projected_graph_from_params
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
 
@@ -30,10 +30,9 @@ class DijkstraShortestPathHandler(AlgorithmHandler):
         start_node_id = int(df["start_id"].iloc[0])
         end_node_id = int(df["end_id"].iloc[0])
 
-        with projected_graph(self.gds) as G:
+        with projected_graph_from_params(self.gds, **kwargs) as G:
             # If any optional parameter is not None, use that parameter
-            args = locals()
-            params = {k: v for k, v in kwargs.items() if v is not None}
+            params = clean_params(kwargs, ["nodeLabels", "relTypes"])
             logger.info(f"Dijkstra single-source shortest path parameters: {params}")
 
             path_data = self.gds.shortestPath.dijkstra.stream(
@@ -73,6 +72,8 @@ class DijkstraShortestPathHandler(AlgorithmHandler):
             arguments.get("end_node"),
             arguments.get("nodeIdentifierProperty"),
             relationshipWeightProperty=arguments.get("relationship_property"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
@@ -93,9 +94,9 @@ class DeltaSteppingShortestPathHandler(AlgorithmHandler):
 
         source_node_id = int(df["source_id"].iloc[0])
 
-        with projected_graph(self.gds) as G:
+        with projected_graph_from_params(self.gds, **kwargs) as G:
             # If any optional parameter is not None, use that parameter
-            params = {k: v for k, v in kwargs.items() if v is not None}
+            params = clean_params(kwargs, ["nodeLabels", "relTypes"])
             logger.info(f"Delta-Stepping shortest path parameters: {params}")
 
             path_data = self.gds.allShortestPaths.delta.stream(
@@ -155,6 +156,8 @@ class DeltaSteppingShortestPathHandler(AlgorithmHandler):
             arguments.get("nodeIdentifierProperty"),
             delta=arguments.get("delta"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
@@ -175,9 +178,9 @@ class DijkstraSingleSourceShortestPathHandler(AlgorithmHandler):
 
         source_node_id = int(df["source_id"].iloc[0])
 
-        with projected_graph(self.gds) as G:
+        with projected_graph_from_params(self.gds, **kwargs) as G:
             # If any optional parameter is not None, use that parameter
-            params = {k: v for k, v in kwargs.items() if v is not None}
+            params = clean_params(kwargs, ["nodeLabels", "relTypes"])
             logger.info(f"Dijkstra single-source shortest path parameters: {params}")
 
             path_data = self.gds.allShortestPaths.dijkstra.stream(
@@ -235,6 +238,8 @@ class DijkstraSingleSourceShortestPathHandler(AlgorithmHandler):
             arguments.get("sourceNode"),
             arguments.get("nodeIdentifierProperty"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
@@ -264,9 +269,9 @@ class AStarShortestPathHandler(AlgorithmHandler):
         source_node_id = int(df["source_id"].iloc[0])
         target_node_id = int(df["target_id"].iloc[0])
 
-        with projected_graph(self.gds) as G:
+        with projected_graph_from_params(self.gds, **kwargs) as G:
             # If any optional parameter is not None, use that parameter
-            params = {k: v for k, v in kwargs.items() if v is not None}
+            params = clean_params(kwargs, ["nodeLabels", "relTypes"])
             logger.info(f"A* shortest path parameters: {params}")
 
             path_data = self.gds.shortestPath.astar.stream(
@@ -308,6 +313,8 @@ class AStarShortestPathHandler(AlgorithmHandler):
             latitudeProperty=arguments.get("latitudeProperty"),
             longitudeProperty=arguments.get("longitudeProperty"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
@@ -337,9 +344,9 @@ class YensShortestPathsHandler(AlgorithmHandler):
         source_node_id = int(df["source_id"].iloc[0])
         target_node_id = int(df["target_id"].iloc[0])
 
-        with projected_graph(self.gds) as G:
+        with projected_graph_from_params(self.gds, **kwargs) as G:
             # If any optional parameter is not None, use that parameter
-            params = {k: v for k, v in kwargs.items() if v is not None}
+            params = clean_params(kwargs, ["nodeLabels", "relTypes"])
             logger.info(f"Yen's shortest paths parameters: {params}")
 
             path_data = self.gds.shortestPath.yens.stream(
@@ -396,6 +403,8 @@ class YensShortestPathsHandler(AlgorithmHandler):
             arguments.get("nodeIdentifierProperty"),
             k=arguments.get("k"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
@@ -416,9 +425,9 @@ class MinimumWeightSpanningTreeHandler(AlgorithmHandler):
 
         source_node_id = int(df["source_id"].iloc[0])
 
-        with projected_graph(self.gds, undirected=True) as G:
+        with projected_graph_from_params(self.gds, undirected=True, **kwargs) as G:
             # If any optional parameter is not None, use that parameter
-            params = {k: v for k, v in kwargs.items() if v is not None}
+            params = clean_params(kwargs, ["nodeLabels", "relTypes"])
             logger.info(f"Minimum Weight Spanning Tree parameters: {params}")
 
             mst_data = self.gds.spanningTree.stream(
@@ -472,6 +481,8 @@ class MinimumWeightSpanningTreeHandler(AlgorithmHandler):
             arguments.get("nodeIdentifierProperty"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
             objective=arguments.get("objective"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
@@ -531,9 +542,9 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
         if not target_node_ids:
             return {"found": False, "message": "No target nodes found"}
 
-        with projected_graph(self.gds) as G:
+        with projected_graph_from_params(self.gds, **kwargs) as G:
             # If any optional parameter is not None, use that parameter
-            params = {k: v for k, v in kwargs.items() if v is not None}
+            params = clean_params(kwargs, ["nodeLabels", "relTypes"])
             logger.info(f"Minimum Directed Steiner Tree parameters: {params}")
 
             # Run the steiner tree algorithm
@@ -590,14 +601,16 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
             delta=arguments.get("delta"),
             applyRerouting=arguments.get("applyRerouting"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
 class PrizeCollectingSteinerTreeHandler(AlgorithmHandler):
     def prize_collecting_steiner_tree(self, **kwargs):
-        with projected_graph(self.gds, undirected=True) as G:
-            # Prepare parameters for the algorithm
-            params = {k: v for k, v in kwargs.items() if v is not None}
+        with projected_graph_from_params(self.gds, undirected=True, **kwargs) as G:
+            # If any optional parameter is not None, use that parameter
+            params = clean_params(kwargs, ["nodeLabels", "relTypes"])
             logger.info(f"Prize-Collecting Steiner Tree parameters: {params}")
 
             # Run the prize-collecting steiner tree algorithm
@@ -648,14 +661,16 @@ class PrizeCollectingSteinerTreeHandler(AlgorithmHandler):
         return self.prize_collecting_steiner_tree(
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
             prizeProperty=arguments.get("prizeProperty"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
 class AllPairsShortestPathsHandler(AlgorithmHandler):
     def all_pairs_shortest_paths(self, **kwargs):
-        with projected_graph(self.gds) as G:
+        with projected_graph_from_params(self.gds, **kwargs) as G:
             # If any optional parameter is not None, use that parameter
-            params = {k: v for k, v in kwargs.items() if v is not None}
+            params = clean_params(kwargs, ["nodeLabels", "relTypes"])
             logger.info(f"All Pairs Shortest Paths parameters: {params}")
 
             # Run the all pairs shortest paths algorithm
@@ -723,13 +738,12 @@ class RandomWalkHandler(AlgorithmHandler):
                 if not source_df.empty:
                     source_node_ids.append(int(source_df["source_id"].iloc[0]))
 
-        with projected_graph(self.gds) as G:
-            # Prepare parameters for the random walk algorithm, excluding our internal parameters
-            params = {
-                k: v
-                for k, v in kwargs.items()
-                if v is not None and k != "nodeIdentifierProperty"
-            }
+        with projected_graph_from_params(self.gds, **kwargs) as G:
+            # If any optional parameter is not None, use that parameter
+            params = clean_params(
+                kwargs, ["nodeLabels", "relTypes", "nodeIdentifierProperty"]
+            )
+            logger.info(f"Random Walk parameters: {params}")
 
             # Add source nodes if found
             if source_node_ids:
@@ -778,6 +792,8 @@ class RandomWalkHandler(AlgorithmHandler):
             returnFactor=arguments.get("returnFactor"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
             walkBufferSize=arguments.get("walkBufferSize"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
@@ -818,13 +834,11 @@ class BreadthFirstSearchHandler(AlgorithmHandler):
                 if not target_df.empty:
                     target_node_ids.append(int(target_df["target_id"].iloc[0]))
 
-        with projected_graph(self.gds) as G:
-            # Prepare parameters for the BFS algorithm, excluding our internal parameters
-            params = {
-                k: v
-                for k, v in kwargs.items()
-                if v is not None and k != "nodeIdentifierProperty"
-            }
+        with projected_graph_from_params(self.gds, **kwargs) as G:
+            # If any optional parameter is not None, use that parameter
+            params = clean_params(
+                kwargs, ["nodeLabels", "relTypes", "nodeIdentifierProperty"]
+            )
 
             # Add target nodes if found
             if target_node_ids:
@@ -875,6 +889,8 @@ class BreadthFirstSearchHandler(AlgorithmHandler):
             arguments.get("nodeIdentifierProperty"),
             targetNodes=arguments.get("targetNodes"),
             maxDepth=arguments.get("maxDepth"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
@@ -915,14 +931,11 @@ class DepthFirstSearchHandler(AlgorithmHandler):
                 if not target_df.empty:
                     target_node_ids.append(int(target_df["target_id"].iloc[0]))
 
-        with projected_graph(self.gds) as G:
-            # Prepare parameters for the DFS algorithm, excluding our internal parameters
-            params = {
-                k: v
-                for k, v in kwargs.items()
-                if v is not None and k != "nodeIdentifierProperty"
-            }
-
+        with projected_graph_from_params(self.gds, **kwargs) as G:
+            # If any optional parameter is not None, use that parameter
+            params = clean_params(
+                kwargs, ["nodeLabels", "relTypes", "nodeIdentifierProperty"]
+            )
             # Add target nodes if found
             if target_node_ids:
                 params["targetNodes"] = target_node_ids
@@ -972,6 +985,8 @@ class DepthFirstSearchHandler(AlgorithmHandler):
             arguments.get("nodeIdentifierProperty"),
             targetNodes=arguments.get("targetNodes"),
             maxDepth=arguments.get("maxDepth"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
@@ -995,13 +1010,11 @@ class BellmanFordSingleSourceShortestPathHandler(AlgorithmHandler):
 
         source_node_id = int(source_df["source_id"].iloc[0])
 
-        with projected_graph(self.gds) as G:
-            # Prepare parameters for the Bellman-Ford algorithm, excluding our internal parameters
-            params = {
-                k: v
-                for k, v in kwargs.items()
-                if v is not None and k != "nodeIdentifierProperty"
-            }
+        with projected_graph_from_params(self.gds, **kwargs) as G:
+            # If any optional parameter is not None, use that parameter
+            params = clean_params(
+                kwargs, ["nodeLabels", "relTypes", "nodeIdentifierProperty"]
+            )
             logger.info(
                 f"Bellman-Ford Single-Source Shortest Path parameters: {params}"
             )
@@ -1061,6 +1074,8 @@ class BellmanFordSingleSourceShortestPathHandler(AlgorithmHandler):
             arguments.get("sourceNode"),
             arguments.get("nodeIdentifierProperty"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )
 
 
@@ -1087,14 +1102,12 @@ class LongestPathHandler(AlgorithmHandler):
                 )
                 if not target_df.empty:
                     target_node_ids.append(int(target_df["target_id"].iloc[0]))
-
-        with projected_graph(self.gds) as G:
-            # Prepare parameters for the longest path algorithm, excluding our internal parameters
-            params = {
-                k: v
-                for k, v in kwargs.items()
-                if v is not None and k not in ["nodeIdentifierProperty", "targetNodes"]
-            }
+        with projected_graph_from_params(self.gds, **kwargs) as G:
+            # If any optional parameter is not None, use that parameter
+            params = clean_params(
+                kwargs,
+                ["nodeLabels", "relTypes", "nodeIdentifierProperty", "targetNodes"],
+            )
             logger.info(f"Longest Path parameters: {params}")
 
             # Run the longest path algorithm
@@ -1152,4 +1165,6 @@ class LongestPathHandler(AlgorithmHandler):
             targetNodes=arguments.get("targetNodes"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
         )

@@ -11,6 +11,7 @@ async def test_article_rank(mcp_client):
             "dampingFactor": 0.85,
             "maxIterations": 20,
             "tolerance": 1e-6,
+            "relTypes": ["LINK"],
             "nodeLabels": ["UndergroundStation"],
         },
     )
@@ -338,6 +339,8 @@ async def test_hits(mcp_client):
         {
             "nodes": ["King's Cross St. Pancras", "Oxford Circus"],
             "nodeIdentifierProperty": "name",
+            "relTypes": ["LINK"],
+            "nodeLabels": ["UndergroundStation"],
         },
     )
 

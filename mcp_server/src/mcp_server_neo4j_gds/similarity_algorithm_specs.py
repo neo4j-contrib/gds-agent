@@ -69,6 +69,11 @@ similarity_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run Node Similarity on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run Node Similarity on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                },
             },
         },
     ),
@@ -154,6 +159,11 @@ similarity_tool_definitions = [
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "The node labels used to project and run k-nearest neighbors on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run k-nearest neighbors on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
             },
             "required": ["nodeProperties"],
