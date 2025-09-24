@@ -346,7 +346,7 @@ def test_get_labels_and_types_and_properties(neo4j_container):
     gds = GraphDataScience(driver)
     with driver.session() as session:
         session.run(
-            "CREATE (:Foo{prop1:1})-[:R1{relprop1:2}]->(:Bar), (:Bar)-[:R2{relprop2:2}]->(:Bar{prop2:2})"
+            "CREATE (:Foo{prop1:1, prop3:5})-[:R1{relprop1:2}]->(:Bar:SpareBar), (:Bar)-[:R2{relprop2:2}]->(:Bar{prop2:2})"
         )
 
     from mcp_server.src.mcp_server_neo4j_gds.gds import (
@@ -366,7 +366,7 @@ def test_get_labels_and_types_and_properties(neo4j_container):
         session.run("MATCH (n:Bar)  DETACH DELETE n")
 
         res = session.run(
-            "MATCH (n) WHERE 'Foo' IN labels(n) OR 'Bar' IN labels(n) RETURN count(n) as count"
+            "MATCH (n) WHERE 'Foo' IN labels(n) OR 'Bar' IN labels(n) OR 'SpareBar' IN labels(n) RETURN count(n) as count"
         )
         existing_count2 = res.single()["count"]
 
@@ -376,9 +376,11 @@ def test_get_labels_and_types_and_properties(neo4j_container):
 
     assert "Foo" in node_labels
     assert "Bar" in node_labels
+    assert "SpareBar" in node_labels
     assert "R1" in rel_types
     assert "R2" in rel_types
     assert "relprop1" in rel_props
     assert "relprop2" in rel_props
     assert "prop1" in node_props
     assert "prop2" in node_props
+    assert "prop3" in node_props
