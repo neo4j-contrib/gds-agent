@@ -331,3 +331,54 @@ def test_projection_with_labels_and_types(neo4j_container):
 
     list_result = gds.graph.list()
     assert len(list_result) == 0
+
+
+@pytest.mark.asyncio
+def test_get_labels_and_types_and_properties(neo4j_container):
+    """Import test data into Neo4j."""
+    # Set environment variables for the import script
+    os.environ["NEO4J_URI"] = neo4j_container
+    os.environ["NEO4J_USERNAME"] = NEO4J_USER
+    os.environ["NEO4J_PASSWORD"] = NEO4J_PASSWORD
+
+    driver = GraphDatabase.driver(neo4j_container, auth=(NEO4J_USER, NEO4J_PASSWORD))
+    existing_count2 = -2
+    gds = GraphDataScience(driver)
+    with driver.session() as session:
+        session.run(
+            "CREATE (:Foo{prop1:1})-[:R1{relprop1:2}]->(:Bar), (:Bar{relprop2:2})-[:R2]->(:Bar{prop2:2})"
+        )
+
+    from mcp_server.src.mcp_server_neo4j_gds.gds import (
+        get_node_labels,
+        get_relationship_types,
+        get_relationship_properties_keys,
+        get_node_properties_keys,
+    )
+
+    node_labels = get_node_labels(gds)
+    rel_types = get_relationship_types(gds)
+    rel_props = get_relationship_properties_keys(gds)
+    node_props = get_node_properties_keys(gds)
+
+    with driver.session() as session:
+        session.run("MATCH (n:Foo)  DETACH DELETE n")
+        session.run("MATCH (n:Bar)  DETACH DELETE n")
+
+        res = session.run(
+            "MATCH (n) WHERE 'Foo' IN labels(n) OR 'Bar' IN labels(n) RETURN count(n) as count"
+        )
+        existing_count2 = res.single()["count"]
+
+    driver.close()
+    # assertions at the end to ensure failures do not affect other tests
+    assert existing_count2 == 0
+
+    assert "relprop1" in rel_props
+    assert "relprop2" in rel_props
+    assert "prop1" in node_props
+    assert "prop2" in node_props
+    assert "R1" in rel_types
+    assert "R2" in rel_types
+    assert "Foo" in node_labels
+    assert "Bar" in node_labels
