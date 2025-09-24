@@ -152,7 +152,10 @@ def projected_graph(gds, node_labels=None, relationship_types=None, undirected=F
 def get_node_labels(gds: GraphDataScience):
     query = """
                 MATCH (n)
-                RETURN DISTINCT labels(n) as labels
+                WITH DISTINCT labels(n) AS labels
+                UNWIND labels AS label
+                WITH DISTINCT label
+                RETURN COLLECT(label) AS labels
             """
     df = gds.run_cypher(query)
     if df.empty:
@@ -169,9 +172,14 @@ def get_node_properties_keys(gds: GraphDataScience, node_labels=None):
     if node_labels is None:
         node_labels = []
     nodelabels_query = create_node_cypher_match_query(node_labels)
-    query = (
-        nodelabels_query + """RETURN DISTINCT keys(properties(n)) AS properties_keys"""
-    )
+    property_extractor = """
+                            WITH keys(properties(n)) AS prop_keys_list
+                            UNWIND prop_keys_list AS prop_keys
+                            WITH DISTINCT prop_keys
+                            RETURN COLLECT(prop_keys) AS properties_keys
+                        """
+
+    query = nodelabels_query + property_extractor
     df = gds.run_cypher(query)
     if df.empty:
         return []
@@ -182,7 +190,13 @@ def get_relationship_properties_keys(gds: GraphDataScience, relationshipTypes=No
     if relationshipTypes is None:
         relationshipTypes = []
     rel_query = create_relationship_cypher_match_query([], relationshipTypes)
-    query = rel_query + " RETURN DISTINCT keys(properties(r)) AS properties_keys"
+    property_extractor = """
+                            WITH keys(properties(r)) AS prop_keys_list
+                            UNWIND prop_keys_list AS prop_keys
+                            WITH DISTINCT prop_keys
+                            RETURN COLLECT(prop_keys) AS properties_keys
+                        """
+    query = rel_query + property_extractor
 
     df = gds.run_cypher(query)
     if df.empty:
@@ -193,10 +207,12 @@ def get_relationship_properties_keys(gds: GraphDataScience, relationshipTypes=No
 def get_relationship_types(gds: GraphDataScience, node_labels=None):
     if node_labels is None:
         node_labels = []
-    query = (
-        create_relationship_cypher_match_query(node_labels, [])
-        + " RETURN DISTINCT TYPE(r) as relationship_types"
-    )
+    type_extractor = """
+                     WITH type(r) AS type
+                     WITH DISTINCT type
+                     RETURN COLLECT(type) AS relationship_types
+                     """
+    query = create_relationship_cypher_match_query(node_labels, []) + type_extractor
 
     df = gds.run_cypher(query)
     if df.empty:

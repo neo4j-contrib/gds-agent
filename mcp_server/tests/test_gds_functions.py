@@ -346,7 +346,7 @@ def test_get_labels_and_types_and_properties(neo4j_container):
     gds = GraphDataScience(driver)
     with driver.session() as session:
         session.run(
-            "CREATE (:Foo{prop1:1})-[:R1{relprop1:2}]->(:Bar), (:Bar{relprop2:2})-[:R2]->(:Bar{prop2:2})"
+            "CREATE (:Foo{prop1:1})-[:R1{relprop1:2}]->(:Bar), (:Bar)-[:R2{relprop2:2}]->(:Bar{prop2:2})"
         )
 
     from mcp_server.src.mcp_server_neo4j_gds.gds import (
@@ -374,11 +374,11 @@ def test_get_labels_and_types_and_properties(neo4j_container):
     # assertions at the end to ensure failures do not affect other tests
     assert existing_count2 == 0
 
+    assert "Foo" in node_labels
+    assert "Bar" in node_labels
+    assert "R1" in rel_types
+    assert "R2" in rel_types
     assert "relprop1" in rel_props
     assert "relprop2" in rel_props
     assert "prop1" in node_props
     assert "prop2" in node_props
-    assert "R1" in rel_types
-    assert "R2" in rel_types
-    assert "Foo" in node_labels
-    assert "Bar" in node_labels
