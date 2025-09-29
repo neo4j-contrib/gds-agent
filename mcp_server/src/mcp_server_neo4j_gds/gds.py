@@ -204,9 +204,8 @@ def get_relationship_properties_keys(gds: GraphDataScience, relationshipTypes=No
     return df["properties_keys"].iloc[0]
 
 
-def get_relationship_types(gds: GraphDataScience, node_labels=None):
-    if node_labels is None:
-        node_labels = []
+def get_relationship_types(gds: GraphDataScience):
+    node_labels = []
     type_extractor = """
                      WITH type(r) AS type
                      WITH DISTINCT type

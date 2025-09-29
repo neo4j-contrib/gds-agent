@@ -108,14 +108,6 @@ async def main(db_url: str, username: str, password: str, database: str = None):
                         description="""Get relationship types in the database.""",
                         inputSchema={
                             "type": "object",
-                            "properties": {
-                                "nodeLabels": {
-                                    "type": "array",
-                                    "items": {"type": "string"},
-                                    "description": "Ignore relationships whose source and target node is not in the specified node labels. To use this parameter, use get_node_labels first.",
-                                },
-                            },
-                            "required": [],
                         },
                     ),
                 ]
@@ -151,10 +143,7 @@ async def main(db_url: str, username: str, password: str, database: str = None):
                 result = get_node_labels(gds)
                 return [types.TextContent(type="text", text=serialize_result(result))]
             elif name == "get_relationship_types":
-                if "nodeLabels" in arguments:
-                    result = get_relationship_types(gds, arguments["nodeLabels"])
-                else:
-                    result = get_relationship_types(gds)
+                result = get_relationship_types(gds)
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
             else:
