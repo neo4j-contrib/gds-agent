@@ -125,3 +125,14 @@ async def test_get_node_labels(mcp_client):
     properties_keys = json.loads(result_text)
 
     assert properties_keys == ["UndergroundStation"]
+
+
+@pytest.mark.asyncio
+async def test_get_relationship_types(mcp_client):
+    result = await mcp_client.call_tool("get_relationship_types")
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+    properties_keys = json.loads(result_text)
+
+    assert properties_keys == ["LINK"]
