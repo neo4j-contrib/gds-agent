@@ -21,6 +21,7 @@ from .gds import (
     get_relationship_properties_keys,
     get_node_labels,
     get_relationship_types,
+    get_relationship_schema,
 )
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
@@ -97,15 +98,8 @@ async def main(db_url: str, username: str, password: str, database: str = None):
                         },
                     ),
                     types.Tool(
-                        name="get_node_labels",
-                        description="""Get all node labels in the database""",
-                        inputSchema={
-                            "type": "object",
-                        },
-                    ),
-                    types.Tool(
-                        name="get_relationship_types",
-                        description="""Get relationship types in the database.""",
+                        name="get_relationship_schema",
+                        description="""Get the relationship schema of the database. It returns for each  distinct relationship type, the source  node labels that it can leave from, the relationship type, and the target node labels that it can arrive at. This means a given relationship type can only be used together with at least one label from source, and at least one label from target. """,
                         inputSchema={
                             "type": "object",
                         },
@@ -145,7 +139,9 @@ async def main(db_url: str, username: str, password: str, database: str = None):
             elif name == "get_relationship_types":
                 result = get_relationship_types(gds)
                 return [types.TextContent(type="text", text=serialize_result(result))]
-
+            elif name == "get_relationship_schema":
+                result = get_relationship_schema(gds)
+                return [types.TextContent(type="text", text=serialize_result(result))]
             else:
                 handler = AlgorithmRegistry.get_handler(name, gds)
                 result = handler.execute(arguments or {})

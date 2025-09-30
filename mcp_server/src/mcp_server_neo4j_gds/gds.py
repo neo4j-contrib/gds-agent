@@ -186,6 +186,25 @@ def get_node_properties_keys(gds: GraphDataScience, node_labels=None):
     return df["properties_keys"].iloc[0]
 
 
+def get_relationship_schema(gds: GraphDataScience):
+    node_labels = []
+    type_extractor = """
+                  WITH   type(r) AS type, 
+                    labels(n) As labelsn, 
+                    labels(m) as labelsm
+                    UNWIND labelsn AS labeln
+                    UNWIND labelsm AS labelm
+                    WITH DISTINCT type, labeln,labelm
+                  RETURN  type, COLLECT(labeln) as soureLabels, COLLECT(labelm) as targetLabels
+                     """
+    query = create_relationship_cypher_match_query(node_labels, []) + type_extractor
+
+    df = gds.run_cypher(query)
+    if df.empty:
+        return []
+    return df
+
+
 def get_relationship_properties_keys(gds: GraphDataScience, relationshipTypes=None):
     if relationshipTypes is None:
         relationshipTypes = []

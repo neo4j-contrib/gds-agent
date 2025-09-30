@@ -6,6 +6,7 @@ from .gds import projected_graph_from_params
 
 from .node_translator import (
     filter_identifiers,
+    filter_identifiers_pro,
     translate_ids_to_identifiers,
     translate_identifiers_to_ids,
 )
@@ -202,7 +203,14 @@ class DegreeCentralityHandler(AlgorithmHandler):
     def degree_centrality(self, **kwargs):
         with projected_graph_from_params(self.gds, kwargs=kwargs) as G:
             gds_params = clean_params(
-                kwargs, ["nodes", "nodeIdentifierProperty", "nodeLabels", "relTypes"]
+                kwargs,
+                [
+                    "nodes",
+                    "nodeIdentifierProperty",
+                    "nodeLabels",
+                    "relTypes",
+                    "nodeResultFilter",
+                ],
             )
             logger.info(f"Degree centrality parameters: {gds_params}")
             centrality = self.gds.degree.stream(G, **gds_params)
@@ -211,10 +219,15 @@ class DegreeCentralityHandler(AlgorithmHandler):
         node_identifier_property = kwargs.get("nodeIdentifierProperty")
         translate_ids_to_identifiers(self.gds, node_identifier_property, centrality)
 
-        # Filter results by node names if provided
+        # Filter results by node names/labels if provided
         node_names = kwargs.get("nodes", None)
-        centrality = filter_identifiers(
-            self.gds, node_identifier_property, node_names, centrality
+        node_result_filter = kwargs.get("nodeResultFilter", None)
+        centrality = filter_identifiers_pro(
+            self.gds,
+            node_identifier_property,
+            node_names,
+            node_result_filter,
+            centrality,
         )
 
         return centrality
@@ -227,6 +240,7 @@ class DegreeCentralityHandler(AlgorithmHandler):
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
             nodeLabels=arguments.get("nodeLabels"),
             relTypes=arguments.get("relTypes"),
+            nodeResultFilter=arguments.get("nodeResultFilter"),
         )
 
 

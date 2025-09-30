@@ -86,6 +86,41 @@ def filter_identifiers(
             "names": node_names,
         },
     )
+    return filter_results(df, results, id_name)
+
+
+def filter_identifiers_pro(
+    gds: GraphDataScience,
+    node_identifier_property,
+    node_names,
+    node_labels,
+    results,
+    id_name="nodeId",
+):
+    if node_labels is None:
+        return filter_identifiers(
+            gds, node_identifier_property, node_names, results, id_name
+        )
+
+    query = f"""
+            UNWIND $labels AS label
+            MATCH (s)
+            WHERE label IN labels(s) AND s.{node_identifier_property} IS NOT NULL
+            WITH DISTINCT s.{node_identifier_property} as node_id
+            RETURN COLLECT(node_id) AS node_names 
+            """
+    df = gds.run_cypher(
+        query,
+        params={
+            "labels": node_labels,
+        },
+    )
+    return filter_identifiers(
+        gds, node_identifier_property, df["node_names"].iloc[0], results, id_name
+    )
+
+
+def filter_results(df, results, id_name="nodeId"):
     node_ids = df["node_id"].tolist()
     filtered_results = results[results[id_name].isin(node_ids)]
     return filtered_results

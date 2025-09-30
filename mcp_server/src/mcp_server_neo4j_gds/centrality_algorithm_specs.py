@@ -249,12 +249,17 @@ centrality_tool_definitions = [
                 "nodeLabels": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "The node labels used to project and run Degree Centrality on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                    "description": "If this parameter is provided, the algorithm will be run on a filtered subgraph containing ONLY nodes with the provided node labels. This means that any other node will not be in the subgraph. Do not specify to run for all nodes. If you use this parameter, ensure that relationships exist between the nodes with the given labels.",
                 },
                 "relTypes": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Degree Centrality on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                    "description": "If this parameter is provided, the algorithm will be run on a filtered subgraph containing ONLY relationships with the provided types. Any relationship  of different type will be ignored. Do not specify to run for all relationship types. If you use this parameter, either do not specify nodeLabels, or ensure relationships of the provided types exist between nodes with the given labels.",
+                },
+                "nodeResultFilter": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "List of node labels to filter degree centrality results for. This is useful for running on heterogeneous graphs, where relationships can exist between different labels, but only want results for specific labels. Do not use in conjuction with nodes parameter.",
                 },
                 "orientation": {
                     "type": "string",
