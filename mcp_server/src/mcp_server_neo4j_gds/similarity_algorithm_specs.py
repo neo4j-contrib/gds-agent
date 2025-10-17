@@ -144,7 +144,7 @@ similarity_tool_definitions = [
                 },
                 "nodeProperties": {
                     "type": "object",
-                    "description": "The node properties to use for similarity computation along with their selected similarity metrics. Accepts a Map of property keys to metrics. For example: {embedding: 'COSINE',age: 'DEFAULT',lotteryNumbers: 'OVERLAP'}",
+                    "description": "The node properties to use for similarity computation along with their selected similarity metrics. Accepts a Map of property keys to metrics. For example: {embedding: 'COSINE',age: 'DEFAULT',lotteryNumbers: 'OVERLAP'}. DEFAULT refers to COSINE.",
                 },
                 "topK": {
                     "type": "integer",
