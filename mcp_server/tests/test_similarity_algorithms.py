@@ -110,7 +110,7 @@ async def test_k_nearest_neighbors(mcp_client):
         {
             "nodeIdentifierProperty": "name",
             "topK": 3,
-            "nodeProperties": "rail",
+            "nodeProperties": {"rail": "DEFAULT"},
             "relTypes": ["LINK"],
             "nodeLabels": ["UndergroundStation"],
         },
@@ -140,7 +140,7 @@ async def test_filtered_knn(mcp_client):
             "nodeIdentifierProperty": "name",
             "topK": 3,
             "sourceNodeFilter": ["Acton Town"],
-            "nodeProperties": "rail",
+            "nodeProperties": {"rail": "DEFAULT"},
         },
     )
 
@@ -165,7 +165,7 @@ async def test_filtered_knn(mcp_client):
             "nodeIdentifierProperty": "name",
             "topK": 3,
             "targetNodeFilter": "Stamford Brook",
-            "nodeProperties": "rail",
+            "nodeProperties": {"rail": "DEFAULT"},
         },
     )
     assert len(result) == 1
@@ -190,7 +190,7 @@ async def test_filtered_knn(mcp_client):
             "sourceNodeFilter": ["Acton Town"],
             "targetNodeFilter": ["Stamford Brook"],
             "seedTargetNodes": True,  # k-nn filtering is a bit special, it might not necessarily find answer if this is not specified (at least for this small example graph)
-            "nodeProperties": "rail",
+            "nodeProperties": {"rail": "DEFAULT"},
         },
     )
 
