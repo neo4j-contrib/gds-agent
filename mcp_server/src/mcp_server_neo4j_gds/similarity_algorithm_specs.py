@@ -12,12 +12,28 @@ similarity_tool_definitions = [
             "type": "object",
             "properties": {
                 "sourceNodeFilter": {
-                    "type": ["integer", "array", "string"],
-                    "description": "The source node filter to apply. Accepts a single node id, a List of node ids, or a single label.",
+                    "anyOf": [
+                        {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        },
+                        {
+                            "type": "string",
+                        },
+                    ],
+                    "description": "The source node filter to apply. Accepts a List of node names, or a single label.",
                 },
                 "targetNodeFilter": {
-                    "type": ["integer", "array", "string"],
-                    "description": "The target node filter to apply. Accepts a single node id, a List of node ids, or a single label.",
+                    "anyOf": [
+                        {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        },
+                        {
+                            "type": "string",
+                        },
+                    ],
+                    "description": "The target node filter to apply. Accepts a List of node names, or a single label.",
                 },
                 "similarityCutoff": {
                     "type": "number",
@@ -103,16 +119,32 @@ similarity_tool_definitions = [
             "type": "object",
             "properties": {
                 "sourceNodeFilter": {
-                    "type": ["integer", "array", "string"],
-                    "description": "The source node filter to apply. Accepts a single node id, a List of node ids, or a single label.",
+                    "anyOf": [
+                        {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        },
+                        {
+                            "type": "string",
+                        },
+                    ],
+                    "description": "The source node filter to apply. Accepts a List of node names, or a single label.",
                 },
                 "targetNodeFilter": {
-                    "type": ["integer", "array", "string"],
-                    "description": "The target node filter to apply. Accepts a single node id, a List of node ids, or a single label.",
+                    "anyOf": [
+                        {
+                            "type": "array",
+                            "items": {"type": "string"},
+                        },
+                        {
+                            "type": "string",
+                        },
+                    ],
+                    "description": "The target node filter to apply. Accepts a List of node names, or a single label.",
                 },
                 "nodeProperties": {
-                    "type": ["string", "object", "array"],
-                    "description": "The node properties to use for similarity computation along with their selected similarity metrics. Accepts a single property key, a Map of property keys to metrics, or a List of property keys and/or Maps, as above.",
+                    "type": "object",
+                    "description": "The node properties to use for similarity computation along with their selected similarity metrics. Accepts a Map of property keys to metrics. For example: {embedding: 'COSINE',age: 'DEFAULT',lotteryNumbers: 'OVERLAP'}",
                 },
                 "topK": {
                     "type": "integer",

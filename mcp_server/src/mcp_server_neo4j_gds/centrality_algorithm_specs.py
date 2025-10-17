@@ -34,25 +34,9 @@ centrality_tool_definitions = [
                     "description": "Property of the relationship to use for weighting. If not specified, all relationships are treated equally.",
                 },
                 "sourceNodes": {
-                    "description": "The nodes or node-bias pairs to use for computing Personalized Article Rank. To use different bias for different source nodes, use the syntax: [[node1, bias1], [node2, bias2], ...]",
-                    "anyOf": [
-                        {"type": "string", "description": "Single node"},
-                        {
-                            "type": "array",
-                            "items": {"type": "string"},
-                            "description": "List of nodes",
-                        },
-                        {
-                            "type": "array",
-                            "items": {
-                                "type": "array",
-                                "prefixItems": [{"type": "string"}, {"type": "number"}],
-                                "minItems": 2,
-                                "maxItems": 2,
-                            },
-                            "description": "List of [node, bias] pairs",
-                        },
-                    ],
+                    "description": "The nodes to use for computing Personalized Article Rank.",
+                    "type": "array",
+                    "items": {"type": "string"},
                 },
                 "scaler": {
                     "type": "string",
@@ -249,7 +233,7 @@ centrality_tool_definitions = [
                 "nodeLabels": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "The node labels used to project and run Degree Centrality on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                    "description": "The node labels used to project and run Degree Centrality on. This is used to filter the graph to run the algorithm on. Nodes with other node labels will be hidden and ignored. Include all node labels for nodes that you want to run the algorithm on.",
                 },
                 "relTypes": {
                     "type": "array",
@@ -314,25 +298,9 @@ centrality_tool_definitions = [
                     "description": "Property of the relationship to use for weighting. If not specified, all relationships are treated equally.",
                 },
                 "sourceNodes": {
-                    "description": "The nodes or node-bias pairs to use for computing Personalized Eigenvector Centrality. To use different bias for different source nodes, use the syntax: [[node1, bias1], [node2, bias2], ...]",
-                    "anyOf": [
-                        {"type": "string", "description": "Single node"},
-                        {
-                            "type": "array",
-                            "items": {"type": "string"},
-                            "description": "List of nodes",
-                        },
-                        {
-                            "type": "array",
-                            "items": {
-                                "type": "array",
-                                "prefixItems": [{"type": "string"}, {"type": "number"}],
-                                "minItems": 2,
-                                "maxItems": 2,
-                            },
-                            "description": "List of [node, bias] pairs",
-                        },
-                    ],
+                    "description": "The nodes to use for computing Personalized Eigenvector Centrality.",
+                    "type": "array",
+                    "items": {"type": "string"},
                 },
                 "scaler": {
                     "type": "string",
@@ -381,25 +349,9 @@ centrality_tool_definitions = [
                     "description": "Minimum change in scores between iterations. If all scores change less than the tolerance value the result is considered stable and the algorithm returns.",
                 },
                 "sourceNodes": {
-                    "description": "The nodes or node-bias pairs to use for computing Personalized PageRank. To use different bias for different source nodes, use the syntax: [[node1, bias1], [node2, bias2], ...]",
-                    "anyOf": [
-                        {"type": "string", "description": "Single node"},
-                        {
-                            "type": "array",
-                            "items": {"type": "string"},
-                            "description": "List of nodes",
-                        },
-                        {
-                            "type": "array",
-                            "items": {
-                                "type": "array",
-                                "prefixItems": [{"type": "string"}, {"type": "number"}],
-                                "minItems": 2,
-                                "maxItems": 2,
-                            },
-                            "description": "List of [node, bias] pairs",
-                        },
-                    ],
+                    "description": "The nodes to use for computing Personalized PageRank.",
+                    "type": "array",
+                    "items": {"type": "string"},
                 },
             },
             "required": [],
