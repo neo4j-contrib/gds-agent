@@ -1,9 +1,8 @@
-# Changelog - [0.5.1] - 2025-10-27
+# Changelog - [0.6.0] - yyyy-MM-dd
 
 ### New Features
 
 ### Bug Fixes
-1. Fix 0.5.1 version in pyproject.toml
 
 ### Other Changes
 
