@@ -1,4 +1,4 @@
-# Changelog - [0.5.0] - yyyy-MM-dd
+# Changelog - [0.5.0] - 2025-10-27
 
 ### New Features
 1. Support projecting specific relationship types for heterogeneous graphs.
