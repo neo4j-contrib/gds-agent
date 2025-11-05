@@ -93,3 +93,5 @@ When available, attach relevant logs in `mcp_server_neo4j_gds.log`. This file is
 
 # Additional resources
 The GDS agent can be used with other MCP servers, such as those that provide additional Neo4j toolings: https://github.com/neo4j-contrib/mcp-neo4j
+
+Arxiv paper including details about the architecture and benchmark results: https://arxiv.org/abs/2508.20637. 
