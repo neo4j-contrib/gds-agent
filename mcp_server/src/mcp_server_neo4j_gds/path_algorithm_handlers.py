@@ -679,27 +679,24 @@ class AllPairsShortestPathsHandler(AlgorithmHandler):
             if apsp_data.empty:
                 return {"found": False, "message": "No shortest paths found"}
 
-            # Convert to native Python types as needed
-            paths = []
+            # Get node names using GDS utility function (batch operation)
+            apsp_data["sourceNodeName"] = self.gds.util.asNodes(
+                apsp_data["sourceNodeId"].tolist()
+            )
+            apsp_data["targetNodeName"] = self.gds.util.asNodes(
+                apsp_data["targetNodeId"].tolist()
+            )
 
-            for _, row in apsp_data.iterrows():
-                source_id = int(row["sourceNodeId"])
-                target_id = int(row["targetNodeId"])
-                distance = float(row["distance"])
-
-                # Get node names using GDS utility function
-                source_name = self.gds.util.asNode(source_id)
-                target_name = self.gds.util.asNode(target_id)
-
-                paths.append(
-                    {
-                        "sourceNodeId": source_id,
-                        "targetNodeId": target_id,
-                        "sourceNodeName": source_name,
-                        "targetNodeName": target_name,
-                        "distance": distance,
-                    }
-                )
+            # Convert to list of dictionaries
+            paths = apsp_data[
+                [
+                    "sourceNodeId",
+                    "targetNodeId",
+                    "sourceNodeName",
+                    "targetNodeName",
+                    "distance",
+                ]
+            ].to_dict("records")
 
             return {
                 "found": True,
