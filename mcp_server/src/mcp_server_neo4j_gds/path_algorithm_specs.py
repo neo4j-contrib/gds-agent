@@ -609,4 +609,48 @@ path_tool_definitions = [
             "required": [],
         },
     ),
+    types.Tool(
+        name="max_flow",
+        description="Given source nodes, target nodes and relationships with capacity constraints, the max-flow algorithm assigns a flow to each relationship to achieve maximal transport from source to target. "
+        "The flow is a scalar property for each relationship and must satisfy 1) Flow into a node equals flow out of a node (preservation). 2) Flow is restricted by the capacity of a relationship",
+        inputSchema={
+            "type": "object",
+            "properties": {
+                "sourceNodes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "List of source node names from which flow originates.",
+                },
+                "targetNodes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "List of target node names to which flow is sent.",
+                },
+                "nodeIdentifierProperty": {
+                    "type": "string",
+                    "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
+                },
+                "capacityProperty": {
+                    "type": "string",
+                    "description": "Name of the relationship property that specifies the maximum flow capacity for each edge.",
+                },
+                "nodeLabels": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The node labels used to project and run max flow on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
+                },
+                "relTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "The relationships types used to project and run max flow on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                },
+            },
+            "required": [
+                "sourceNodes",
+                "targetNodes",
+                "nodeIdentifierProperty",
+                "capacityProperty",
+            ],
+        },
+    ),
 ]

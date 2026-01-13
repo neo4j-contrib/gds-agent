@@ -72,6 +72,7 @@ async def test_list_tools(mcp_client):
         "depth_first_search",
         "bellman_ford_single_source_shortest_path",
         "longest_path",
+        "max_flow",
         # similarity
         "node_similarity",
         "k_nearest_neighbors",
