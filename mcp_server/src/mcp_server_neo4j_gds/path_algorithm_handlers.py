@@ -56,7 +56,7 @@ class DijkstraShortestPathHandler(AlgorithmHandler):
                 costs = costs.tolist()
 
             # Get node names using GDS utility function
-            node_names = [self.gds.util.asNode(node_id) for node_id in node_ids]
+            node_names = self.gds.util.asNodes(node_ids)
 
             return {
                 "totalCost": float(path_data["totalCost"].iloc[0]),
@@ -128,7 +128,7 @@ class DeltaSteppingShortestPathHandler(AlgorithmHandler):
 
                 # Get node names using GDS utility function
                 target_node_name = self.gds.util.asNode(target_node_id)
-                node_names = [self.gds.util.asNode(node_id) for node_id in node_ids]
+                node_names = self.gds.util.asNodes(node_ids)
 
                 result_data.append(
                     {
@@ -212,7 +212,7 @@ class DijkstraSingleSourceShortestPathHandler(AlgorithmHandler):
 
                 # Get node names using GDS utility function
                 target_node_name = self.gds.util.asNode(target_node_id)
-                node_names = [self.gds.util.asNode(node_id) for node_id in node_ids]
+                node_names = self.gds.util.asNodes(node_ids)
 
                 result_data.append(
                     {
@@ -295,7 +295,7 @@ class AStarShortestPathHandler(AlgorithmHandler):
                 costs = costs.tolist()
 
             # Get node names using GDS utility function
-            node_names = [self.gds.util.asNode(node_id) for node_id in node_ids]
+            node_names = self.gds.util.asNodes(node_ids)
 
             return {
                 "totalCost": float(path_data["totalCost"].iloc[0]),
@@ -373,7 +373,7 @@ class YensShortestPathsHandler(AlgorithmHandler):
                     costs = costs.tolist()
 
                 # Get node names using GDS utility function
-                node_names = [self.gds.util.asNode(node_id) for node_id in node_ids]
+                node_names = self.gds.util.asNodes(node_ids)
 
                 result_data.append(
                     {
@@ -679,27 +679,24 @@ class AllPairsShortestPathsHandler(AlgorithmHandler):
             if apsp_data.empty:
                 return {"found": False, "message": "No shortest paths found"}
 
-            # Convert to native Python types as needed
-            paths = []
+            # Get node names using GDS utility function (batch operation)
+            apsp_data["sourceNodeName"] = self.gds.util.asNodes(
+                apsp_data["sourceNodeId"].tolist()
+            )
+            apsp_data["targetNodeName"] = self.gds.util.asNodes(
+                apsp_data["targetNodeId"].tolist()
+            )
 
-            for _, row in apsp_data.iterrows():
-                source_id = int(row["sourceNodeId"])
-                target_id = int(row["targetNodeId"])
-                distance = float(row["distance"])
-
-                # Get node names using GDS utility function
-                source_name = self.gds.util.asNode(source_id)
-                target_name = self.gds.util.asNode(target_id)
-
-                paths.append(
-                    {
-                        "sourceNodeId": source_id,
-                        "targetNodeId": target_id,
-                        "sourceNodeName": source_name,
-                        "targetNodeName": target_name,
-                        "distance": distance,
-                    }
-                )
+            # Convert to list of dictionaries
+            paths = apsp_data[
+                [
+                    "sourceNodeId",
+                    "targetNodeId",
+                    "sourceNodeName",
+                    "targetNodeName",
+                    "distance",
+                ]
+            ].to_dict("records")
 
             return {
                 "found": True,
@@ -767,7 +764,7 @@ class RandomWalkHandler(AlgorithmHandler):
                     node_ids = node_ids.tolist()
 
                 # Get node names using GDS utility function
-                node_names = [self.gds.util.asNode(node_id) for node_id in node_ids]
+                node_names = self.gds.util.asNodes(node_ids)
 
                 walks.append(
                     {
@@ -867,7 +864,7 @@ class BreadthFirstSearchHandler(AlgorithmHandler):
                     node_ids = node_ids.tolist()
 
                 # Get node names using GDS utility function
-                node_names = [self.gds.util.asNode(node_id) for node_id in node_ids]
+                node_names = self.gds.util.asNodes(node_ids)
 
                 traversals.append(
                     {
@@ -963,7 +960,7 @@ class DepthFirstSearchHandler(AlgorithmHandler):
                     node_ids = node_ids.tolist()
 
                 # Get node names using GDS utility function
-                node_names = [self.gds.util.asNode(node_id) for node_id in node_ids]
+                node_names = self.gds.util.asNodes(node_ids)
 
                 traversals.append(
                     {
@@ -1049,7 +1046,7 @@ class BellmanFordSingleSourceShortestPathHandler(AlgorithmHandler):
                     costs = costs.tolist()
 
                 # Get node names using GDS utility function
-                node_names = [self.gds.util.asNode(node_id) for node_id in node_ids]
+                node_names = self.gds.util.asNodes(node_ids)
 
                 paths.append(
                     {
@@ -1141,7 +1138,7 @@ class LongestPathHandler(AlgorithmHandler):
                     costs = costs.tolist()
 
                 # Get node names using GDS utility function
-                node_names = [self.gds.util.asNode(node_id) for node_id in node_ids]
+                node_names = self.gds.util.asNodes(node_ids)
 
                 paths.append(
                     {
