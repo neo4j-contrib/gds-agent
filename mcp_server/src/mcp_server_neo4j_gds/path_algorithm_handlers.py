@@ -1248,17 +1248,17 @@ class MaxFlowHandler(AlgorithmHandler):
 
             # Get node names using GDS utility function (batch operation)
             max_flow_data["sourceNodeName"] = self.gds.util.asNodes(
-                max_flow_data["sourceNodeId"].tolist()
+                max_flow_data["source"].tolist()
             )
             max_flow_data["targetNodeName"] = self.gds.util.asNodes(
-                max_flow_data["targetNodeId"].tolist()
+                max_flow_data["target"].tolist()
             )
 
             # Convert to list of dictionaries
             flows = max_flow_data[
                 [
-                    "sourceNodeId",
-                    "targetNodeId",
+                    "source",
+                    "target",
                     "sourceNodeName",
                     "targetNodeName",
                     "flow",

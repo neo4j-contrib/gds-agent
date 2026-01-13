@@ -625,3 +625,27 @@ async def test_longest_path(mcp_client):
     filtered_paths = result_filtered_data["paths"]
     assert len(filtered_paths) == 1
     assert result_filtered_data["paths"][0]["costs"] == [0.0, 3.0, 6.0, 10.0, 13.0]
+
+
+@pytest.mark.asyncio
+async def test_max_flow(mcp_client):
+    result = await mcp_client.call_tool(
+        "max_flow",
+        {
+            "sourceNodes": ["Baker Street"],
+            "targetNodes": [
+                "Bond Street",
+                "Euston Square",
+                "Paddington",
+                "Wembley Park",
+            ],
+            "nodeIdentifierProperty": "name",
+            "capacityProperty": "time",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+    result_data = json.loads(result_text)
+
+    assert len(result_data.get("flows")) == 7
