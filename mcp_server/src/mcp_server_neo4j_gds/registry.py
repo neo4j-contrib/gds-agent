@@ -51,6 +51,7 @@ from .path_algorithm_handlers import (
     DepthFirstSearchHandler,
     BellmanFordSingleSourceShortestPathHandler,
     LongestPathHandler,
+    MaxFlowHandler,
 )
 
 
@@ -103,6 +104,7 @@ class AlgorithmRegistry:
         "depth_first_search": DepthFirstSearchHandler,
         "bellman_ford_single_source_shortest_path": BellmanFordSingleSourceShortestPathHandler,
         "longest_path": LongestPathHandler,
+        "max_flow": MaxFlowHandler,
     }
 
     @classmethod

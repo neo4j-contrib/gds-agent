@@ -1165,3 +1165,117 @@ class LongestPathHandler(AlgorithmHandler):
             nodeLabels=arguments.get("nodeLabels"),
             relTypes=arguments.get("relTypes"),
         )
+
+
+class MaxFlowHandler(AlgorithmHandler):
+    def max_flow(
+        self,
+        source_nodes: list,
+        target_nodes: list,
+        node_identifier_property: str,
+        **kwargs,
+    ):
+        source_node_ids = []
+        source_node_names = []
+        unmatched_sources = []
+
+        for source_name in source_nodes:
+            source_query = f"""
+            MATCH (source)
+            WHERE toLower(source.{node_identifier_property}) CONTAINS toLower($source_name)
+            RETURN id(source) as source_id, source.{node_identifier_property} as source_name
+            """
+
+            source_df = self.gds.run_cypher(
+                source_query, params={"source_name": source_name}
+            )
+
+            if not source_df.empty:
+                source_node_ids.append(int(source_df["source_id"].iloc[0]))
+                source_node_names.append(source_df["source_name"].iloc[0])
+            else:
+                unmatched_sources.append(source_name)
+
+        # Check if all source nodes were found
+        if unmatched_sources:
+            return {
+                "found": False,
+                "message": f"The following source nodes were not found: {', '.join(unmatched_sources)}",
+            }
+
+        if not source_node_ids:
+            return {"found": False, "message": "No source nodes found"}
+
+        # Find target node IDs
+        target_node_ids = []
+        target_node_names = []
+        unmatched_targets = []
+
+        for target_name in target_nodes:
+            target_query = f"""
+            MATCH (target)
+            WHERE toLower(target.{node_identifier_property}) CONTAINS toLower($target_name)
+            RETURN id(target) as target_id, target.{node_identifier_property} as target_name
+            """
+
+            target_df = self.gds.run_cypher(
+                target_query, params={"target_name": target_name}
+            )
+
+            if not target_df.empty:
+                target_node_ids.append(int(target_df["target_id"].iloc[0]))
+                target_node_names.append(target_df["target_name"].iloc[0])
+            else:
+                unmatched_targets.append(target_name)
+
+        # Check if all target nodes were found
+        if unmatched_targets:
+            return {
+                "found": False,
+                "message": f"The following target nodes were not found: {', '.join(unmatched_targets)}",
+            }
+
+        if not target_node_ids:
+            return {"found": False, "message": "No target nodes found"}
+
+        with projected_graph_from_params(self.gds, **kwargs) as G:
+            params = clean_params(kwargs, ["nodeLabels", "relTypes"])
+            logger.info(f"Max Flow parameters: {params}")
+
+            max_flow_data = self.gds.maxFlow.stream(
+                G, sourceNodes=source_node_ids, targetNodes=target_node_ids, **params
+            )
+
+            # Get node names using GDS utility function (batch operation)
+            max_flow_data["sourceNodeName"] = self.gds.util.asNodes(
+                max_flow_data["source"].tolist()
+            )
+            max_flow_data["targetNodeName"] = self.gds.util.asNodes(
+                max_flow_data["target"].tolist()
+            )
+
+            # Convert to list of dictionaries
+            flows = max_flow_data[
+                [
+                    "source",
+                    "target",
+                    "sourceNodeName",
+                    "targetNodeName",
+                    "flow",
+                ]
+            ].to_dict("records")
+
+            return {
+                "found": True,
+                "flows": flows,
+            }
+
+    def execute(self, arguments: Dict[str, Any]) -> Any:
+        return self.max_flow(
+            arguments.get("sourceNodes"),
+            arguments.get("targetNodes"),
+            arguments.get("nodeIdentifierProperty"),
+            capacityProperty=arguments.get("capacityProperty"),
+            nodeLabels=arguments.get("nodeLabels"),
+            relTypes=arguments.get("relTypes"),
+        )
