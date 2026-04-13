@@ -7,6 +7,10 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "start_node": {
                     "type": "string",
                     "description": "Name of the starting node",
@@ -23,18 +27,8 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Property of the relationship to use for path finding",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Dijkstra on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Dijkstra on on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": ["start_node", "end_node", "nodeIdentifierProperty"],
+            "required": ["graphName", "start_node", "end_node", "nodeIdentifierProperty"],
         },
     ),
     types.Tool(
@@ -47,6 +41,10 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "sourceNode": {
                     "type": "string",
                     "description": "Name of the source node to find shortest paths from.",
@@ -63,18 +61,8 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Delta-Stepping on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Delta-Stepping on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": ["sourceNode", "nodeIdentifierProperty"],
+            "required": ["graphName", "sourceNode", "nodeIdentifierProperty"],
         },
     ),
     types.Tool(
@@ -86,6 +74,10 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "sourceNode": {
                     "type": "string",
                     "description": "Name of the source node to find shortest paths from.",
@@ -98,18 +90,8 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Dijkstra on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Dijkstra on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": ["sourceNode", "nodeIdentifierProperty"],
+            "required": ["graphName", "sourceNode", "nodeIdentifierProperty"],
         },
     ),
     types.Tool(
@@ -127,6 +109,10 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "sourceNode": {
                     "type": "string",
                     "description": "Name of the source node to find shortest path from.",
@@ -151,18 +137,9 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run A* on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run A* on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
             "required": [
+                "graphName",
                 "sourceNode",
                 "targetNode",
                 "nodeIdentifierProperty",
@@ -186,6 +163,10 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "sourceNode": {
                     "type": "string",
                     "description": "Name of the source node to find shortest paths from.",
@@ -206,18 +187,8 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Yens on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Yens on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": ["sourceNode", "targetNode", "nodeIdentifierProperty"],
+            "required": ["graphName", "sourceNode", "targetNode", "nodeIdentifierProperty"],
         },
     ),
     types.Tool(
@@ -232,6 +203,10 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "sourceNode": {
                     "type": "string",
                     "description": "Name of the starting source node.",
@@ -249,18 +224,8 @@ path_tool_definitions = [
                     "enum": ["minimum", "maximum"],
                     "description": "If specified, the parameter dictates whether to find the minimum or the maximum weight spanning tree. By default, a minimum weight spanning tree is returned. Permitted values are 'minimum' and 'maximum'.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Prim on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Prim on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": ["sourceNode", "nodeIdentifierProperty"],
+            "required": ["graphName", "sourceNode", "nodeIdentifierProperty"],
         },
     ),
     types.Tool(
@@ -279,6 +244,10 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "sourceNode": {
                     "type": "string",
                     "description": "Name of the starting source node.",
@@ -304,18 +273,8 @@ path_tool_definitions = [
                     "type": "boolean",
                     "description": "If specified, the algorithm will try to improve the outcome via an additional post-processing heuristic.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Steiner-Tree on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Steiner-Tree on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": ["sourceNode", "targetNodes", "nodeIdentifierProperty"],
+            "required": ["graphName", "sourceNode", "targetNodes", "nodeIdentifierProperty"],
         },
     ),
     types.Tool(
@@ -333,6 +292,10 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "relationshipWeightProperty": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
@@ -341,18 +304,8 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "The name of node property that denotes a node's prize.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Prize Collecting Steiner Tree on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Prize Collecting Steiner Tree on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": ["prizeProperty"],
+            "required": ["graphName", "prizeProperty"],
         },
     ),
     types.Tool(
@@ -366,22 +319,16 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "relationshipWeightProperty": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run APSP on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run APSP on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": [],
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -400,6 +347,10 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "sourceNodes": {
                     "type": "array",
                     "items": {"type": "string"},
@@ -433,18 +384,8 @@ path_tool_definitions = [
                     "type": "integer",
                     "description": "The number of random walks to complete before starting training.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Random Walk on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Random Walk on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": [],
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -457,6 +398,10 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "sourceNode": {
                     "type": "string",
                     "description": "Name of the starting source node.",
@@ -474,18 +419,8 @@ path_tool_definitions = [
                     "type": "integer",
                     "description": "The maximum distance from the source node at which nodes are visited.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run BFS on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run BFS on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": ["sourceNode", "nodeIdentifierProperty"],
+            "required": ["graphName", "sourceNode", "nodeIdentifierProperty"],
         },
     ),
     types.Tool(
@@ -498,6 +433,10 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "sourceNode": {
                     "type": "string",
                     "description": "Name of the starting source node.",
@@ -515,18 +454,8 @@ path_tool_definitions = [
                     "type": "integer",
                     "description": "The maximum distance from the source node at which nodes are visited.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run DFS on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run DFS on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": ["sourceNode", "nodeIdentifierProperty"],
+            "required": ["graphName", "sourceNode", "nodeIdentifierProperty"],
         },
     ),
     types.Tool(
@@ -545,6 +474,10 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "sourceNode": {
                     "type": "string",
                     "description": "Name of the starting source node.",
@@ -557,18 +490,8 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Bellman-Ford on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Bellman-Ford on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": ["sourceNode", "nodeIdentifierProperty"],
+            "required": ["graphName", "sourceNode", "nodeIdentifierProperty"],
         },
     ),
     types.Tool(
@@ -582,6 +505,10 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "targetNodes": {
                     "type": "array",
                     "items": {"type": "string"},
@@ -595,18 +522,8 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run longest path on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run longest path on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": [],
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -616,6 +533,10 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "sourceNodes": {
                     "type": "array",
                     "items": {"type": "string"},
@@ -634,18 +555,9 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the relationship property that specifies the maximum flow capacity for each edge.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run max flow on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run max flow on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
             "required": [
+                "graphName",
                 "sourceNodes",
                 "targetNodes",
                 "nodeIdentifierProperty",
