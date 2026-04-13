@@ -2,17 +2,16 @@ import pytest
 
 
 @pytest.mark.asyncio
-async def test_article_rank(mcp_client):
+async def test_article_rank(mcp_client, projected_test_graph):
     # Test basic
     baseline_result = await mcp_client.call_tool(
         "article_rank",
         {
+            "graphName": projected_test_graph,
             "nodeIdentifierProperty": "name",
             "dampingFactor": 0.85,
             "maxIterations": 20,
             "tolerance": 1e-6,
-            "relTypes": ["LINK"],
-            "nodeLabels": ["UndergroundStation"],
         },
     )
 
@@ -31,6 +30,7 @@ async def test_article_rank(mcp_client):
     result = await mcp_client.call_tool(
         "article_rank",
         {
+            "graphName": projected_test_graph,
             "nodes": ["Covent Garden", "Southwark"],
             "nodeIdentifierProperty": "name",
             "dampingFactor": 0.85,
@@ -51,6 +51,7 @@ async def test_article_rank(mcp_client):
     basic_result = await mcp_client.call_tool(
         "article_rank",
         {
+            "graphName": projected_test_graph,
             "dampingFactor": 0.85,
         },
     )
@@ -66,6 +67,7 @@ async def test_article_rank(mcp_client):
     personalized_result = await mcp_client.call_tool(
         "article_rank",
         {
+            "graphName": projected_test_graph,
             "sourceNodes": ["Covent Garden", "Southwark"],
             "nodeIdentifierProperty": "name",
             "dampingFactor": 0.85,
@@ -133,6 +135,7 @@ async def test_article_rank(mcp_client):
     combined_result = await mcp_client.call_tool(
         "article_rank",
         {
+            "graphName": projected_test_graph,
             "sourceNodes": ["Covent Garden"],
             "nodes": ["Covent Garden", "Southwark", "London Bridge"],
             "nodeIdentifierProperty": "name",
@@ -160,9 +163,9 @@ async def test_article_rank(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_articulation_points(mcp_client):
+async def test_articulation_points(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
-        "articulation_points", {"nodeIdentifierProperty": "name"}
+        "articulation_points", {"graphName": projected_test_graph, "nodeIdentifierProperty": "name"}
     )
 
     assert len(result_with_names) == 1
@@ -173,10 +176,11 @@ async def test_articulation_points(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_betweenness_centrality(mcp_client):
+async def test_betweenness_centrality(mcp_client, projected_test_graph):
     result_filtered = await mcp_client.call_tool(
         "betweenness_centrality",
         {
+            "graphName": projected_test_graph,
             "nodes": ["King's Cross St. Pancras", "Oxford Circus"],
             "nodeIdentifierProperty": "name",
         },
@@ -190,9 +194,9 @@ async def test_betweenness_centrality(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_bridges(mcp_client):
+async def test_bridges(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
-        "bridges", {"nodeIdentifierProperty": "name"}
+        "bridges", {"graphName": projected_test_graph, "nodeIdentifierProperty": "name"}
     )
 
     assert len(result_with_names) == 1
@@ -205,9 +209,9 @@ async def test_bridges(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_celf(mcp_client):
+async def test_celf(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
-        "CELF", {"seedSetSize": 3, "nodeIdentifierProperty": "name"}
+        "CELF", {"graphName": projected_test_graph, "seedSetSize": 3, "nodeIdentifierProperty": "name"}
     )
 
     assert len(result_with_names) == 1
@@ -218,10 +222,11 @@ async def test_celf(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_closeness_centrality(mcp_client):
+async def test_closeness_centrality(mcp_client, projected_test_graph):
     result_filtered = await mcp_client.call_tool(
         "closeness_centrality",
         {
+            "graphName": projected_test_graph,
             "nodes": ["King's Cross St. Pancras", "Oxford Circus"],
             "nodeIdentifierProperty": "name",
         },
@@ -235,10 +240,11 @@ async def test_closeness_centrality(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_degree_centrality(mcp_client):
+async def test_degree_centrality(mcp_client, projected_test_graph):
     result_filtered = await mcp_client.call_tool(
         "degree_centrality",
         {
+            "graphName": projected_test_graph,
             "nodes": ["King's Cross St. Pancras", "Oxford Circus"],
             "nodeIdentifierProperty": "name",
             "orientation": "NATURAL",
@@ -254,10 +260,11 @@ async def test_degree_centrality(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_eigenvector_centrality(mcp_client):
+async def test_eigenvector_centrality(mcp_client, projected_test_graph):
     result_combined = await mcp_client.call_tool(
         "eigenvector_centrality",
         {
+            "graphName": projected_test_graph,
             "sourceNodes": ["Covent Garden"],
             "nodes": ["Covent Garden", "Southwark", "London Bridge"],
             "nodeIdentifierProperty": "name",
@@ -285,10 +292,11 @@ async def test_eigenvector_centrality(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_pagerank(mcp_client):
+async def test_pagerank(mcp_client, projected_test_graph):
     result_combined = await mcp_client.call_tool(
         "pagerank",
         {
+            "graphName": projected_test_graph,
             "sourceNodes": ["Covent Garden"],
             "nodes": ["Covent Garden", "Southwark", "London Bridge"],
             "nodeIdentifierProperty": "name",
@@ -316,10 +324,11 @@ async def test_pagerank(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_harmonic_centrality(mcp_client):
+async def test_harmonic_centrality(mcp_client, projected_test_graph):
     result_filtered = await mcp_client.call_tool(
         "harmonic_centrality",
         {
+            "graphName": projected_test_graph,
             "nodes": ["King's Cross St. Pancras", "Oxford Circus"],
             "nodeIdentifierProperty": "name",
         },
@@ -333,14 +342,13 @@ async def test_harmonic_centrality(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_hits(mcp_client):
+async def test_hits(mcp_client, projected_test_graph):
     result_filtered = await mcp_client.call_tool(
         "HITS",
         {
+            "graphName": projected_test_graph,
             "nodes": ["King's Cross St. Pancras", "Oxford Circus"],
             "nodeIdentifierProperty": "name",
-            "relTypes": ["LINK"],
-            "nodeLabels": ["UndergroundStation"],
         },
     )
 

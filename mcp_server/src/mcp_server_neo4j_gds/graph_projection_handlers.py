@@ -33,7 +33,6 @@ class ProjectGraphCypherHandler(AlgorithmHandler):
                 "graphName": graph_name,
                 "nodeCount": G.node_count(),
                 "relationshipCount": G.relationship_count(),
-                "schema": G.schema(),
                 "memoryUsage": result.get("memoryUsage", "unknown"),
                 "projectMillis": result.get("projectMillis", 0),
             }

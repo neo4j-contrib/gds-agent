@@ -258,3 +258,42 @@ async def mcp_client(mcp_server_process):
     await client.process.stdin.drain()
 
     yield client
+
+
+@pytest_asyncio.fixture
+async def projected_test_graph(mcp_client):
+    """Create a test graph projection and clean up after test."""
+    import uuid
+
+    graph_name = f"test_graph_{uuid.uuid4().hex[:8]}"
+
+    # Project the full London Underground graph for testing
+    # Note: We don't project node properties since the 'name' property is a string
+    # and GDS requires numeric properties. The name is only used for node identification
+    # after algorithms run, not during computation.
+    cypher_query = """
+        MATCH (n:UndergroundStation)-[r:LINK]->(m:UndergroundStation)
+        RETURN gds.graph.project(
+            $graph_name,
+            n,
+            m,
+            {
+                sourceNodeLabels: labels(n),
+                targetNodeLabels: labels(m),
+                relationshipType: type(r)
+            }
+        )
+    """
+
+    await mcp_client.call_tool(
+        "project_graph_cypher",
+        {"graphName": graph_name, "cypherQuery": cypher_query},
+    )
+
+    yield graph_name
+
+    # Cleanup
+    try:
+        await mcp_client.call_tool("drop_graph", {"graphName": graph_name})
+    except Exception:
+        pass  # Graph may already be dropped
