@@ -28,6 +28,10 @@ async def test_list_tools(mcp_client):
         "get_relationship_properties_keys",
         "get_node_labels",
         "get_relationship_types",
+        # Graph projection tools
+        "project_graph_cypher",
+        "drop_graph",
+        "list_graphs",
         # Centrality algorithms
         "article_rank",
         "articulation_points",
