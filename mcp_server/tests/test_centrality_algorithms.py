@@ -197,7 +197,8 @@ async def test_betweenness_centrality(mcp_client, projected_test_graph):
 @pytest.mark.asyncio
 async def test_bridges(mcp_client, projected_undirected_graph):
     result_with_names = await mcp_client.call_tool(
-        "bridges", {"graphName": projected_undirected_graph, "nodeIdentifierProperty": "name"}
+        "bridges",
+        {"graphName": projected_undirected_graph, "nodeIdentifierProperty": "name"},
     )
 
     assert len(result_with_names) == 1

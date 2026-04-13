@@ -106,7 +106,9 @@ async def test_filtered_node_similarity(mcp_client, projected_test_graph):
 
 
 @pytest.mark.asyncio
-async def test_k_nearest_neighbors(mcp_client, projected_undirected_graph_with_node_properties):
+async def test_k_nearest_neighbors(
+    mcp_client, projected_undirected_graph_with_node_properties
+):
     result = await mcp_client.call_tool(
         "k_nearest_neighbors",
         {
@@ -133,7 +135,9 @@ async def test_k_nearest_neighbors(mcp_client, projected_undirected_graph_with_n
 
 
 @pytest.mark.asyncio
-async def test_filtered_knn(mcp_client, projected_undirected_graph_with_node_properties):
+async def test_filtered_knn(
+    mcp_client, projected_undirected_graph_with_node_properties
+):
     # test source-filter only
     result = await mcp_client.call_tool(
         "k_nearest_neighbors",

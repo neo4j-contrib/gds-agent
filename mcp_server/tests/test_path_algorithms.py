@@ -352,7 +352,9 @@ async def test_minimum_directed_steiner_tree(mcp_client, projected_test_graph):
 
 
 @pytest.mark.asyncio
-async def test_prize_collecting_steiner_tree(mcp_client, projected_undirected_graph_with_node_properties):
+async def test_prize_collecting_steiner_tree(
+    mcp_client, projected_undirected_graph_with_node_properties
+):
     result = await mcp_client.call_tool(
         "prize_collecting_steiner_tree",
         {
