@@ -163,10 +163,10 @@ async def test_article_rank(mcp_client, projected_test_graph):
 
 
 @pytest.mark.asyncio
-async def test_articulation_points(mcp_client, projected_test_graph):
+async def test_articulation_points(mcp_client, projected_undirected_graph):
     result_with_names = await mcp_client.call_tool(
         "articulation_points",
-        {"graphName": projected_test_graph, "nodeIdentifierProperty": "name"},
+        {"graphName": projected_undirected_graph, "nodeIdentifierProperty": "name"},
     )
 
     assert len(result_with_names) == 1
@@ -195,9 +195,9 @@ async def test_betweenness_centrality(mcp_client, projected_test_graph):
 
 
 @pytest.mark.asyncio
-async def test_bridges(mcp_client, projected_test_graph):
+async def test_bridges(mcp_client, projected_undirected_graph):
     result_with_names = await mcp_client.call_tool(
-        "bridges", {"graphName": projected_test_graph, "nodeIdentifierProperty": "name"}
+        "bridges", {"graphName": projected_undirected_graph, "nodeIdentifierProperty": "name"}
     )
 
     assert len(result_with_names) == 1
@@ -246,11 +246,11 @@ async def test_closeness_centrality(mcp_client, projected_test_graph):
 
 
 @pytest.mark.asyncio
-async def test_degree_centrality(mcp_client, projected_test_graph):
+async def test_degree_centrality(mcp_client, projected_graph_with_properties):
     result_filtered = await mcp_client.call_tool(
         "degree_centrality",
         {
-            "graphName": projected_test_graph,
+            "graphName": projected_graph_with_properties,
             "nodes": ["King's Cross St. Pancras", "Oxford Circus"],
             "nodeIdentifierProperty": "name",
             "orientation": "NATURAL",

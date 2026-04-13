@@ -39,6 +39,7 @@ async def test_find_shortest_path(mcp_client, projected_test_graph):
             "start_node": "NonExistentStation1",
             "end_node": "NonExistentStation2",
             "nodeIdentifierProperty": "name",
+            "graphName": projected_test_graph,
         },
     )
 
@@ -142,7 +143,7 @@ async def test_dijkstra_single_source_shortest_path(mcp_client, projected_test_g
 
 
 @pytest.mark.asyncio
-async def test_a_star_shortest_path(mcp_client, projected_test_graph):
+async def test_a_star_shortest_path(mcp_client, projected_graph_with_geo_properties):
     result = await mcp_client.call_tool(
         "a_star_shortest_path",
         {
@@ -152,7 +153,7 @@ async def test_a_star_shortest_path(mcp_client, projected_test_graph):
             "relationshipWeightProperty": "time",
             "latitudeProperty": "latitude",
             "longitudeProperty": "longitude",
-            "graphName": projected_test_graph,
+            "graphName": projected_graph_with_geo_properties,
         },
     )
 
@@ -182,7 +183,7 @@ async def test_a_star_shortest_path(mcp_client, projected_test_graph):
             "nodeIdentifierProperty": "name",
             "latitudeProperty": "latitude",
             "longitudeProperty": "longitude",
-            "graphName": projected_test_graph,
+            "graphName": projected_graph_with_geo_properties,
         },
     )
 
@@ -255,14 +256,14 @@ async def test_yens_shortest_paths(mcp_client, projected_test_graph):
 
 
 @pytest.mark.asyncio
-async def test_minimum_weight_spanning_tree(mcp_client, projected_test_graph):
+async def test_minimum_weight_spanning_tree(mcp_client, projected_undirected_graph):
     result = await mcp_client.call_tool(
         "minimum_weight_spanning_tree",
         {
             "sourceNode": "Canada Water",
             "nodeIdentifierProperty": "name",
             "relationshipWeightProperty": "time",
-            "graphName": projected_test_graph,
+            "graphName": projected_undirected_graph,
         },
     )
 
@@ -292,7 +293,7 @@ async def test_minimum_weight_spanning_tree(mcp_client, projected_test_graph):
         {
             "sourceNode": "NonExistentStation",
             "nodeIdentifierProperty": "name",
-            "graphName": projected_test_graph,
+            "graphName": projected_undirected_graph,
         },
     )
 
@@ -351,13 +352,13 @@ async def test_minimum_directed_steiner_tree(mcp_client, projected_test_graph):
 
 
 @pytest.mark.asyncio
-async def test_prize_collecting_steiner_tree(mcp_client, projected_test_graph):
+async def test_prize_collecting_steiner_tree(mcp_client, projected_undirected_graph_with_node_properties):
     result = await mcp_client.call_tool(
         "prize_collecting_steiner_tree",
         {
             "relationshipWeightProperty": "time",
             "prizeProperty": "zone",
-            "graphName": projected_test_graph,
+            "graphName": projected_undirected_graph_with_node_properties,
         },
     )
 

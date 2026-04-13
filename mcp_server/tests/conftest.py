@@ -262,15 +262,13 @@ async def mcp_client(mcp_server_process):
 
 @pytest_asyncio.fixture
 async def projected_test_graph(mcp_client):
-    """Create a test graph projection and clean up after test."""
+    """Create a test graph projection with relationship properties for path algorithms."""
     import uuid
 
     graph_name = f"test_graph_{uuid.uuid4().hex[:8]}"
 
-    # Project the full London Underground graph for testing
-    # Note: We don't project node properties since the 'name' property is a string
-    # and GDS requires numeric properties. The name is only used for node identification
-    # after algorithms run, not during computation.
+    # Project the full London Underground graph for testing with relationship properties
+    # Path algorithms often need relationship properties like 'time' and 'distance'
     cypher_query = """
         MATCH (n:UndergroundStation)-[r:LINK]->(m:UndergroundStation)
         RETURN gds.graph.project(
@@ -280,7 +278,8 @@ async def projected_test_graph(mcp_client):
             {
                 sourceNodeLabels: labels(n),
                 targetNodeLabels: labels(m),
-                relationshipType: type(r)
+                relationshipType: type(r),
+                relationshipProperties: {time: toFloat(r.time), distance: toFloat(r.distance)}
             }
         )
     """
@@ -297,3 +296,162 @@ async def projected_test_graph(mcp_client):
         await mcp_client.call_tool("drop_graph", {"graphName": graph_name})
     except Exception:
         pass  # Graph may already be dropped
+
+
+@pytest_asyncio.fixture
+async def projected_graph_with_geo_properties(mcp_client):
+    """Create a graph projection with latitude/longitude for A* algorithm."""
+    import uuid
+
+    graph_name = f"test_geo_{uuid.uuid4().hex[:8]}"
+
+    # Project with geographic node properties for A* algorithm
+    cypher_query = """
+        MATCH (n:UndergroundStation)-[r:LINK]->(m:UndergroundStation)
+        RETURN gds.graph.project(
+            $graph_name,
+            n,
+            m,
+            {
+                sourceNodeLabels: labels(n),
+                targetNodeLabels: labels(m),
+                relationshipType: type(r),
+                sourceNodeProperties: {latitude: toFloat(n.latitude), longitude: toFloat(n.longitude)},
+                targetNodeProperties: {latitude: toFloat(m.latitude), longitude: toFloat(m.longitude)},
+                relationshipProperties: {time: toFloat(r.time), distance: toFloat(r.distance)}
+            }
+        )
+    """
+
+    await mcp_client.call_tool(
+        "project_graph_cypher",
+        {"graphName": graph_name, "cypherQuery": cypher_query},
+    )
+
+    yield graph_name
+
+    # Cleanup
+    try:
+        await mcp_client.call_tool("drop_graph", {"graphName": graph_name})
+    except Exception:
+        pass
+
+
+@pytest_asyncio.fixture
+async def projected_undirected_graph(mcp_client):
+    """Create an UNDIRECTED test graph projection for algorithms that require it."""
+    import uuid
+
+    graph_name = f"test_undirected_{uuid.uuid4().hex[:8]}"
+
+    # Project as UNDIRECTED graph for algorithms like articulation_points and bridges
+    cypher_query = """
+        MATCH (n:UndergroundStation)-[r:LINK]->(m:UndergroundStation)
+        RETURN gds.graph.project(
+            $graph_name,
+            n,
+            m,
+            {
+                sourceNodeLabels: labels(n),
+                targetNodeLabels: labels(m),
+                relationshipType: type(r),
+                relationshipProperties: {time: toFloat(r.time), distance: toFloat(r.distance)}
+            },
+            {
+                undirectedRelationshipTypes: ['LINK']
+            }
+        )
+    """
+
+    await mcp_client.call_tool(
+        "project_graph_cypher",
+        {"graphName": graph_name, "cypherQuery": cypher_query},
+    )
+
+    yield graph_name
+
+    # Cleanup
+    try:
+        await mcp_client.call_tool("drop_graph", {"graphName": graph_name})
+    except Exception:
+        pass
+
+
+@pytest_asyncio.fixture
+async def projected_graph_with_properties(mcp_client):
+    """Create a graph projection with relationship properties."""
+    import uuid
+
+    graph_name = f"test_with_props_{uuid.uuid4().hex[:8]}"
+
+    # Project with relationship properties (distance)
+    cypher_query = """
+        MATCH (n:UndergroundStation)-[r:LINK]->(m:UndergroundStation)
+        RETURN gds.graph.project(
+            $graph_name,
+            n,
+            m,
+            {
+                sourceNodeLabels: labels(n),
+                targetNodeLabels: labels(m),
+                relationshipType: type(r),
+                relationshipProperties: {distance: r.distance}
+            }
+        )
+    """
+
+    await mcp_client.call_tool(
+        "project_graph_cypher",
+        {"graphName": graph_name, "cypherQuery": cypher_query},
+    )
+
+    yield graph_name
+
+    # Cleanup
+    try:
+        await mcp_client.call_tool("drop_graph", {"graphName": graph_name})
+    except Exception:
+        pass
+
+
+@pytest_asyncio.fixture
+async def projected_undirected_graph_with_node_properties(mcp_client):
+    """Create an UNDIRECTED graph with node properties for community algorithms."""
+    import uuid
+
+    graph_name = f"test_undirected_props_{uuid.uuid4().hex[:8]}"
+
+    # Project as UNDIRECTED with node properties and relationship properties
+    # Note: zone is converted to FLOAT for prize_collecting_steiner_tree which requires DOUBLE type
+    cypher_query = """
+        MATCH (n:UndergroundStation)-[r:LINK]->(m:UndergroundStation)
+        RETURN gds.graph.project(
+            $graph_name,
+            n,
+            m,
+            {
+                sourceNodeLabels: labels(n),
+                targetNodeLabels: labels(m),
+                relationshipType: type(r),
+                sourceNodeProperties: {total_lines: toInteger(n.total_lines), zone: toFloat(n.zone), rail: toInteger(n.rail)},
+                targetNodeProperties: {total_lines: toInteger(m.total_lines), zone: toFloat(m.zone), rail: toInteger(m.rail)},
+                relationshipProperties: {time: toFloat(r.time), distance: toFloat(r.distance)}
+            },
+            {
+                undirectedRelationshipTypes: ['LINK']
+            }
+        )
+    """
+
+    await mcp_client.call_tool(
+        "project_graph_cypher",
+        {"graphName": graph_name, "cypherQuery": cypher_query},
+    )
+
+    yield graph_name
+
+    # Cleanup
+    try:
+        await mcp_client.call_tool("drop_graph", {"graphName": graph_name})
+    except Exception:
+        pass
