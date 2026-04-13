@@ -418,9 +418,7 @@ class MinimumWeightSpanningTreeHandler(AlgorithmHandler):
         params = clean_params(kwargs, ["graphName"])
         logger.info(f"Minimum Weight Spanning Tree parameters: {params}")
 
-        mst_data = self.gds.spanningTree.stream(
-            G, sourceNode=source_node_id, **params
-        )
+        mst_data = self.gds.spanningTree.stream(G, sourceNode=source_node_id, **params)
 
         if mst_data.empty:
             return {
@@ -719,9 +717,7 @@ class RandomWalkHandler(AlgorithmHandler):
                     source_node_ids.append(int(source_df["source_id"].iloc[0]))
 
         G = self.get_graph(kwargs.get("graphName"))
-        params = clean_params(
-            kwargs, ["graphName", "nodeIdentifierProperty"]
-        )
+        params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         logger.info(f"Random Walk parameters: {params}")
 
         # Add source nodes if found
@@ -813,9 +809,7 @@ class BreadthFirstSearchHandler(AlgorithmHandler):
                     target_node_ids.append(int(target_df["target_id"].iloc[0]))
 
         G = self.get_graph(kwargs.get("graphName"))
-        params = clean_params(
-            kwargs, ["graphName", "nodeIdentifierProperty"]
-        )
+        params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
 
         # Add target nodes if found
         if target_node_ids:
@@ -908,9 +902,7 @@ class DepthFirstSearchHandler(AlgorithmHandler):
                     target_node_ids.append(int(target_df["target_id"].iloc[0]))
 
         G = self.get_graph(kwargs.get("graphName"))
-        params = clean_params(
-            kwargs, ["graphName", "nodeIdentifierProperty"]
-        )
+        params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         # Add target nodes if found
         if target_node_ids:
             params["targetNodes"] = target_node_ids
@@ -985,12 +977,8 @@ class BellmanFordSingleSourceShortestPathHandler(AlgorithmHandler):
         source_node_id = int(source_df["source_id"].iloc[0])
 
         G = self.get_graph(kwargs.get("graphName"))
-        params = clean_params(
-            kwargs, ["graphName", "nodeIdentifierProperty"]
-        )
-        logger.info(
-            f"Bellman-Ford Single-Source Shortest Path parameters: {params}"
-        )
+        params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
+        logger.info(f"Bellman-Ford Single-Source Shortest Path parameters: {params}")
 
         # Run the Bellman-Ford algorithm
         bellman_ford_data = self.gds.bellmanFord.stream(

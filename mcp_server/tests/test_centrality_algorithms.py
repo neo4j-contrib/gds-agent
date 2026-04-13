@@ -165,7 +165,8 @@ async def test_article_rank(mcp_client, projected_test_graph):
 @pytest.mark.asyncio
 async def test_articulation_points(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
-        "articulation_points", {"graphName": projected_test_graph, "nodeIdentifierProperty": "name"}
+        "articulation_points",
+        {"graphName": projected_test_graph, "nodeIdentifierProperty": "name"},
     )
 
     assert len(result_with_names) == 1
@@ -211,7 +212,12 @@ async def test_bridges(mcp_client, projected_test_graph):
 @pytest.mark.asyncio
 async def test_celf(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
-        "CELF", {"graphName": projected_test_graph, "seedSetSize": 3, "nodeIdentifierProperty": "name"}
+        "CELF",
+        {
+            "graphName": projected_test_graph,
+            "seedSetSize": 3,
+            "nodeIdentifierProperty": "name",
+        },
     )
 
     assert len(result_with_names) == 1

@@ -551,7 +551,9 @@ async def test_depth_first_search(mcp_client, projected_test_graph):
 
 
 @pytest.mark.asyncio
-async def test_bellman_ford_single_source_shortest_path(mcp_client, projected_test_graph):
+async def test_bellman_ford_single_source_shortest_path(
+    mcp_client, projected_test_graph
+):
     result = await mcp_client.call_tool(
         "bellman_ford_single_source_shortest_path",
         {

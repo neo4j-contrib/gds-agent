@@ -38,7 +38,9 @@ async def test_project_and_drop_graph(mcp_client):
     assert "test_projection" in list_text
 
     # Drop the graph
-    drop_result = await mcp_client.call_tool("drop_graph", {"graphName": "test_projection"})
+    drop_result = await mcp_client.call_tool(
+        "drop_graph", {"graphName": "test_projection"}
+    )
     assert len(drop_result) == 1
     drop_text = drop_result[0]["text"]
     print(f"Drop result: {drop_text}")

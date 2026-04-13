@@ -184,7 +184,9 @@ class LeidenHandler(AlgorithmHandler):
 class LocalClusteringCoefficientHandler(AlgorithmHandler):
     def local_clustering_coefficient(self, **kwargs):
         G = self.get_graph(kwargs.get("graphName"))
-        gds_params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty", "nodes"])
+        gds_params = clean_params(
+            kwargs, ["graphName", "nodeIdentifierProperty", "nodes"]
+        )
         logger.info(f"Local Clustering Coefficient parameters: {gds_params}")
         local_clustering_coefficient_result = (
             self.gds.localClusteringCoefficient.stream(G, **gds_params)
@@ -321,7 +323,9 @@ class StronglyConnectedComponentsHandler(AlgorithmHandler):
 class TriangleCountHandler(AlgorithmHandler):
     def triangle_count(self, **kwargs):
         G = self.get_graph(kwargs.get("graphName"))
-        gds_params = clean_params(kwargs, ["graphName", "nodes", "nodeIdentifierProperty"])
+        gds_params = clean_params(
+            kwargs, ["graphName", "nodes", "nodeIdentifierProperty"]
+        )
         logger.info(f"Triangle Count parameters: {gds_params}")
         triangle_count_result = self.gds.triangleCount.stream(G, **gds_params)
 

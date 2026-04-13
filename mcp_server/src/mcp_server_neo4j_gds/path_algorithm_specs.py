@@ -28,7 +28,12 @@ path_tool_definitions = [
                     "description": "Property of the relationship to use for path finding",
                 },
             },
-            "required": ["graphName", "start_node", "end_node", "nodeIdentifierProperty"],
+            "required": [
+                "graphName",
+                "start_node",
+                "end_node",
+                "nodeIdentifierProperty",
+            ],
         },
     ),
     types.Tool(
@@ -188,7 +193,12 @@ path_tool_definitions = [
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
             },
-            "required": ["graphName", "sourceNode", "targetNode", "nodeIdentifierProperty"],
+            "required": [
+                "graphName",
+                "sourceNode",
+                "targetNode",
+                "nodeIdentifierProperty",
+            ],
         },
     ),
     types.Tool(
@@ -274,7 +284,12 @@ path_tool_definitions = [
                     "description": "If specified, the algorithm will try to improve the outcome via an additional post-processing heuristic.",
                 },
             },
-            "required": ["graphName", "sourceNode", "targetNodes", "nodeIdentifierProperty"],
+            "required": [
+                "graphName",
+                "sourceNode",
+                "targetNodes",
+                "nodeIdentifierProperty",
+            ],
         },
     ),
     types.Tool(
