@@ -80,17 +80,12 @@ similarity_tool_definitions = [
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Node Similarity on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Node Similarity on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
             },
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -187,18 +182,12 @@ similarity_tool_definitions = [
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run k-nearest neighbors on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run k-nearest neighbors on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
             },
-            "required": ["nodeProperties"],
+            "required": ["nodeProperties", "graphName"],
         },
     ),
 ]
