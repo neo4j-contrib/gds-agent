@@ -41,14 +41,16 @@ class ListGraphsHandler(AlgorithmHandler):
 
         graphs = []
         for _, row in graphs_df.iterrows():
-            graphs.append({
-                "graphName": row["graphName"],
-                "nodeCount": int(row["nodeCount"]),
-                "relationshipCount": int(row["relationshipCount"]),
-                "schema": row.get("schema", {}),
-                "creationTime": row.get("creationTime", "unknown"),
-                "memoryUsage": row.get("memoryUsage", "unknown"),
-            })
+            graphs.append(
+                {
+                    "graphName": row["graphName"],
+                    "nodeCount": int(row["nodeCount"]),
+                    "relationshipCount": int(row["relationshipCount"]),
+                    "schema": row.get("schema", {}),
+                    "creationTime": row.get("creationTime", "unknown"),
+                    "memoryUsage": row.get("memoryUsage", "unknown"),
+                }
+            )
 
         return {"graphs": graphs, "count": len(graphs)}
 
