@@ -11,6 +11,15 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
+                },
                 "communityProperty": {
                     "type": "string",
                     "description": "The node property that holds the community ID as an integer for each node. "
@@ -41,6 +50,15 @@ community_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
                 "nodeProperty": {
                     "type": "string",
@@ -83,6 +101,15 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
+                },
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
@@ -108,6 +135,15 @@ community_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
                 "nodeIdentifierProperty": {
                     "type": "string",
@@ -143,6 +179,15 @@ community_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
                 "nodeProperty": {
                     "type": "string",
@@ -198,6 +243,15 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
+                },
                 "maxIterations": {
                     "type": "integer",
                     "description": "The maximum number of iterations to run.",
@@ -244,6 +298,15 @@ community_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
                 "maxLevels": {
                     "type": "integer",
@@ -298,6 +361,15 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
+                },
                 "triangleCountProperty": {
                     "type": "string",
                     "description": "Node property that contains pre-computed triangle count.",
@@ -327,6 +399,15 @@ community_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
                 "relationshipWeightProperty": {
                     "type": "string",
@@ -380,6 +461,15 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
+                },
                 "communityProperty": {
                     "type": "string",
                     "description": "The node property that holds the community ID as an integer for each node. Note that only non-negative community IDs are considered valid and will have their modularity score computed.",
@@ -404,6 +494,15 @@ community_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
                 "maxIterations": {
                     "type": "integer",
@@ -449,6 +548,15 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
+                },
                 "consecutiveIds": {
                     "type": "boolean",
                     "description": "Flag to decide whether component identifiers are mapped into a consecutive id space (requires additional memory).",
@@ -476,6 +584,15 @@ community_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
                 "maxDegree": {
                     "type": "integer",
@@ -508,6 +625,15 @@ community_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
                 "relationshipWeightProperty": {
                     "type": "string",
@@ -554,6 +680,15 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
+                },
                 "k": {
                     "type": "integer",
                     "description": "The number of disjoint communities the nodes will be divided into.",
@@ -594,6 +729,15 @@ community_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
                 "maxIterations": {
                     "type": "integer",

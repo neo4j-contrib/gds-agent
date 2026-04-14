@@ -84,6 +84,19 @@ similarity_tool_definitions = [
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the relationship property to write similarity scores to.",
+                },
+                "mutateRelationshipType": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The relationship type to use for the new relationships.",
+                },
             },
             "required": ["graphName"],
         },
@@ -185,6 +198,19 @@ similarity_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the relationship property to write similarity scores to.",
+                },
+                "mutateRelationshipType": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The relationship type to use for the new relationships.",
                 },
             },
             "required": ["nodeProperties", "graphName"],

@@ -11,6 +11,15 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
+                },
                 "start_node": {
                     "type": "string",
                     "description": "Name of the starting node",
@@ -50,6 +59,15 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
+                },
                 "sourceNode": {
                     "type": "string",
                     "description": "Name of the source node to find shortest paths from.",
@@ -82,6 +100,15 @@ path_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
                 "sourceNode": {
                     "type": "string",
@@ -117,6 +144,15 @@ path_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
                 "sourceNode": {
                     "type": "string",
@@ -172,6 +208,15 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
+                },
                 "sourceNode": {
                     "type": "string",
                     "description": "Name of the source node to find shortest paths from.",
@@ -217,6 +262,15 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
+                },
                 "sourceNode": {
                     "type": "string",
                     "description": "Name of the starting source node.",
@@ -257,6 +311,15 @@ path_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
                 "sourceNode": {
                     "type": "string",
@@ -311,6 +374,15 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
+                },
                 "relationshipWeightProperty": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
@@ -337,6 +409,15 @@ path_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
                 "relationshipWeightProperty": {
                     "type": "string",
@@ -365,6 +446,15 @@ path_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
                 "sourceNodes": {
                     "type": "array",
@@ -417,6 +507,15 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
+                },
                 "sourceNode": {
                     "type": "string",
                     "description": "Name of the starting source node.",
@@ -451,6 +550,15 @@ path_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
                 "sourceNode": {
                     "type": "string",
@@ -493,6 +601,15 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
+                },
                 "sourceNode": {
                     "type": "string",
                     "description": "Name of the starting source node.",
@@ -524,6 +641,15 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
+                },
                 "targetNodes": {
                     "type": "array",
                     "items": {"type": "string"},
@@ -551,6 +677,15 @@ path_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
                 "sourceNodes": {
                     "type": "array",
