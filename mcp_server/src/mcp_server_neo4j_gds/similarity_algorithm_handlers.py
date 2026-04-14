@@ -12,6 +12,7 @@ logger = logging.getLogger("mcp_server_neo4j_gds")
 
 class NodeSimilarityHandler(AlgorithmHandler):
     def node_similarity(self, **kwargs):
+        mode = kwargs.get("mode", "stream")
         G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
             kwargs,
@@ -20,6 +21,7 @@ class NodeSimilarityHandler(AlgorithmHandler):
                 "nodeIdentifierProperty",
                 "sourceNodeFilter",
                 "targetNodeFilter",
+                "mode",
             ],
         )
         node_identifier_property = kwargs.get("nodeIdentifierProperty")
@@ -40,27 +42,27 @@ class NodeSimilarityHandler(AlgorithmHandler):
             gds_params,
         )
         logger.info(f"Node Similarity parameters: {gds_params}")
-        node_similarity_result = self.gds.nodeSimilarity.filtered.stream(
-            G, **gds_params
-        )
+        if mode == "mutate":
+            result = self.gds.nodeSimilarity.filtered.mutate(G, **gds_params)
+        else:
+            result = self.gds.nodeSimilarity.filtered.stream(G, **gds_params)
 
-        # Add node names to the results if nodeIdentifierProperty is provided
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        translate_ids_to_identifiers(
-            self.gds,
-            node_identifier_property,
-            node_similarity_result,
-            "node1",
-            "node1Name",
-        )
-        translate_ids_to_identifiers(
-            self.gds,
-            node_identifier_property,
-            node_similarity_result,
-            "node2",
-            "node2Name",
-        )
-        return node_similarity_result
+            node_identifier_property = kwargs.get("nodeIdentifierProperty")
+            translate_ids_to_identifiers(
+                self.gds,
+                node_identifier_property,
+                result,
+                "node1",
+                "node1Name",
+            )
+            translate_ids_to_identifiers(
+                self.gds,
+                node_identifier_property,
+                result,
+                "node2",
+                "node2Name",
+            )
+        return result
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.node_similarity(
@@ -68,6 +70,9 @@ class NodeSimilarityHandler(AlgorithmHandler):
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             sourceNodeFilter=arguments.get("sourceNodeFilter"),
             targetNodeFilter=arguments.get("targetNodeFilter"),
+            mode=arguments.get("mode"),
+            mutateProperty=arguments.get("mutateProperty"),
+            mutateRelationshipType=arguments.get("mutateRelationshipType"),
             similarityCutoff=arguments.get("similarityCutoff"),
             degreeCutoff=arguments.get("degreeCutoff"),
             upperDegreeCutoff=arguments.get("upperDegreeCutoff"),
@@ -83,6 +88,7 @@ class NodeSimilarityHandler(AlgorithmHandler):
 
 class KNearestNeighborsHandler(AlgorithmHandler):
     def k_nearest_neighbors(self, **kwargs):
+        mode = kwargs.get("mode", "stream")
         G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
             kwargs,
@@ -91,6 +97,7 @@ class KNearestNeighborsHandler(AlgorithmHandler):
                 "nodeIdentifierProperty",
                 "sourceNodeFilter",
                 "targetNodeFilter",
+                "mode",
             ],
         )
         node_identifier_property = kwargs.get("nodeIdentifierProperty")
@@ -112,26 +119,28 @@ class KNearestNeighborsHandler(AlgorithmHandler):
         )
 
         logger.info(f"K-Nearest Neighbors parameters: {kwargs}")
-        k_nearest_neighbors_result = self.gds.knn.filtered.stream(G, **gds_params)
+        if mode == "mutate":
+            result = self.gds.knn.filtered.mutate(G, **gds_params)
+        else:
+            result = self.gds.knn.filtered.stream(G, **gds_params)
 
-        # Add node names to the results if nodeIdentifierProperty is provided
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        translate_ids_to_identifiers(
-            self.gds,
-            node_identifier_property,
-            k_nearest_neighbors_result,
-            "node1",
-            "node1Name",
-        )
-        translate_ids_to_identifiers(
-            self.gds,
-            node_identifier_property,
-            k_nearest_neighbors_result,
-            "node2",
-            "node2Name",
-        )
+            node_identifier_property = kwargs.get("nodeIdentifierProperty")
+            translate_ids_to_identifiers(
+                self.gds,
+                node_identifier_property,
+                result,
+                "node1",
+                "node1Name",
+            )
+            translate_ids_to_identifiers(
+                self.gds,
+                node_identifier_property,
+                result,
+                "node2",
+                "node2Name",
+            )
 
-        return k_nearest_neighbors_result
+        return result
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.k_nearest_neighbors(
@@ -139,6 +148,9 @@ class KNearestNeighborsHandler(AlgorithmHandler):
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             sourceNodeFilter=arguments.get("sourceNodeFilter"),
             targetNodeFilter=arguments.get("targetNodeFilter"),
+            mode=arguments.get("mode"),
+            mutateProperty=arguments.get("mutateProperty"),
+            mutateRelationshipType=arguments.get("mutateRelationshipType"),
             nodeProperties=arguments.get("nodeProperties"),
             topK=arguments.get("topK"),
             sampleRate=arguments.get("sampleRate"),
