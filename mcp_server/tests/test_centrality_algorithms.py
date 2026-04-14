@@ -1,4 +1,5 @@
 import pytest
+import re
 
 
 @pytest.mark.asyncio
@@ -160,6 +161,31 @@ async def test_article_rank(mcp_client, projected_test_graph):
         and "Southwark" in combined_full_text
         and "London Bridge" in combined_full_text
     )
+
+
+@pytest.mark.asyncio
+async def test_article_rank_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "article_rank",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "articleRankScore",
+            "dampingFactor": 0.85,
+            "maxIterations": 20,
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+    assert "ranIterations" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written == 302
 
 
 @pytest.mark.asyncio
