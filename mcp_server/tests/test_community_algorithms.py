@@ -1,4 +1,5 @@
 import pytest
+import re
 
 
 @pytest.mark.asyncio
@@ -154,6 +155,29 @@ async def test_louvain(mcp_client, projected_test_graph):
     lines = result_with_names_text.strip().split("\n")
     data_lines = [line for line in lines[1:] if line.strip()]
     assert len(data_lines) > 0
+
+
+@pytest.mark.asyncio
+async def test_louvain_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "louvain",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "louvainCommunity",
+            "maxLevels": 10,
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written == 302
 
 
 @pytest.mark.asyncio
