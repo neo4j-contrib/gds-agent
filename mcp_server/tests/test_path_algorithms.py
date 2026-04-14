@@ -143,7 +143,7 @@ async def test_dijkstra_single_source_shortest_path(mcp_client, projected_test_g
 
 
 @pytest.mark.asyncio
-async def test_a_star_shortest_path(mcp_client, projected_graph_with_geo_properties):
+async def test_a_star_shortest_path(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "a_star_shortest_path",
         {
@@ -153,7 +153,7 @@ async def test_a_star_shortest_path(mcp_client, projected_graph_with_geo_propert
             "relationshipWeightProperty": "time",
             "latitudeProperty": "latitude",
             "longitudeProperty": "longitude",
-            "graphName": projected_graph_with_geo_properties,
+            "graphName": projected_test_graph,
         },
     )
 
@@ -183,7 +183,7 @@ async def test_a_star_shortest_path(mcp_client, projected_graph_with_geo_propert
             "nodeIdentifierProperty": "name",
             "latitudeProperty": "latitude",
             "longitudeProperty": "longitude",
-            "graphName": projected_graph_with_geo_properties,
+            "graphName": projected_test_graph,
         },
     )
 
@@ -353,14 +353,14 @@ async def test_minimum_directed_steiner_tree(mcp_client, projected_test_graph):
 
 @pytest.mark.asyncio
 async def test_prize_collecting_steiner_tree(
-    mcp_client, projected_undirected_graph_with_node_properties
+    mcp_client, projected_undirected_graph
 ):
     result = await mcp_client.call_tool(
         "prize_collecting_steiner_tree",
         {
             "relationshipWeightProperty": "time",
             "prizeProperty": "zone",
-            "graphName": projected_undirected_graph_with_node_properties,
+            "graphName": projected_undirected_graph,
         },
     )
 

@@ -2,12 +2,12 @@ import pytest
 
 
 @pytest.mark.asyncio
-async def test_conductance(mcp_client, projected_undirected_graph_with_node_properties):
+async def test_conductance(mcp_client, projected_undirected_graph):
     result = await mcp_client.call_tool(
         "conductance",
         {
             "communityProperty": "total_lines",
-            "graphName": projected_undirected_graph_with_node_properties,
+            "graphName": projected_undirected_graph,
         },
     )
 
@@ -28,13 +28,13 @@ async def test_hdbscan(mcp_client):
 
 @pytest.mark.asyncio
 async def test_k_core_decomposition(
-    mcp_client, projected_undirected_graph_with_node_properties
+    mcp_client, projected_undirected_graph
 ):
     result_with_names = await mcp_client.call_tool(
         "k_core_decomposition",
         {
             "nodeIdentifierProperty": "name",
-            "graphName": projected_undirected_graph_with_node_properties,
+            "graphName": projected_undirected_graph,
         },
     )
 
@@ -97,13 +97,13 @@ async def test_label_propagation(mcp_client, projected_test_graph):
 
 
 @pytest.mark.asyncio
-async def test_leiden(mcp_client, projected_undirected_graph_with_node_properties):
+async def test_leiden(mcp_client, projected_undirected_graph):
     result_with_names = await mcp_client.call_tool(
         "leiden",
         {
             "nodeIdentifierProperty": "name",
             "maxLevels": 10,
-            "graphName": projected_undirected_graph_with_node_properties,
+            "graphName": projected_undirected_graph,
         },
     )
 
@@ -119,14 +119,14 @@ async def test_leiden(mcp_client, projected_undirected_graph_with_node_propertie
 
 @pytest.mark.asyncio
 async def test_local_clustering_coefficient(
-    mcp_client, projected_undirected_graph_with_node_properties
+    mcp_client, projected_undirected_graph
 ):
     result_filtered = await mcp_client.call_tool(
         "local_clustering_coefficient",
         {
             "nodeIdentifierProperty": "name",
             "nodes": ["Bank"],
-            "graphName": projected_undirected_graph_with_node_properties,
+            "graphName": projected_undirected_graph,
         },
     )
     assert len(result_filtered) == 1
@@ -162,13 +162,13 @@ async def test_louvain(mcp_client, projected_test_graph):
 
 @pytest.mark.asyncio
 async def test_modularity_metric(
-    mcp_client, projected_undirected_graph_with_node_properties
+    mcp_client, projected_undirected_graph
 ):
     result = await mcp_client.call_tool(
         "modularity_metric",
         {
             "communityProperty": "total_lines",
-            "graphName": projected_undirected_graph_with_node_properties,
+            "graphName": projected_undirected_graph,
         },
     )
 
@@ -233,14 +233,14 @@ async def test_strongly_connected_components(mcp_client, projected_test_graph):
 
 @pytest.mark.asyncio
 async def test_triangle_count(
-    mcp_client, projected_undirected_graph_with_node_properties
+    mcp_client, projected_undirected_graph
 ):
     result_filtered = await mcp_client.call_tool(
         "triangle_count",
         {
             "nodeIdentifierProperty": "name",
             "nodes": ["Bank"],
-            "graphName": projected_undirected_graph_with_node_properties,
+            "graphName": projected_undirected_graph,
         },
     )
     assert len(result_filtered) == 1
