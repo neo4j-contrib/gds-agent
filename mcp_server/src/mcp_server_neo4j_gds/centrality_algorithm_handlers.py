@@ -18,7 +18,7 @@ class ArticleRankHandler(AlgorithmHandler):
         node_identifier_property = kwargs.get("nodeIdentifierProperty")
         source_nodes = kwargs.get("sourceNodes", None)
 
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
             kwargs,
             [
@@ -64,7 +64,7 @@ class ArticleRankHandler(AlgorithmHandler):
 
 class ArticulationPointsHandler(AlgorithmHandler):
     def articulation_points(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         articulation_points = self.gds.articulationPoints.stream(G)
 
         # Add node names to the results if nodeIdentifierProperty is provided
@@ -83,7 +83,7 @@ class ArticulationPointsHandler(AlgorithmHandler):
 
 class BetweennessCentralityHandler(AlgorithmHandler):
     def betweenness_centrality(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
             kwargs, ["graphName", "nodes", "nodeIdentifierProperty"]
         )
@@ -114,7 +114,7 @@ class BetweennessCentralityHandler(AlgorithmHandler):
 
 class BridgesHandler(AlgorithmHandler):
     def bridges(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         bridges_result = self.gds.bridges.stream(G)
 
         # Add node names to the results if nodeIdentifierProperty is provided
@@ -137,7 +137,7 @@ class BridgesHandler(AlgorithmHandler):
 
 class CELFHandler(AlgorithmHandler):
     def celf(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         logger.info(f"CELF parameters: {gds_params}")
         result = self.gds.influenceMaximization.celf.stream(G, **gds_params)
@@ -160,7 +160,7 @@ class CELFHandler(AlgorithmHandler):
 
 class ClosenessCentralityHandler(AlgorithmHandler):
     def closeness_centrality(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
             kwargs, ["graphName", "nodes", "nodeIdentifierProperty"]
         )
@@ -190,7 +190,7 @@ class ClosenessCentralityHandler(AlgorithmHandler):
 
 class DegreeCentralityHandler(AlgorithmHandler):
     def degree_centrality(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
             kwargs, ["graphName", "nodes", "nodeIdentifierProperty"]
         )
@@ -221,7 +221,7 @@ class DegreeCentralityHandler(AlgorithmHandler):
 
 class EigenvectorCentralityHandler(AlgorithmHandler):
     def eigenvector_centrality(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
             kwargs,
             [
@@ -273,7 +273,7 @@ class EigenvectorCentralityHandler(AlgorithmHandler):
 
 class PageRankHandler(AlgorithmHandler):
     def pagerank(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
             kwargs,
             [
@@ -323,7 +323,7 @@ class PageRankHandler(AlgorithmHandler):
 
 class HarmonicCentralityHandler(AlgorithmHandler):
     def harmonic_centrality(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         centrality = self.gds.closeness.harmonic.stream(G)
 
         # Add node names to the results if nodeIdentifierProperty is provided
@@ -347,7 +347,7 @@ class HarmonicCentralityHandler(AlgorithmHandler):
 
 class HITSHandler(AlgorithmHandler):
     def hits(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
             kwargs, ["graphName", "nodes", "nodeIdentifierProperty"]
         )

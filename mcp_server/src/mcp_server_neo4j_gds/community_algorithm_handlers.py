@@ -12,7 +12,7 @@ logger = logging.getLogger("mcp_server_neo4j_gds")
 
 class ConductanceHandler(AlgorithmHandler):
     def conductance(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(kwargs, ["graphName"])
         logger.info(f"Conductance parameters: {gds_params}")
         conductance = self.gds.conductance.stream(G, **gds_params)
@@ -28,7 +28,7 @@ class ConductanceHandler(AlgorithmHandler):
 
 class HDBSCANHandler(AlgorithmHandler):
     def hdbscan(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         logger.info(f"HDBSCAN parameters: {gds_params}")
         hdbscan_result = self.gds.hdbscan.stream(G, **gds_params)
@@ -52,7 +52,7 @@ class HDBSCANHandler(AlgorithmHandler):
 
 class KCoreDecompositionHandler(AlgorithmHandler):
     def k_core_decomposition(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         logger.info("Running K-Core Decomposition")
         k_core_decomposition_result = self.gds.kcore.stream(G)
 
@@ -72,7 +72,7 @@ class KCoreDecompositionHandler(AlgorithmHandler):
 
 class K1ColoringHandler(AlgorithmHandler):
     def k_1_coloring(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         logger.info(f"K-1 Coloring parameters: {gds_params}")
         k1_coloring_result = self.gds.k1coloring.stream(G, **gds_params)
@@ -96,7 +96,7 @@ class K1ColoringHandler(AlgorithmHandler):
 
 class KMeansClusteringHandler(AlgorithmHandler):
     def k_means_clustering(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         logger.info(f"K-Means Clustering parameters: {gds_params}")
         kmeans_clustering_result = self.gds.kmeans.stream(G, **gds_params)
@@ -126,7 +126,7 @@ class KMeansClusteringHandler(AlgorithmHandler):
 
 class LabelPropagationHandler(AlgorithmHandler):
     def label_propagation(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         logger.info(f"Label Propagation parameters: {gds_params}")
         label_propagation_result = self.gds.labelPropagation.stream(G, **gds_params)
@@ -154,7 +154,7 @@ class LabelPropagationHandler(AlgorithmHandler):
 
 class LeidenHandler(AlgorithmHandler):
     def leiden(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         logger.info(f"Leiden parameters: {gds_params}")
         leiden_result = self.gds.leiden.stream(G, **gds_params)
@@ -183,7 +183,7 @@ class LeidenHandler(AlgorithmHandler):
 
 class LocalClusteringCoefficientHandler(AlgorithmHandler):
     def local_clustering_coefficient(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
             kwargs, ["graphName", "nodeIdentifierProperty", "nodes"]
         )
@@ -222,7 +222,7 @@ class LocalClusteringCoefficientHandler(AlgorithmHandler):
 
 class LouvainHandler(AlgorithmHandler):
     def louvain(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         logger.info(f"Louvain parameters: {gds_params}")
         louvain_result = self.gds.louvain.stream(G, **gds_params)
@@ -252,7 +252,7 @@ class LouvainHandler(AlgorithmHandler):
 
 class ModularityMetricHandler(AlgorithmHandler):
     def modularity_metric(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         logger.info(f"Modularity Metric parameters: {gds_params}")
         modularity_metric_result = self.gds.modularity.stream(G, **gds_params)
@@ -269,7 +269,7 @@ class ModularityMetricHandler(AlgorithmHandler):
 
 class ModularityOptimizationHandler(AlgorithmHandler):
     def modularity_optimization(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         logger.info(f"Modularity Optimization parameters: {gds_params}")
         modularity_optimization_result = self.gds.modularityOptimization.stream(
@@ -299,7 +299,7 @@ class ModularityOptimizationHandler(AlgorithmHandler):
 
 class StronglyConnectedComponentsHandler(AlgorithmHandler):
     def strongly_connected_components(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         logger.info(f"Strongly Connected Components parameters: {gds_params}")
         strongly_connected_components_result = self.gds.scc.stream(G, **gds_params)
@@ -322,7 +322,7 @@ class StronglyConnectedComponentsHandler(AlgorithmHandler):
 
 class TriangleCountHandler(AlgorithmHandler):
     def triangle_count(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
             kwargs, ["graphName", "nodes", "nodeIdentifierProperty"]
         )
@@ -356,7 +356,7 @@ class TriangleCountHandler(AlgorithmHandler):
 
 class WeaklyConnectedComponentsHandler(AlgorithmHandler):
     def weakly_connected_components(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         logger.info(f"Weakly Connected Components parameters: {gds_params}")
         weakly_connected_components_result = self.gds.wcc.stream(G, **gds_params)
@@ -383,7 +383,7 @@ class WeaklyConnectedComponentsHandler(AlgorithmHandler):
 
 class ApproximateMaximumKCutHandler(AlgorithmHandler):
     def approximate_maximum_k_cut(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         logger.info(f"Approximate Maximum K Cut parameters: {gds_params}")
         approximate_maximum_k_cut_result = self.gds.maxkcut.stream(G, **gds_params)
@@ -410,7 +410,7 @@ class ApproximateMaximumKCutHandler(AlgorithmHandler):
 
 class SpeakerListenerLabelPropagationHandler(AlgorithmHandler):
     def speaker_listener_label_propagation(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         logger.info(f"Speaker Listener Label Propagation parameters: {gds_params}")
         speaker_listener_label_propagation_result = self.gds.sllpa.stream(

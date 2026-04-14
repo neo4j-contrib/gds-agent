@@ -12,7 +12,7 @@ logger = logging.getLogger("mcp_server_neo4j_gds")
 
 class NodeSimilarityHandler(AlgorithmHandler):
     def node_similarity(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
             kwargs,
             [
@@ -83,7 +83,7 @@ class NodeSimilarityHandler(AlgorithmHandler):
 
 class KNearestNeighborsHandler(AlgorithmHandler):
     def k_nearest_neighbors(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
             kwargs,
             [

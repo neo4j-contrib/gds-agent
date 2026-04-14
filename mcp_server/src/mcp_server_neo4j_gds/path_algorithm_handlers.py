@@ -29,7 +29,7 @@ class DijkstraShortestPathHandler(AlgorithmHandler):
         start_node_id = int(df["start_id"].iloc[0])
         end_node_id = int(df["end_id"].iloc[0])
 
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName"])
         logger.info(f"Dijkstra single-source shortest path parameters: {params}")
 
@@ -91,7 +91,7 @@ class DeltaSteppingShortestPathHandler(AlgorithmHandler):
 
         source_node_id = int(df["source_id"].iloc[0])
 
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName"])
         logger.info(f"Delta-Stepping shortest path parameters: {params}")
 
@@ -173,7 +173,7 @@ class DijkstraSingleSourceShortestPathHandler(AlgorithmHandler):
 
         source_node_id = int(df["source_id"].iloc[0])
 
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName"])
         logger.info(f"Dijkstra single-source shortest path parameters: {params}")
 
@@ -262,7 +262,7 @@ class AStarShortestPathHandler(AlgorithmHandler):
         source_node_id = int(df["source_id"].iloc[0])
         target_node_id = int(df["target_id"].iloc[0])
 
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName"])
         logger.info(f"A* shortest path parameters: {params}")
 
@@ -335,7 +335,7 @@ class YensShortestPathsHandler(AlgorithmHandler):
         source_node_id = int(df["source_id"].iloc[0])
         target_node_id = int(df["target_id"].iloc[0])
 
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName"])
         logger.info(f"Yen's shortest paths parameters: {params}")
 
@@ -414,7 +414,7 @@ class MinimumWeightSpanningTreeHandler(AlgorithmHandler):
 
         source_node_id = int(df["source_id"].iloc[0])
 
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName"])
         logger.info(f"Minimum Weight Spanning Tree parameters: {params}")
 
@@ -527,7 +527,7 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
         if not target_node_ids:
             return {"found": False, "message": "No target nodes found"}
 
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName"])
         logger.info(f"Minimum Directed Steiner Tree parameters: {params}")
 
@@ -591,7 +591,7 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
 
 class PrizeCollectingSteinerTreeHandler(AlgorithmHandler):
     def prize_collecting_steiner_tree(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName"])
         logger.info(f"Prize-Collecting Steiner Tree parameters: {params}")
 
@@ -649,7 +649,7 @@ class PrizeCollectingSteinerTreeHandler(AlgorithmHandler):
 
 class AllPairsShortestPathsHandler(AlgorithmHandler):
     def all_pairs_shortest_paths(self, **kwargs):
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName"])
         logger.info(f"All Pairs Shortest Paths parameters: {params}")
 
@@ -716,7 +716,7 @@ class RandomWalkHandler(AlgorithmHandler):
                 if not source_df.empty:
                     source_node_ids.append(int(source_df["source_id"].iloc[0]))
 
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         logger.info(f"Random Walk parameters: {params}")
 
@@ -808,7 +808,7 @@ class BreadthFirstSearchHandler(AlgorithmHandler):
                 if not target_df.empty:
                     target_node_ids.append(int(target_df["target_id"].iloc[0]))
 
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
 
         # Add target nodes if found
@@ -901,7 +901,7 @@ class DepthFirstSearchHandler(AlgorithmHandler):
                 if not target_df.empty:
                     target_node_ids.append(int(target_df["target_id"].iloc[0]))
 
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         # Add target nodes if found
         if target_node_ids:
@@ -976,7 +976,7 @@ class BellmanFordSingleSourceShortestPathHandler(AlgorithmHandler):
 
         source_node_id = int(source_df["source_id"].iloc[0])
 
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         logger.info(f"Bellman-Ford Single-Source Shortest Path parameters: {params}")
 
@@ -1062,7 +1062,7 @@ class LongestPathHandler(AlgorithmHandler):
                 )
                 if not target_df.empty:
                     target_node_ids.append(int(target_df["target_id"].iloc[0]))
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(
             kwargs,
             ["graphName", "nodeIdentifierProperty", "targetNodes"],
@@ -1199,7 +1199,7 @@ class MaxFlowHandler(AlgorithmHandler):
         if not target_node_ids:
             return {"found": False, "message": "No target nodes found"}
 
-        G = self.get_graph(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName"])
         logger.info(f"Max Flow parameters: {params}")
 
