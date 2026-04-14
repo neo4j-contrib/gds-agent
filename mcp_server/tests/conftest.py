@@ -263,6 +263,7 @@ async def mcp_client(mcp_server_process):
 @pytest_asyncio.fixture
 async def projected_test_graph(mcp_client):
     import uuid
+
     graph_name = f"test_graph_{uuid.uuid4().hex[:8]}"
 
     cypher_query = """
@@ -310,6 +311,7 @@ async def projected_test_graph(mcp_client):
 @pytest_asyncio.fixture
 async def projected_undirected_graph(mcp_client):
     import uuid
+
     graph_name = f"test_undirected_{uuid.uuid4().hex[:8]}"
 
     cypher_query = """
