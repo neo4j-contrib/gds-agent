@@ -2,13 +2,12 @@ import pytest
 
 
 @pytest.mark.asyncio
-async def test_conductance(mcp_client):
+async def test_conductance(mcp_client, projected_undirected_graph):
     result = await mcp_client.call_tool(
         "conductance",
         {
             "communityProperty": "total_lines",
-            "relTypes": ["LINK"],
-            "nodeLabels": ["UndergroundStation"],
+            "graphName": projected_undirected_graph,
         },
     )
 
@@ -28,13 +27,12 @@ async def test_hdbscan(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_k_core_decomposition(mcp_client):
+async def test_k_core_decomposition(mcp_client, projected_undirected_graph):
     result_with_names = await mcp_client.call_tool(
         "k_core_decomposition",
         {
             "nodeIdentifierProperty": "name",
-            "relTypes": ["LINK"],
-            "nodeLabels": ["UndergroundStation"],
+            "graphName": projected_undirected_graph,
         },
     )
 
@@ -49,9 +47,14 @@ async def test_k_core_decomposition(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_k_1_coloring(mcp_client):
+async def test_k_1_coloring(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
-        "k_1_coloring", {"nodeIdentifierProperty": "name", "maxIterations": 5}
+        "k_1_coloring",
+        {
+            "nodeIdentifierProperty": "name",
+            "maxIterations": 5,
+            "graphName": projected_test_graph,
+        },
     )
 
     assert len(result_with_names) == 1
@@ -71,62 +74,13 @@ async def test_k_means_clustering(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_label_propagation(mcp_client):
+async def test_label_propagation(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
-        "label_propagation", {"nodeIdentifierProperty": "name", "maxIterations": 10}
-    )
-
-    assert len(result_with_names) == 1
-    result_with_names_text = result_with_names[0]["text"]
-    assert "nodeId" in result_with_names_text
-    assert "communityId" in result_with_names_text
-    assert "nodeName" in result_with_names_text
-    lines = result_with_names_text.strip().split("\n")
-    data_lines = [line for line in lines[1:] if line.strip()]
-    assert len(data_lines) > 0
-
-
-@pytest.mark.asyncio
-async def test_leiden(mcp_client):
-    result_with_names = await mcp_client.call_tool(
-        "leiden", {"nodeIdentifierProperty": "name", "maxLevels": 10}
-    )
-
-    assert len(result_with_names) == 1
-    result_with_names_text = result_with_names[0]["text"]
-    assert "nodeId" in result_with_names_text
-    assert "communityId" in result_with_names_text
-    assert "nodeName" in result_with_names_text
-    lines = result_with_names_text.strip().split("\n")
-    data_lines = [line for line in lines[1:] if line.strip()]
-    assert len(data_lines) > 0
-
-
-@pytest.mark.asyncio
-async def test_local_clustering_coefficient(mcp_client):
-    result_filtered = await mcp_client.call_tool(
-        "local_clustering_coefficient",
-        {"nodeIdentifierProperty": "name", "nodes": ["Bank"]},
-    )
-    assert len(result_filtered) == 1
-    result_filtered_text = result_filtered[0]["text"]
-    assert "nodeId" in result_filtered_text
-    assert "localClusteringCoefficient" in result_filtered_text
-    assert "nodeName" in result_filtered_text
-    filtered_lines = result_filtered_text.strip().split("\n")
-    filtered_data_lines = [line for line in filtered_lines[1:] if line.strip()]
-    assert any("Bank" in line for line in filtered_data_lines)
-
-
-@pytest.mark.asyncio
-async def test_louvain(mcp_client):
-    result_with_names = await mcp_client.call_tool(
-        "louvain",
+        "label_propagation",
         {
             "nodeIdentifierProperty": "name",
-            "maxLevels": 10,
-            "relTypes": ["LINK"],
-            "nodeLabels": ["UndergroundStation"],
+            "maxIterations": 10,
+            "graphName": projected_test_graph,
         },
     )
 
@@ -141,9 +95,75 @@ async def test_louvain(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_modularity_metric(mcp_client):
+async def test_leiden(mcp_client, projected_undirected_graph):
+    result_with_names = await mcp_client.call_tool(
+        "leiden",
+        {
+            "nodeIdentifierProperty": "name",
+            "maxLevels": 10,
+            "graphName": projected_undirected_graph,
+        },
+    )
+
+    assert len(result_with_names) == 1
+    result_with_names_text = result_with_names[0]["text"]
+    assert "nodeId" in result_with_names_text
+    assert "communityId" in result_with_names_text
+    assert "nodeName" in result_with_names_text
+    lines = result_with_names_text.strip().split("\n")
+    data_lines = [line for line in lines[1:] if line.strip()]
+    assert len(data_lines) > 0
+
+
+@pytest.mark.asyncio
+async def test_local_clustering_coefficient(mcp_client, projected_undirected_graph):
+    result_filtered = await mcp_client.call_tool(
+        "local_clustering_coefficient",
+        {
+            "nodeIdentifierProperty": "name",
+            "nodes": ["Bank"],
+            "graphName": projected_undirected_graph,
+        },
+    )
+    assert len(result_filtered) == 1
+    result_filtered_text = result_filtered[0]["text"]
+    assert "nodeId" in result_filtered_text
+    assert "localClusteringCoefficient" in result_filtered_text
+    assert "nodeName" in result_filtered_text
+    filtered_lines = result_filtered_text.strip().split("\n")
+    filtered_data_lines = [line for line in filtered_lines[1:] if line.strip()]
+    assert any("Bank" in line for line in filtered_data_lines)
+
+
+@pytest.mark.asyncio
+async def test_louvain(mcp_client, projected_test_graph):
+    result_with_names = await mcp_client.call_tool(
+        "louvain",
+        {
+            "nodeIdentifierProperty": "name",
+            "maxLevels": 10,
+            "graphName": projected_test_graph,
+        },
+    )
+
+    assert len(result_with_names) == 1
+    result_with_names_text = result_with_names[0]["text"]
+    assert "nodeId" in result_with_names_text
+    assert "communityId" in result_with_names_text
+    assert "nodeName" in result_with_names_text
+    lines = result_with_names_text.strip().split("\n")
+    data_lines = [line for line in lines[1:] if line.strip()]
+    assert len(data_lines) > 0
+
+
+@pytest.mark.asyncio
+async def test_modularity_metric(mcp_client, projected_undirected_graph):
     result = await mcp_client.call_tool(
-        "modularity_metric", {"communityProperty": "total_lines"}
+        "modularity_metric",
+        {
+            "communityProperty": "total_lines",
+            "graphName": projected_undirected_graph,
+        },
     )
 
     assert len(result) == 1
@@ -168,10 +188,14 @@ async def test_modularity_metric(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_modularity_optimization(mcp_client):
+async def test_modularity_optimization(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
         "modularity_optimization",
-        {"nodeIdentifierProperty": "name", "maxIterations": 10},
+        {
+            "nodeIdentifierProperty": "name",
+            "maxIterations": 10,
+            "graphName": projected_test_graph,
+        },
     )
 
     assert len(result_with_names) == 1
@@ -185,9 +209,10 @@ async def test_modularity_optimization(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_strongly_connected_components(mcp_client):
+async def test_strongly_connected_components(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
-        "strongly_connected_components", {"nodeIdentifierProperty": "name"}
+        "strongly_connected_components",
+        {"nodeIdentifierProperty": "name", "graphName": projected_test_graph},
     )
 
     assert len(result_with_names) == 1
@@ -201,9 +226,14 @@ async def test_strongly_connected_components(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_triangle_count(mcp_client):
+async def test_triangle_count(mcp_client, projected_undirected_graph):
     result_filtered = await mcp_client.call_tool(
-        "triangle_count", {"nodeIdentifierProperty": "name", "nodes": ["Bank"]}
+        "triangle_count",
+        {
+            "nodeIdentifierProperty": "name",
+            "nodes": ["Bank"],
+            "graphName": projected_undirected_graph,
+        },
     )
     assert len(result_filtered) == 1
     result_filtered_text = result_filtered[0]["text"]
@@ -216,9 +246,10 @@ async def test_triangle_count(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_weakly_connected_components(mcp_client):
+async def test_weakly_connected_components(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
-        "weakly_connected_components", {"nodeIdentifierProperty": "name"}
+        "weakly_connected_components",
+        {"nodeIdentifierProperty": "name", "graphName": projected_test_graph},
     )
 
     assert len(result_with_names) == 1
@@ -232,9 +263,10 @@ async def test_weakly_connected_components(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_approximate_maximum_k_cut(mcp_client):
+async def test_approximate_maximum_k_cut(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
-        "approximate_maximum_k_cut", {"nodeIdentifierProperty": "name", "k": 2}
+        "approximate_maximum_k_cut",
+        {"nodeIdentifierProperty": "name", "k": 2, "graphName": projected_test_graph},
     )
 
     assert len(result_with_names) == 1
@@ -248,13 +280,14 @@ async def test_approximate_maximum_k_cut(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_speaker_listener_label_propagation(mcp_client):
+async def test_speaker_listener_label_propagation(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
         "speaker_listener_label_propagation",
         {
             "nodeIdentifierProperty": "name",
             "maxIterations": 10,
             "minAssociationStrength": 0.1,
+            "graphName": projected_test_graph,
         },
     )
 

@@ -258,3 +258,102 @@ async def mcp_client(mcp_server_process):
     await client.process.stdin.drain()
 
     yield client
+
+
+@pytest_asyncio.fixture
+async def projected_test_graph(mcp_client):
+    import uuid
+
+    graph_name = f"test_graph_{uuid.uuid4().hex[:8]}"
+
+    cypher_query = """
+        MATCH (n:UndergroundStation)-[r:LINK]->(m:UndergroundStation)
+        RETURN gds.graph.project(
+            $graph_name,
+            n,
+            m,
+            {
+                sourceNodeLabels: labels(n),
+                targetNodeLabels: labels(m),
+                relationshipType: type(r),
+                sourceNodeProperties: {
+                    total_lines: toInteger(n.total_lines),
+                    zone: toFloat(n.zone),
+                    rail: toInteger(n.rail),
+                    latitude: toFloat(n.latitude),
+                    longitude: toFloat(n.longitude)
+                },
+                targetNodeProperties: {
+                    total_lines: toInteger(m.total_lines),
+                    zone: toFloat(m.zone),
+                    rail: toInteger(m.rail),
+                    latitude: toFloat(m.latitude),
+                    longitude: toFloat(m.longitude)
+                },
+                relationshipProperties: {time: toFloat(r.time), distance: toFloat(r.distance)}
+            }
+        )
+    """
+
+    await mcp_client.call_tool(
+        "project_graph_cypher",
+        {"graphName": graph_name, "cypherQuery": cypher_query},
+    )
+
+    yield graph_name
+
+    try:
+        await mcp_client.call_tool("drop_graph", {"graphName": graph_name})
+    except Exception:
+        pass
+
+
+@pytest_asyncio.fixture
+async def projected_undirected_graph(mcp_client):
+    import uuid
+
+    graph_name = f"test_undirected_{uuid.uuid4().hex[:8]}"
+
+    cypher_query = """
+        MATCH (n:UndergroundStation)-[r:LINK]->(m:UndergroundStation)
+        RETURN gds.graph.project(
+            $graph_name,
+            n,
+            m,
+            {
+                sourceNodeLabels: labels(n),
+                targetNodeLabels: labels(m),
+                relationshipType: type(r),
+                sourceNodeProperties: {
+                    total_lines: toInteger(n.total_lines),
+                    zone: toFloat(n.zone),
+                    rail: toInteger(n.rail),
+                    latitude: toFloat(n.latitude),
+                    longitude: toFloat(n.longitude)
+                },
+                targetNodeProperties: {
+                    total_lines: toInteger(m.total_lines),
+                    zone: toFloat(m.zone),
+                    rail: toInteger(m.rail),
+                    latitude: toFloat(m.latitude),
+                    longitude: toFloat(m.longitude)
+                },
+                relationshipProperties: {time: toFloat(r.time), distance: toFloat(r.distance)}
+            },
+            {
+                undirectedRelationshipTypes: ['LINK']
+            }
+        )
+    """
+
+    await mcp_client.call_tool(
+        "project_graph_cypher",
+        {"graphName": graph_name, "cypherQuery": cypher_query},
+    )
+
+    yield graph_name
+
+    try:
+        await mcp_client.call_tool("drop_graph", {"graphName": graph_name})
+    except Exception:
+        pass

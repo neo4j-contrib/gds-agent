@@ -2,14 +2,13 @@ import pytest
 
 
 @pytest.mark.asyncio
-async def test_node_similarity(mcp_client):
+async def test_node_similarity(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "node_similarity",
         {
             "nodeIdentifierProperty": "name",
             "topN": 35,
-            "relTypes": ["LINK"],
-            "nodeLabels": ["UndergroundStation"],
+            "graphName": projected_test_graph,
         },
     )
 
@@ -30,7 +29,7 @@ async def test_node_similarity(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_filtered_node_similarity(mcp_client):
+async def test_filtered_node_similarity(mcp_client, projected_test_graph):
     # test source-filter only
     result = await mcp_client.call_tool(
         "node_similarity",
@@ -38,6 +37,7 @@ async def test_filtered_node_similarity(mcp_client):
             "nodeIdentifierProperty": "name",
             "topK": 3,
             "sourceNodeFilter": ["Acton Town"],
+            "graphName": projected_test_graph,
         },
     )
 
@@ -62,6 +62,7 @@ async def test_filtered_node_similarity(mcp_client):
             "nodeIdentifierProperty": "name",
             "topK": 3,
             "targetNodeFilter": "Stamford Brook",
+            "graphName": projected_test_graph,
         },
     )
     assert len(result) == 1
@@ -85,6 +86,7 @@ async def test_filtered_node_similarity(mcp_client):
             "topK": 3,
             "sourceNodeFilter": ["Acton Town"],
             "targetNodeFilter": ["Stamford Brook"],
+            "graphName": projected_test_graph,
         },
     )
 
@@ -104,15 +106,14 @@ async def test_filtered_node_similarity(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_k_nearest_neighbors(mcp_client):
+async def test_k_nearest_neighbors(mcp_client, projected_undirected_graph):
     result = await mcp_client.call_tool(
         "k_nearest_neighbors",
         {
             "nodeIdentifierProperty": "name",
             "topK": 3,
             "nodeProperties": {"rail": "DEFAULT"},
-            "relTypes": ["LINK"],
-            "nodeLabels": ["UndergroundStation"],
+            "graphName": projected_undirected_graph,
         },
     )
 
@@ -132,7 +133,7 @@ async def test_k_nearest_neighbors(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_filtered_knn(mcp_client):
+async def test_filtered_knn(mcp_client, projected_undirected_graph):
     # test source-filter only
     result = await mcp_client.call_tool(
         "k_nearest_neighbors",
@@ -141,6 +142,7 @@ async def test_filtered_knn(mcp_client):
             "topK": 3,
             "sourceNodeFilter": ["Acton Town"],
             "nodeProperties": {"rail": "DEFAULT"},
+            "graphName": projected_undirected_graph,
         },
     )
 
@@ -166,6 +168,7 @@ async def test_filtered_knn(mcp_client):
             "topK": 3,
             "targetNodeFilter": "Stamford Brook",
             "nodeProperties": {"rail": "DEFAULT"},
+            "graphName": projected_undirected_graph,
         },
     )
     assert len(result) == 1
@@ -191,6 +194,7 @@ async def test_filtered_knn(mcp_client):
             "targetNodeFilter": ["Stamford Brook"],
             "seedTargetNodes": True,  # k-nn filtering is a bit special, it might not necessarily find answer if this is not specified (at least for this small example graph)
             "nodeProperties": {"rail": "DEFAULT"},
+            "graphName": projected_undirected_graph,
         },
     )
 

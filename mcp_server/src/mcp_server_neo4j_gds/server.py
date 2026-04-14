@@ -14,6 +14,7 @@ from .similarity_algorithm_specs import similarity_tool_definitions
 from .centrality_algorithm_specs import centrality_tool_definitions
 from .community_algorithm_specs import community_tool_definitions
 from .path_algorithm_specs import path_tool_definitions
+from .graph_projection_specs import graph_projection_tool_definitions
 from .registry import AlgorithmRegistry
 from .gds import (
     count_nodes,
@@ -21,6 +22,11 @@ from .gds import (
     get_relationship_properties_keys,
     get_node_labels,
     get_relationship_types,
+)
+from .graph_projection_handlers import (
+    ProjectGraphCypherHandler,
+    DropGraphHandler,
+    ListGraphsHandler,
 )
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
@@ -111,6 +117,7 @@ async def main(db_url: str, username: str, password: str, database: str = None):
                         },
                     ),
                 ]
+                + graph_projection_tool_definitions
                 + centrality_tool_definitions
                 + community_tool_definitions
                 + path_tool_definitions
@@ -144,6 +151,21 @@ async def main(db_url: str, username: str, password: str, database: str = None):
                 return [types.TextContent(type="text", text=serialize_result(result))]
             elif name == "get_relationship_types":
                 result = get_relationship_types(gds)
+                return [types.TextContent(type="text", text=serialize_result(result))]
+
+            elif name == "project_graph_cypher":
+                handler = ProjectGraphCypherHandler(gds)
+                result = handler.execute(arguments or {})
+                return [types.TextContent(type="text", text=serialize_result(result))]
+
+            elif name == "drop_graph":
+                handler = DropGraphHandler(gds)
+                result = handler.execute(arguments or {})
+                return [types.TextContent(type="text", text=serialize_result(result))]
+
+            elif name == "list_graphs":
+                handler = ListGraphsHandler(gds)
+                result = handler.execute(arguments or {})
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
             else:

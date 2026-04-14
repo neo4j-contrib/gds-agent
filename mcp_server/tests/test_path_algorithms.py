@@ -3,7 +3,7 @@ import json
 
 
 @pytest.mark.asyncio
-async def test_find_shortest_path(mcp_client):
+async def test_find_shortest_path(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "find_shortest_path",
         {
@@ -11,8 +11,7 @@ async def test_find_shortest_path(mcp_client):
             "end_node": "Westbourne Park",
             "nodeIdentifierProperty": "name",
             "relationship_property": "time",
-            "relTypes": ["LINK"],
-            "nodeLabels": ["UndergroundStation"],
+            "graphName": projected_test_graph,
         },
     )
 
@@ -40,6 +39,7 @@ async def test_find_shortest_path(mcp_client):
             "start_node": "NonExistentStation1",
             "end_node": "NonExistentStation2",
             "nodeIdentifierProperty": "name",
+            "graphName": projected_test_graph,
         },
     )
 
@@ -49,7 +49,7 @@ async def test_find_shortest_path(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_delta_stepping_shortest_path(mcp_client):
+async def test_delta_stepping_shortest_path(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "delta_stepping_shortest_path",
         {
@@ -57,6 +57,7 @@ async def test_delta_stepping_shortest_path(mcp_client):
             "nodeIdentifierProperty": "name",
             "delta": 2.0,
             "relationshipWeightProperty": "time",
+            "graphName": projected_test_graph,
         },
     )
 
@@ -87,6 +88,7 @@ async def test_delta_stepping_shortest_path(mcp_client):
             "sourceNode": "NonExistentStation",
             "nodeIdentifierProperty": "name",
             "delta": 1.0,
+            "graphName": projected_test_graph,
         },
     )
 
@@ -95,13 +97,14 @@ async def test_delta_stepping_shortest_path(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_dijkstra_single_source_shortest_path(mcp_client):
+async def test_dijkstra_single_source_shortest_path(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "dijkstra_single_source_shortest_path",
         {
             "sourceNode": "Bayswater",
             "nodeIdentifierProperty": "name",
             "relationshipWeightProperty": "time",
+            "graphName": projected_test_graph,
         },
     )
 
@@ -131,6 +134,7 @@ async def test_dijkstra_single_source_shortest_path(mcp_client):
         {
             "sourceNode": "NonExistentStation",
             "nodeIdentifierProperty": "name",
+            "graphName": projected_test_graph,
         },
     )
 
@@ -139,7 +143,7 @@ async def test_dijkstra_single_source_shortest_path(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_a_star_shortest_path(mcp_client):
+async def test_a_star_shortest_path(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "a_star_shortest_path",
         {
@@ -149,6 +153,7 @@ async def test_a_star_shortest_path(mcp_client):
             "relationshipWeightProperty": "time",
             "latitudeProperty": "latitude",
             "longitudeProperty": "longitude",
+            "graphName": projected_test_graph,
         },
     )
 
@@ -178,6 +183,7 @@ async def test_a_star_shortest_path(mcp_client):
             "nodeIdentifierProperty": "name",
             "latitudeProperty": "latitude",
             "longitudeProperty": "longitude",
+            "graphName": projected_test_graph,
         },
     )
 
@@ -187,7 +193,7 @@ async def test_a_star_shortest_path(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_yens_shortest_paths(mcp_client):
+async def test_yens_shortest_paths(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "yens_shortest_paths",
         {
@@ -196,6 +202,7 @@ async def test_yens_shortest_paths(mcp_client):
             "nodeIdentifierProperty": "name",
             "relationshipWeightProperty": "time",
             "k": 3,
+            "graphName": projected_test_graph,
         },
     )
 
@@ -239,6 +246,7 @@ async def test_yens_shortest_paths(mcp_client):
             "targetNode": "NonExistentStation2",
             "nodeIdentifierProperty": "name",
             "k": 2,
+            "graphName": projected_test_graph,
         },
     )
 
@@ -248,15 +256,14 @@ async def test_yens_shortest_paths(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_minimum_weight_spanning_tree(mcp_client):
+async def test_minimum_weight_spanning_tree(mcp_client, projected_undirected_graph):
     result = await mcp_client.call_tool(
         "minimum_weight_spanning_tree",
         {
             "sourceNode": "Canada Water",
             "nodeIdentifierProperty": "name",
             "relationshipWeightProperty": "time",
-            "relTypes": ["LINK"],
-            "nodeLabels": ["UndergroundStation"],
+            "graphName": projected_undirected_graph,
         },
     )
 
@@ -286,6 +293,7 @@ async def test_minimum_weight_spanning_tree(mcp_client):
         {
             "sourceNode": "NonExistentStation",
             "nodeIdentifierProperty": "name",
+            "graphName": projected_undirected_graph,
         },
     )
 
@@ -295,7 +303,7 @@ async def test_minimum_weight_spanning_tree(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_minimum_directed_steiner_tree(mcp_client):
+async def test_minimum_directed_steiner_tree(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "minimum_directed_steiner_tree",
         {
@@ -303,6 +311,7 @@ async def test_minimum_directed_steiner_tree(mcp_client):
             "targetNodes": ["Regent's Park", "Piccadilly Circus", "Knightsbridge"],
             "nodeIdentifierProperty": "name",
             "relationshipWeightProperty": "time",
+            "graphName": projected_test_graph,
         },
     )
 
@@ -333,6 +342,7 @@ async def test_minimum_directed_steiner_tree(mcp_client):
             "sourceNode": "NonExistentStation",
             "targetNodes": ["Tower Hill"],
             "nodeIdentifierProperty": "name",
+            "graphName": projected_test_graph,
         },
     )
 
@@ -342,12 +352,13 @@ async def test_minimum_directed_steiner_tree(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_prize_collecting_steiner_tree(mcp_client):
+async def test_prize_collecting_steiner_tree(mcp_client, projected_undirected_graph):
     result = await mcp_client.call_tool(
         "prize_collecting_steiner_tree",
         {
             "relationshipWeightProperty": "time",
             "prizeProperty": "zone",
+            "graphName": projected_undirected_graph,
         },
     )
 
@@ -373,11 +384,12 @@ async def test_prize_collecting_steiner_tree(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_all_pairs_shortest_paths(mcp_client):
+async def test_all_pairs_shortest_paths(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "all_pairs_shortest_paths",
         {
             "relationshipWeightProperty": "time",
+            "graphName": projected_test_graph,
         },
     )
 
@@ -410,7 +422,7 @@ async def test_all_pairs_shortest_paths(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_random_walk(mcp_client):
+async def test_random_walk(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "random_walk",
         {
@@ -418,6 +430,7 @@ async def test_random_walk(mcp_client):
             "nodeIdentifierProperty": "name",
             "walkLength": 5,
             "walksPerNode": 3,
+            "graphName": projected_test_graph,
         },
     )
 
@@ -435,6 +448,7 @@ async def test_random_walk(mcp_client):
         {
             "walkLength": 3,
             "walksPerNode": 1,
+            "graphName": projected_test_graph,
         },
     )
 
@@ -448,13 +462,14 @@ async def test_random_walk(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_breadth_first_search(mcp_client):
+async def test_breadth_first_search(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "breadth_first_search",
         {
             "sourceNode": "Bayswater",
             "nodeIdentifierProperty": "name",
             "maxDepth": 3,
+            "graphName": projected_test_graph,
         },
     )
 
@@ -482,6 +497,7 @@ async def test_breadth_first_search(mcp_client):
         {
             "sourceNode": "NonExistentStation",
             "nodeIdentifierProperty": "name",
+            "graphName": projected_test_graph,
         },
     )
 
@@ -491,15 +507,14 @@ async def test_breadth_first_search(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_depth_first_search(mcp_client):
+async def test_depth_first_search(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "depth_first_search",
         {
             "sourceNode": "Bayswater",
             "nodeIdentifierProperty": "name",
             "maxDepth": 3,
-            "relTypes": ["LINK"],
-            "nodeLabels": ["UndergroundStation"],
+            "graphName": projected_test_graph,
         },
     )
 
@@ -527,6 +542,7 @@ async def test_depth_first_search(mcp_client):
         {
             "sourceNode": "NonExistentStation",
             "nodeIdentifierProperty": "name",
+            "graphName": projected_test_graph,
         },
     )
 
@@ -536,13 +552,16 @@ async def test_depth_first_search(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_bellman_ford_single_source_shortest_path(mcp_client):
+async def test_bellman_ford_single_source_shortest_path(
+    mcp_client, projected_test_graph
+):
     result = await mcp_client.call_tool(
         "bellman_ford_single_source_shortest_path",
         {
             "sourceNode": "Bayswater",
             "nodeIdentifierProperty": "name",
             "relationshipWeightProperty": "time",
+            "graphName": projected_test_graph,
         },
     )
 
@@ -580,6 +599,7 @@ async def test_bellman_ford_single_source_shortest_path(mcp_client):
         {
             "sourceNode": "NonExistentStation",
             "nodeIdentifierProperty": "name",
+            "graphName": projected_test_graph,
         },
     )
 
@@ -589,11 +609,12 @@ async def test_bellman_ford_single_source_shortest_path(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_longest_path(mcp_client):
+async def test_longest_path(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "longest_path",
         {
             "relationshipWeightProperty": "time",
+            "graphName": projected_test_graph,
         },
     )
 
@@ -612,6 +633,7 @@ async def test_longest_path(mcp_client):
             "targetNodes": ["Notting Hill Gate"],
             "nodeIdentifierProperty": "name",
             "relationshipWeightProperty": "time",
+            "graphName": projected_test_graph,
         },
     )
 
@@ -628,7 +650,7 @@ async def test_longest_path(mcp_client):
 
 
 @pytest.mark.asyncio
-async def test_max_flow(mcp_client):
+async def test_max_flow(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "max_flow",
         {
@@ -641,6 +663,7 @@ async def test_max_flow(mcp_client):
             ],
             "nodeIdentifierProperty": "name",
             "capacityProperty": "time",
+            "graphName": projected_test_graph,
         },
     )
 

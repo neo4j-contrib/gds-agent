@@ -7,6 +7,10 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "communityProperty": {
                     "type": "string",
                     "description": "The node property that holds the community ID as an integer for each node. "
@@ -17,18 +21,8 @@ community_tool_definitions = [
                     "description": "The relationship property that holds the weight of the relationships. "
                     "If not provided, all relationships are considered to have a weight of 1.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run conductance on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run conductance on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": ["communityProperty"],
+            "required": ["graphName", "communityProperty"],
         },
     ),
     types.Tool(
@@ -44,6 +38,10 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "nodeProperty": {
                     "type": "string",
                     "description": "A node property corresponding to an array of floats used by HDBSCAN to compute clusters",
@@ -64,13 +62,8 @@ community_tool_definitions = [
                     "type": "integer",
                     "description": "The number of leaf nodes of the supporting tree data structure.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run HDBSCAN on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
             },
-            "required": ["nodeProperty"],
+            "required": ["graphName", "nodeProperty"],
         },
     ),
     types.Tool(
@@ -86,22 +79,16 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run K Core decomposition on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run K Core decomposition on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": [],
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -118,19 +105,13 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
-                },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run K-1 Coloring on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run K-1 Coloring on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
                 "maxIterations": {
                     "type": "integer",
@@ -141,7 +122,7 @@ community_tool_definitions = [
                     "description": "Only nodes inside communities larger or equal the given value are returned.",
                 },
             },
-            "required": [],
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -159,6 +140,10 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "nodeProperty": {
                     "type": "string",
                     "description": "A node property corresponding to an array of floats used by K-Means to cluster nodes into communities.",
@@ -166,11 +151,6 @@ community_tool_definitions = [
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
-                },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run K-Means on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
                 },
                 "k": {
                     "type": "integer",
@@ -203,7 +183,7 @@ community_tool_definitions = [
                     "description": "If set to true, the silhouette scores are computed once the clustering has been determined. Silhouette is a metric on how well the nodes have been clustered.",
                 },
             },
-            "required": ["nodeProperty"],
+            "required": ["graphName", "nodeProperty"],
         },
     ),
     types.Tool(
@@ -214,6 +194,10 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "maxIterations": {
                     "type": "integer",
                     "description": "The maximum number of iterations to run.",
@@ -242,17 +226,8 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Label Propagation on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Label Propagation on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -266,6 +241,10 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "maxLevels": {
                     "type": "integer",
                     "description": "The maximum number of levels in which the graph is clustered and then condensed.",
@@ -298,17 +277,8 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Leiden on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Leiden on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -324,6 +294,10 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "triangleCountProperty": {
                     "type": "string",
                     "description": "Node property that contains pre-computed triangle count.",
@@ -337,17 +311,8 @@ community_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "Optional list of node names to filter results. Only nodes whose names (based on nodeIdentifierProperty) contain any of these values will be included in the results. Requires nodeIdentifierProperty to be specified.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Local Clustering Coefficient on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Local Clustering Coefficient on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -359,6 +324,10 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "relationshipWeightProperty": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
@@ -395,17 +364,8 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Louvain on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Louvain on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -416,6 +376,10 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "communityProperty": {
                     "type": "string",
                     "description": "The node property that holds the community ID as an integer for each node. Note that only non-negative community IDs are considered valid and will have their modularity score computed.",
@@ -424,18 +388,8 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Modularity on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Modularity on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": ["communityProperty"],
+            "required": ["graphName", "communityProperty"],
         },
     ),
     types.Tool(
@@ -447,6 +401,10 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "maxIterations": {
                     "type": "integer",
                     "description": "The maximum number of iterations to run.",
@@ -475,17 +433,8 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run modularity optimization on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run modularity optimization on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -496,6 +445,10 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "consecutiveIds": {
                     "type": "boolean",
                     "description": "Flag to decide whether component identifiers are mapped into a consecutive id space (requires additional memory).",
@@ -504,17 +457,8 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run SCC on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run SCC on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -529,6 +473,10 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "maxDegree": {
                     "type": "integer",
                     "description": "If a node has a degree higher than this it will not be considered by the algorithm. The triangle count for these nodes will be -1.",
@@ -542,17 +490,8 @@ community_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "Optional list of node names to filter results. Only nodes whose names (based on nodeIdentifierProperty) contain any of these values will be included in the results. Requires nodeIdentifierProperty to be specified.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Triangle Count on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Triangle Count on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -566,6 +505,10 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "relationshipWeightProperty": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
@@ -590,17 +533,8 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run WCC on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run WCC on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -616,6 +550,10 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "k": {
                     "type": "integer",
                     "description": "The number of disjoint communities the nodes will be divided into.",
@@ -640,17 +578,8 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Max-K-Cut  on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Max-K-Cut on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -662,6 +591,10 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
                 "maxIterations": {
                     "type": "integer",
                     "description": "Maximum number of iterations to run.",
@@ -679,17 +612,8 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run SLLPA on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run SLLPA on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
+            "required": ["graphName"],
         },
     ),
 ]

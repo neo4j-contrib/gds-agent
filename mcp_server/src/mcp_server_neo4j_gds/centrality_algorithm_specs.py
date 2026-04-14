@@ -3,11 +3,15 @@ from mcp import types
 centrality_tool_definitions = [
     types.Tool(
         name="article_rank",
-        description="""Calculate ArticleRank for nodes in the graph. 
+        description="""Calculate ArticleRank for nodes in the graph.
     ArticleRank is similar to PageRank but normalizes by the number of outgoing references.""",
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
+                },
                 "nodes": {
                     "type": "array",
                     "items": {"type": "string"},
@@ -44,18 +48,8 @@ centrality_tool_definitions = [
                     "Supported values are None, MinMax, Max, Mean, Log, and StdScore. "
                     "To apply scaler-specific configuration, use the Map syntax: {scaler: 'name', ...}.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run the article rank on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run article rank on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": [],
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -64,22 +58,16 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
+                },
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Articulation points on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Articulation Points on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
-                },
             },
-            "required": [],
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -88,20 +76,14 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
+                },
                 "nodes": {
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "List of node names to filter betweenness centrality results for.",
-                },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Betweenness Centrality on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Betweenness Centrality on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
                 "nodeIdentifierProperty": {
                     "type": "string",
@@ -116,7 +98,7 @@ centrality_tool_definitions = [
                     "description": "Property of the relationship to use for weighting. If not specified, all relationships are treated equally.",
                 },
             },
-            "required": [],
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -125,40 +107,28 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Bridges on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Bridges on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
                 },
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
             },
-            "required": [],
+            "required": ["graphName"],
         },
     ),
     types.Tool(
         name="CELF",
-        description="""Calculate the Cost-Effective Lazy Forward (CELF) algorithm for influence maximization in the graph. 
+        description="""Calculate the Cost-Effective Lazy Forward (CELF) algorithm for influence maximization in the graph.
         For a given k, the algorithm finds the set of k nodes that maximize the expected spread of influence in the network.""",
         inputSchema={
             "type": "object",
             "properties": {
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run CELF on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run CELF on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
                 },
                 "seedSetSize": {
                     "type": "integer",
@@ -177,31 +147,25 @@ centrality_tool_definitions = [
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
             },
-            "required": ["seedSetSize"],
+            "required": ["graphName", "seedSetSize"],
         },
     ),
     types.Tool(
         name="closeness_centrality",
-        description="""Calculate closeness centrality for all nodes in the graph. 
-        The closeness centrality of a node measures its average farness (inverse distance) to all other nodes. 
+        description="""Calculate closeness centrality for all nodes in the graph.
+        The closeness centrality of a node measures its average farness (inverse distance) to all other nodes.
         Nodes with a high closeness score have the shortest distances to all other nodes.""",
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
+                },
                 "nodes": {
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "List of node names to filter closeness centrality results for.",
-                },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run closeness centrality on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run closeness centrality on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
                 "nodeIdentifierProperty": {
                     "type": "string",
@@ -212,7 +176,7 @@ centrality_tool_definitions = [
                     "description": "If true, uses the Wasserman-Faust formula for closeness centrality. ",
                 },
             },
-            "required": [],
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -221,6 +185,10 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
+                },
                 "nodes": {
                     "type": "array",
                     "items": {"type": "string"},
@@ -229,16 +197,6 @@ centrality_tool_definitions = [
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
-                },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run Degree Centrality on. This is used to filter the graph to run the algorithm on. Nodes with other node labels will be hidden and ignored. Include all node labels for nodes that you want to run the algorithm on.",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run Degree Centrality on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
                 "orientation": {
                     "type": "string",
@@ -249,37 +207,31 @@ centrality_tool_definitions = [
                     "description": "Property of the relationship to use for weighting. If not specified, all relationships are treated equally.",
                 },
             },
-            "required": [],
+            "required": ["graphName"],
         },
     ),
     types.Tool(
         name="eigenvector_centrality",
-        description="""Calculate eigenvector centrality for all nodes in the graph. 
-    Eigenvector Centrality is an algorithm that measures the transitive influence of nodes. 
-    Relationships originating from high-scoring nodes contribute more to the score of a node than connections from low-scoring nodes. 
+        description="""Calculate eigenvector centrality for all nodes in the graph.
+    Eigenvector Centrality is an algorithm that measures the transitive influence of nodes.
+    Relationships originating from high-scoring nodes contribute more to the score of a node than connections from low-scoring nodes.
     A high eigenvector score means that a node is connected to many nodes who themselves have high scores.
-    The algorithm computes the eigenvector associated with the largest absolute eigenvalue. 
-    To compute that eigenvalue, the algorithm applies the power iteration approach. 
-    Within each iteration, the centrality score for each node is derived from the scores of its incoming neighbors. 
-    In the power iteration method, the eigenvector is L2-normalized after each iteration, leading to normalized results by default. 
+    The algorithm computes the eigenvector associated with the largest absolute eigenvalue.
+    To compute that eigenvalue, the algorithm applies the power iteration approach.
+    Within each iteration, the centrality score for each node is derived from the scores of its incoming neighbors.
+    In the power iteration method, the eigenvector is L2-normalized after each iteration, leading to normalized results by default.
     The PageRank algorithm is a variant of Eigenvector Centrality with an additional jump probability.""",
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
+                },
                 "nodes": {
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "List of node names to filter eigenvector centrality results for.",
-                },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run eigenvector centrality on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run eigenvector centrality on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
                 "nodeIdentifierProperty": {
                     "type": "string",
@@ -309,6 +261,7 @@ centrality_tool_definitions = [
                     "To apply scaler-specific configuration, use the Map syntax: {scaler: 'name', ...}.",
                 },
             },
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -317,20 +270,14 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
+                },
                 "nodes": {
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "List of node names to filter PageRank results for.",
-                },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run PageRank on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run PageRank on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
                 "nodeIdentifierProperty": {
                     "type": "string",
@@ -354,7 +301,7 @@ centrality_tool_definitions = [
                     "items": {"type": "string"},
                 },
             },
-            "required": [],
+            "required": ["graphName"],
         },
     ),
     types.Tool(
@@ -364,37 +311,35 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
+                },
                 "nodes": {
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "List of node names to filter harmonic centrality results for.",
-                },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run harmonic centrality on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run harmonic centrality on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
             },
-            "required": [],
+            "required": ["graphName"],
         },
     ),
     types.Tool(
         name="HITS",
-        description="""Calculate HITS (Hyperlink-Induced Topic Search) scores for nodes in the graph. 
-        The Hyperlink-Induced Topic Search (HITS) is a link analysis algorithm that rates nodes based on two scores, a hub score and an authority score. 
+        description="""Calculate HITS (Hyperlink-Induced Topic Search) scores for nodes in the graph.
+        The Hyperlink-Induced Topic Search (HITS) is a link analysis algorithm that rates nodes based on two scores, a hub score and an authority score.
         The authority score estimates the importance of the node within the network. The hub score estimates the value of its relationships to other nodes.""",
         inputSchema={
             "type": "object",
             "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
+                },
                 "nodes": {
                     "type": "array",
                     "items": {"type": "string"},
@@ -403,16 +348,6 @@ centrality_tool_definitions = [
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
-                },
-                "nodeLabels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The node labels used to project and run hits on. Nodes with different node labels will be ignored. Do not specify to run for all nodes",
-                },
-                "relTypes": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "The relationships types used to project and run hits on. Relationship types of different type will be ignored. Do not specify to run for all relationship types",
                 },
                 "hitsIterations": {
                     "type": "integer",
@@ -432,7 +367,7 @@ centrality_tool_definitions = [
                     "description": "The partitioning scheme used to divide the work between threads. Available options are AUTO, RANGE, DEGREE.",
                 },
             },
-            "required": [],
+            "required": ["graphName"],
         },
     ),
 ]
