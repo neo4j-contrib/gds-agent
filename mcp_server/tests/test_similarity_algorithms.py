@@ -1,4 +1,5 @@
 import pytest
+import re
 
 
 @pytest.mark.asyncio
@@ -103,6 +104,30 @@ async def test_filtered_node_similarity(mcp_client, projected_test_graph):
     assert len(data_lines) == 1
     assert "Acton Town" in data_lines[0]
     assert "Stamford Brook" in data_lines[0]
+
+
+@pytest.mark.asyncio
+async def test_node_similarity_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "node_similarity",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "similarity",
+            "mutateRelationshipType": "SIMILAR_TO",
+            "topK": 3,
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "relationshipsWritten" in result_text
+
+    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    assert match is not None
+    relationships_written = int(match.group(1))
+    assert relationships_written > 0
 
 
 @pytest.mark.asyncio
@@ -211,3 +236,28 @@ async def test_filtered_knn(mcp_client, projected_undirected_graph):
     assert len(data_lines) == 1
     assert "Acton Town" in data_lines[0]
     assert "Stamford Brook" in data_lines[0]
+
+
+@pytest.mark.asyncio
+async def test_knn_mutate(mcp_client, projected_undirected_graph):
+    result = await mcp_client.call_tool(
+        "k_nearest_neighbors",
+        {
+            "graphName": projected_undirected_graph,
+            "mode": "mutate",
+            "mutateProperty": "knnScore",
+            "mutateRelationshipType": "KNN_SIMILAR",
+            "topK": 3,
+            "nodeProperties": {"rail": "DEFAULT"},
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "relationshipsWritten" in result_text
+
+    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    assert match is not None
+    relationships_written = int(match.group(1))
+    assert relationships_written == 302 * 3

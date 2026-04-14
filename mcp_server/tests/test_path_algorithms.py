@@ -672,3 +672,22 @@ async def test_max_flow(mcp_client, projected_test_graph):
     result_data = json.loads(result_text)
 
     assert len(result_data.get("flows")) == 7
+
+
+@pytest.mark.asyncio
+async def test_random_walk_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "random_walk",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "randomWalkPath",
+            "walkLength": 10,
+            "walksPerNode": 5,
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
