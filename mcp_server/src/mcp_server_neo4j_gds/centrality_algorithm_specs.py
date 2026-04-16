@@ -138,15 +138,6 @@ centrality_tool_definitions = [
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
                 },
-                "mode": {
-                    "type": "string",
-                    "enum": ["stream", "mutate"],
-                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
-                },
-                "mutateProperty": {
-                    "type": "string",
-                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
-                },
                 "nodeIdentifierProperty": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",

@@ -203,6 +203,28 @@ async def test_articulation_points(mcp_client, projected_undirected_graph):
 
 
 @pytest.mark.asyncio
+async def test_articulation_points_mutate(mcp_client, projected_undirected_graph):
+    result = await mcp_client.call_tool(
+        "articulation_points",
+        {
+            "graphName": projected_undirected_graph,
+            "mode": "mutate",
+            "mutateProperty": "articulationPoint",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written > 0
+
+
+@pytest.mark.asyncio
 async def test_betweenness_centrality(mcp_client, projected_test_graph):
     result_filtered = await mcp_client.call_tool(
         "betweenness_centrality",
@@ -218,6 +240,28 @@ async def test_betweenness_centrality(mcp_client, projected_test_graph):
     assert "nodeId" in result_filtered_text
     assert "score" in result_filtered_text
     assert "nodeName" in result_filtered_text
+
+
+@pytest.mark.asyncio
+async def test_betweenness_centrality_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "betweenness_centrality",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "betweenness",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written == 302
 
 
 @pytest.mark.asyncio
@@ -255,6 +299,29 @@ async def test_celf(mcp_client, projected_test_graph):
 
 
 @pytest.mark.asyncio
+async def test_celf_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "CELF",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "celfSpread",
+            "seedSetSize": 3,
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written == 302
+
+
+@pytest.mark.asyncio
 async def test_closeness_centrality(mcp_client, projected_test_graph):
     result_filtered = await mcp_client.call_tool(
         "closeness_centrality",
@@ -270,6 +337,28 @@ async def test_closeness_centrality(mcp_client, projected_test_graph):
     assert "nodeId" in result_filtered_text
     assert "score" in result_filtered_text
     assert "nodeName" in result_filtered_text
+
+
+@pytest.mark.asyncio
+async def test_closeness_centrality_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "closeness_centrality",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "closeness",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written == 302
 
 
 @pytest.mark.asyncio
@@ -290,6 +379,29 @@ async def test_degree_centrality(mcp_client, projected_test_graph):
     assert "nodeId" in result_filtered_text
     assert "score" in result_filtered_text
     assert "nodeName" in result_filtered_text
+
+
+@pytest.mark.asyncio
+async def test_degree_centrality_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "degree_centrality",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "degree",
+            "orientation": "NATURAL",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written == 302
 
 
 @pytest.mark.asyncio
@@ -325,6 +437,29 @@ async def test_eigenvector_centrality(mcp_client, projected_test_graph):
 
 
 @pytest.mark.asyncio
+async def test_eigenvector_centrality_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "eigenvector_centrality",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "eigenvector",
+            "maxIterations": 15,
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written == 302
+
+
+@pytest.mark.asyncio
 async def test_pagerank(mcp_client, projected_test_graph):
     result_combined = await mcp_client.call_tool(
         "pagerank",
@@ -357,6 +492,29 @@ async def test_pagerank(mcp_client, projected_test_graph):
 
 
 @pytest.mark.asyncio
+async def test_pagerank_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "pagerank",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "pagerank",
+            "dampingFactor": 0.85,
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written == 302
+
+
+@pytest.mark.asyncio
 async def test_harmonic_centrality(mcp_client, projected_test_graph):
     result_filtered = await mcp_client.call_tool(
         "harmonic_centrality",
@@ -375,6 +533,28 @@ async def test_harmonic_centrality(mcp_client, projected_test_graph):
 
 
 @pytest.mark.asyncio
+async def test_harmonic_centrality_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "harmonic_centrality",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "harmonic",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written == 302
+
+
+@pytest.mark.asyncio
 async def test_hits(mcp_client, projected_test_graph):
     result_filtered = await mcp_client.call_tool(
         "HITS",
@@ -390,3 +570,25 @@ async def test_hits(mcp_client, projected_test_graph):
     assert "nodeId" in result_filtered_text
     assert "values" in result_filtered_text
     assert "nodeName" in result_filtered_text
+
+
+@pytest.mark.asyncio
+async def test_hits_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "HITS",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "hits",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written == 604

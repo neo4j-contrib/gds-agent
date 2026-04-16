@@ -130,24 +130,17 @@ class BetweennessCentralityHandler(AlgorithmHandler):
 
 class BridgesHandler(AlgorithmHandler):
     def bridges(self, **kwargs):
-        mode = kwargs.get("mode", "stream")
         node_identifier_property = kwargs.get("nodeIdentifierProperty")
 
         G = self.gds.graph.get(kwargs.get("graphName"))
-        gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
-        )
 
-        if mode == "mutate":
-            result = self.gds.bridges.mutate(G, **gds_params)
-        else:
-            result = self.gds.bridges.stream(G)
-            translate_ids_to_identifiers(
-                self.gds, node_identifier_property, result, "from", "fromName"
-            )
-            translate_ids_to_identifiers(
-                self.gds, node_identifier_property, result, "to", "toName"
-            )
+        result = self.gds.bridges.stream(G)
+        translate_ids_to_identifiers(
+            self.gds, node_identifier_property, result, "from", "fromName"
+        )
+        translate_ids_to_identifiers(
+            self.gds, node_identifier_property, result, "to", "toName"
+        )
 
         return result
 
