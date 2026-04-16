@@ -1,4 +1,5 @@
 import pytest
+import re
 
 
 @pytest.mark.asyncio
@@ -65,6 +66,52 @@ async def test_k_1_coloring(mcp_client, projected_test_graph):
     lines = result_with_names_text.strip().split("\n")
     data_lines = [line for line in lines[1:] if line.strip()]
     assert len(data_lines) > 0
+
+
+@pytest.mark.asyncio
+async def test_k_core_decomposition_mutate(mcp_client, projected_undirected_graph):
+    result = await mcp_client.call_tool(
+        "k_core_decomposition",
+        {
+            "graphName": projected_undirected_graph,
+            "mode": "mutate",
+            "mutateProperty": "kcore",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written > 0
+
+
+@pytest.mark.asyncio
+async def test_k_1_coloring_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "k_1_coloring",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "color",
+            "maxIterations": 5,
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodeCount" in result_text
+    assert "colorCount" in result_text
+
+    match = re.search(r"nodeCount\s+(\d+)", result_text)
+    assert match is not None
+    nodes_counted = int(match.group(1))
+    assert nodes_counted == 302
 
 
 @pytest.mark.asyncio
@@ -136,6 +183,76 @@ async def test_local_clustering_coefficient(mcp_client, projected_undirected_gra
 
 
 @pytest.mark.asyncio
+async def test_label_propagation_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "label_propagation",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "community",
+            "maxIterations": 10,
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written == 302
+
+
+@pytest.mark.asyncio
+async def test_leiden_mutate(mcp_client, projected_undirected_graph):
+    result = await mcp_client.call_tool(
+        "leiden",
+        {
+            "graphName": projected_undirected_graph,
+            "mode": "mutate",
+            "mutateProperty": "leidenCommunity",
+            "maxLevels": 10,
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written > 0
+
+
+@pytest.mark.asyncio
+async def test_local_clustering_coefficient_mutate(
+    mcp_client, projected_undirected_graph
+):
+    result = await mcp_client.call_tool(
+        "local_clustering_coefficient",
+        {
+            "graphName": projected_undirected_graph,
+            "mode": "mutate",
+            "mutateProperty": "lcc",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written > 0
+
+
+@pytest.mark.asyncio
 async def test_louvain(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
         "louvain",
@@ -154,6 +271,29 @@ async def test_louvain(mcp_client, projected_test_graph):
     lines = result_with_names_text.strip().split("\n")
     data_lines = [line for line in lines[1:] if line.strip()]
     assert len(data_lines) > 0
+
+
+@pytest.mark.asyncio
+async def test_louvain_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "louvain",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "louvainCommunity",
+            "maxLevels": 10,
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written == 302
 
 
 @pytest.mark.asyncio
@@ -209,6 +349,30 @@ async def test_modularity_optimization(mcp_client, projected_test_graph):
 
 
 @pytest.mark.asyncio
+async def test_modularity_optimization_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "modularity_optimization",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "modularityCommunity",
+            "maxIterations": 10,
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodes" in result_text
+    assert "communityCount" in result_text
+
+    match = re.search(r"nodes\s+(\d+)", result_text)
+    assert match is not None
+    nodes_counted = int(match.group(1))
+    assert nodes_counted == 302
+
+
+@pytest.mark.asyncio
 async def test_strongly_connected_components(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
         "strongly_connected_components",
@@ -246,6 +410,50 @@ async def test_triangle_count(mcp_client, projected_undirected_graph):
 
 
 @pytest.mark.asyncio
+async def test_strongly_connected_components_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "strongly_connected_components",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "sccComponent",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written == 302
+
+
+@pytest.mark.asyncio
+async def test_triangle_count_mutate(mcp_client, projected_undirected_graph):
+    result = await mcp_client.call_tool(
+        "triangle_count",
+        {
+            "graphName": projected_undirected_graph,
+            "mode": "mutate",
+            "mutateProperty": "triangles",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written > 0
+
+
+@pytest.mark.asyncio
 async def test_weakly_connected_components(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
         "weakly_connected_components",
@@ -280,6 +488,51 @@ async def test_approximate_maximum_k_cut(mcp_client, projected_test_graph):
 
 
 @pytest.mark.asyncio
+async def test_weakly_connected_components_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "weakly_connected_components",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "wccComponent",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written == 302
+
+
+@pytest.mark.asyncio
+async def test_approximate_maximum_k_cut_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "approximate_maximum_k_cut",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "cutCommunity",
+            "k": 2,
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written == 302
+
+
+@pytest.mark.asyncio
 async def test_speaker_listener_label_propagation(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
         "speaker_listener_label_propagation",
@@ -299,3 +552,29 @@ async def test_speaker_listener_label_propagation(mcp_client, projected_test_gra
     lines = result_with_names_text.strip().split("\n")
     data_lines = [line for line in lines[1:] if line.strip()]
     assert len(data_lines) > 0
+
+
+@pytest.mark.asyncio
+async def test_speaker_listener_label_propagation_mutate(
+    mcp_client, projected_test_graph
+):
+    result = await mcp_client.call_tool(
+        "speaker_listener_label_propagation",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "sllpCommunity",
+            "maxIterations": 10,
+            "minAssociationStrength": 0.1,
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert match is not None
+    nodes_written = int(match.group(1))
+    assert nodes_written == 302

@@ -1,5 +1,6 @@
 import pytest
 import json
+import re
 
 
 @pytest.mark.asyncio
@@ -672,3 +673,233 @@ async def test_max_flow(mcp_client, projected_test_graph):
     result_data = json.loads(result_text)
 
     assert len(result_data.get("flows")) == 7
+
+
+@pytest.mark.asyncio
+async def test_random_walk_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "random_walk",
+        {
+            "graphName": projected_test_graph,
+            "mode": "mutate",
+            "mutateProperty": "randomWalkPath",
+            "walkLength": 10,
+            "walksPerNode": 5,
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "nodePropertiesWritten" in result_text
+
+
+@pytest.mark.asyncio
+async def test_find_shortest_path_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "find_shortest_path",
+        {
+            "graphName": projected_test_graph,
+            "start_node": "Bayswater",
+            "end_node": "Westbourne Park",
+            "nodeIdentifierProperty": "name",
+            "relationship_property": "time",
+            "mode": "mutate",
+            "mutateRelationshipType": "SHORTEST_PATH",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "relationshipsWritten" in result_text
+
+    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    assert match is not None
+    relationships_written = int(match.group(1))
+    assert relationships_written == 1
+
+
+@pytest.mark.asyncio
+async def test_delta_stepping_shortest_path_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "delta_stepping_shortest_path",
+        {
+            "graphName": projected_test_graph,
+            "sourceNode": "Bayswater",
+            "nodeIdentifierProperty": "name",
+            "delta": 2.0,
+            "relationshipWeightProperty": "time",
+            "mode": "mutate",
+            "mutateRelationshipType": "DELTA_PATH",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "relationshipsWritten" in result_text
+
+    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    assert match is not None
+    relationships_written = int(match.group(1))
+    assert relationships_written == 7
+
+
+@pytest.mark.asyncio
+async def test_dijkstra_single_source_shortest_path_mutate(
+    mcp_client, projected_test_graph
+):
+    result = await mcp_client.call_tool(
+        "dijkstra_single_source_shortest_path",
+        {
+            "graphName": projected_test_graph,
+            "sourceNode": "Bayswater",
+            "nodeIdentifierProperty": "name",
+            "relationshipWeightProperty": "time",
+            "mode": "mutate",
+            "mutateRelationshipType": "DIJKSTRA_PATH",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "relationshipsWritten" in result_text
+
+    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    assert match is not None
+    relationships_written = int(match.group(1))
+    assert relationships_written == 7
+
+
+@pytest.mark.asyncio
+async def test_breadth_first_search_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "breadth_first_search",
+        {
+            "graphName": projected_test_graph,
+            "sourceNode": "Bayswater",
+            "nodeIdentifierProperty": "name",
+            "maxDepth": 3,
+            "mode": "mutate",
+            "mutateRelationshipType": "BFS_TREE",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "relationshipsWritten" in result_text
+
+    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    assert match is not None
+    relationships_written = int(match.group(1))
+    assert relationships_written > 0
+
+
+@pytest.mark.asyncio
+async def test_depth_first_search_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "depth_first_search",
+        {
+            "graphName": projected_test_graph,
+            "sourceNode": "Bayswater",
+            "nodeIdentifierProperty": "name",
+            "maxDepth": 3,
+            "mode": "mutate",
+            "mutateRelationshipType": "DFS_TREE",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "relationshipsWritten" in result_text
+
+    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    assert match is not None
+    relationships_written = int(match.group(1))
+    assert relationships_written > 0
+
+
+@pytest.mark.asyncio
+async def test_bellman_ford_single_source_shortest_path_mutate(
+    mcp_client, projected_test_graph
+):
+    result = await mcp_client.call_tool(
+        "bellman_ford_single_source_shortest_path",
+        {
+            "graphName": projected_test_graph,
+            "sourceNode": "Bayswater",
+            "nodeIdentifierProperty": "name",
+            "relationshipWeightProperty": "time",
+            "mode": "mutate",
+            "mutateRelationshipType": "BELLMAN_FORD_PATH",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "relationshipsWritten" in result_text
+
+    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    assert match is not None
+    relationships_written = int(match.group(1))
+    assert relationships_written == 7
+
+
+@pytest.mark.asyncio
+async def test_minimum_weight_spanning_tree_mutate(
+    mcp_client, projected_undirected_graph
+):
+    result = await mcp_client.call_tool(
+        "minimum_weight_spanning_tree",
+        {
+            "graphName": projected_undirected_graph,
+            "sourceNode": "Canada Water",
+            "nodeIdentifierProperty": "name",
+            "relationshipWeightProperty": "time",
+            "mode": "mutate",
+            "mutateProperty": "mstWeight",
+            "mutateRelationshipType": "MST_EDGE",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "relationshipsWritten" in result_text
+
+    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    assert match is not None
+    relationships_written = int(match.group(1))
+    assert relationships_written == 301
+
+
+@pytest.mark.asyncio
+async def test_max_flow_mutate(mcp_client, projected_test_graph):
+    result = await mcp_client.call_tool(
+        "max_flow",
+        {
+            "graphName": projected_test_graph,
+            "sourceNodes": ["Baker Street"],
+            "targetNodes": ["Bond Street"],
+            "nodeIdentifierProperty": "name",
+            "capacityProperty": "time",
+            "mode": "mutate",
+            "mutateProperty": "flow",
+            "mutateRelationshipType": "FLOW_EDGE",
+        },
+    )
+
+    assert len(result) == 1
+    result_text = result[0]["text"]
+
+    assert "relationshipsWritten" in result_text
+
+    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    assert match is not None
+    relationships_written = int(match.group(1))
+    assert relationships_written > 0

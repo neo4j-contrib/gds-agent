@@ -9,6 +9,7 @@ This allows the LLMs to use Cypher project to manage a catalog of projected grap
 
 ### New Features
 1. Add new maxflow path algorithm tool.
+2. Support mutate mode for all algorithm tools.
 
 ### Bug Fixes
 

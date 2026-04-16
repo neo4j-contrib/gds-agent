@@ -1,11 +1,20 @@
 # Environment files
 .envrc
+.env
 
 # Python cache
 __pycache__/
 
 # IDE
 .idea/
+.vscode/
+
+# macOS
+.DS_Store
 
 # Logs
 *.log
+
+# Misc
+.worktreeinclude
+CLAUDE.md

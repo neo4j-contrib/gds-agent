@@ -11,6 +11,15 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
+                },
+                "mutateRelationshipType": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
+                },
                 "start_node": {
                     "type": "string",
                     "description": "Name of the starting node",
@@ -50,6 +59,15 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
+                },
+                "mutateRelationshipType": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
+                },
                 "sourceNode": {
                     "type": "string",
                     "description": "Name of the source node to find shortest paths from.",
@@ -82,6 +100,15 @@ path_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
+                },
+                "mutateRelationshipType": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
                 "sourceNode": {
                     "type": "string",
@@ -117,6 +144,15 @@ path_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
+                },
+                "mutateRelationshipType": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
                 "sourceNode": {
                     "type": "string",
@@ -172,6 +208,15 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
+                },
+                "mutateRelationshipType": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
+                },
                 "sourceNode": {
                     "type": "string",
                     "description": "Name of the source node to find shortest paths from.",
@@ -216,6 +261,19 @@ path_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships with properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The relationship property in the GDS graph to which the weight is written.",
+                },
+                "mutateRelationshipType": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
                 "sourceNode": {
                     "type": "string",
@@ -366,6 +424,15 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
+                },
                 "sourceNodes": {
                     "type": "array",
                     "items": {"type": "string"},
@@ -417,6 +484,15 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
+                },
+                "mutateRelationshipType": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
+                },
                 "sourceNode": {
                     "type": "string",
                     "description": "Name of the starting source node.",
@@ -451,6 +527,15 @@ path_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
+                },
+                "mutateRelationshipType": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
                 "sourceNode": {
                     "type": "string",
@@ -492,6 +577,15 @@ path_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
+                },
+                "mutateRelationshipType": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
                 "sourceNode": {
                     "type": "string",
@@ -551,6 +645,19 @@ path_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["stream", "mutate"],
+                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships with properties. Default is 'stream'.",
+                },
+                "mutateProperty": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The relationship property in the GDS graph to which the flow is written.",
+                },
+                "mutateRelationshipType": {
+                    "type": "string",
+                    "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
                 "sourceNodes": {
                     "type": "array",

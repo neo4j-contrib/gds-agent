@@ -14,6 +14,7 @@ logger = logging.getLogger("mcp_server_neo4j_gds")
 
 class ArticleRankHandler(AlgorithmHandler):
     def article_rank(self, **kwargs):
+        mode = kwargs.get("mode", "stream")
         node_names = kwargs.get("nodes", None)
         node_identifier_property = kwargs.get("nodeIdentifierProperty")
         source_nodes = kwargs.get("sourceNodes", None)
@@ -23,12 +24,12 @@ class ArticleRankHandler(AlgorithmHandler):
             kwargs,
             [
                 "graphName",
+                "mode",
                 "nodes",
                 "nodeIdentifierProperty",
                 "sourceNodes",
             ],
         )
-        # Handle sourceNodes - convert names to IDs if nodeIdentifierProperty is provided
         translate_identifiers_to_ids(
             self.gds,
             source_nodes,
@@ -38,20 +39,23 @@ class ArticleRankHandler(AlgorithmHandler):
         )
 
         logger.info(f"ArticleRank parameters: {gds_params}")
-        article_ranks = self.gds.articleRank.stream(G, **gds_params)
+        if mode == "mutate":
+            result = self.gds.articleRank.mutate(G, **gds_params)
+        else:
+            result = self.gds.articleRank.stream(G, **gds_params)
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
+            logger.info(f"Filtering ArticleRank results for nodes: {node_names}")
+            result = filter_identifiers(
+                self.gds, node_identifier_property, node_names, result
+            )
 
-        translate_ids_to_identifiers(self.gds, node_identifier_property, article_ranks)
-
-        logger.info(f"Filtering ArticleRank results for nodes: {node_names}")
-        article_ranks = filter_identifiers(
-            self.gds, node_identifier_property, node_names, article_ranks
-        )
-
-        return article_ranks
+        return result
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.article_rank(
             graphName=arguments.get("graphName"),
+            mode=arguments.get("mode"),
+            mutateProperty=arguments.get("mutateProperty"),
             nodes=arguments.get("nodes"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             sourceNodes=arguments.get("sourceNodes"),
@@ -64,47 +68,59 @@ class ArticleRankHandler(AlgorithmHandler):
 
 class ArticulationPointsHandler(AlgorithmHandler):
     def articulation_points(self, **kwargs):
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        articulation_points = self.gds.articulationPoints.stream(G)
-
-        # Add node names to the results if nodeIdentifierProperty is provided
+        mode = kwargs.get("mode", "stream")
         node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        translate_ids_to_identifiers(
-            self.gds, node_identifier_property, articulation_points
+
+        G = self.gds.graph.get(kwargs.get("graphName"))
+        gds_params = clean_params(
+            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
         )
-        return articulation_points
+
+        if mode == "mutate":
+            result = self.gds.articulationPoints.mutate(G, **gds_params)
+        else:
+            result = self.gds.articulationPoints.stream(G)
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
+
+        return result
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.articulation_points(
             graphName=arguments.get("graphName"),
+            mode=arguments.get("mode"),
+            mutateProperty=arguments.get("mutateProperty"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
         )
 
 
 class BetweennessCentralityHandler(AlgorithmHandler):
     def betweenness_centrality(self, **kwargs):
+        mode = kwargs.get("mode", "stream")
+        node_names = kwargs.get("nodes", None)
+        node_identifier_property = kwargs.get("nodeIdentifierProperty")
+
         G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
-            kwargs, ["graphName", "nodes", "nodeIdentifierProperty"]
+            kwargs, ["graphName", "mode", "nodes", "nodeIdentifierProperty"]
         )
         logger.info(f"Betweenness centrality parameters: {gds_params}")
-        centrality = self.gds.betweenness.stream(G, **gds_params)
 
-        # Add node names to the results if nodeIdentifierProperty is provided
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        translate_ids_to_identifiers(self.gds, node_identifier_property, centrality)
+        if mode == "mutate":
+            result = self.gds.betweenness.mutate(G, **gds_params)
+        else:
+            result = self.gds.betweenness.stream(G, **gds_params)
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
+            result = filter_identifiers(
+                self.gds, node_identifier_property, node_names, result
+            )
 
-        # Filter results by node names if provided
-        node_names = kwargs.get("nodes", None)
-        centrality = filter_identifiers(
-            self.gds, node_identifier_property, node_names, centrality
-        )
-
-        return centrality
+        return result
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.betweenness_centrality(
             graphName=arguments.get("graphName"),
+            mode=arguments.get("mode"),
+            mutateProperty=arguments.get("mutateProperty"),
             nodes=arguments.get("nodes"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             samplingSize=arguments.get("samplingSize"),
@@ -114,43 +130,53 @@ class BetweennessCentralityHandler(AlgorithmHandler):
 
 class BridgesHandler(AlgorithmHandler):
     def bridges(self, **kwargs):
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        bridges_result = self.gds.bridges.stream(G)
-
-        # Add node names to the results if nodeIdentifierProperty is provided
         node_identifier_property = kwargs.get("nodeIdentifierProperty")
+
+        G = self.gds.graph.get(kwargs.get("graphName"))
+
+        result = self.gds.bridges.stream(G)
         translate_ids_to_identifiers(
-            self.gds, node_identifier_property, bridges_result, "from", "fromName"
+            self.gds, node_identifier_property, result, "from", "fromName"
         )
         translate_ids_to_identifiers(
-            self.gds, node_identifier_property, bridges_result, "to", "toName"
+            self.gds, node_identifier_property, result, "to", "toName"
         )
 
-        return bridges_result
+        return result
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.bridges(
             graphName=arguments.get("graphName"),
+            mode=arguments.get("mode"),
+            mutateProperty=arguments.get("mutateProperty"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
         )
 
 
 class CELFHandler(AlgorithmHandler):
     def celf(self, **kwargs):
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        gds_params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
-        logger.info(f"CELF parameters: {gds_params}")
-        result = self.gds.influenceMaximization.celf.stream(G, **gds_params)
-
-        # Add node names to the results if nodeIdentifierProperty is provided
+        mode = kwargs.get("mode", "stream")
         node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        translate_ids_to_identifiers(self.gds, node_identifier_property, result)
+
+        G = self.gds.graph.get(kwargs.get("graphName"))
+        gds_params = clean_params(
+            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
+        )
+        logger.info(f"CELF parameters: {gds_params}")
+
+        if mode == "mutate":
+            result = self.gds.influenceMaximization.celf.mutate(G, **gds_params)
+        else:
+            result = self.gds.influenceMaximization.celf.stream(G, **gds_params)
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
 
         return result
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.celf(
             graphName=arguments.get("graphName"),
+            mode=arguments.get("mode"),
+            mutateProperty=arguments.get("mutateProperty"),
             seedSetSize=arguments.get("seedSetSize"),
             monteCarloSimulations=arguments.get("monteCarloSimulations"),
             propagationProbability=arguments.get("propagationProbability"),
@@ -160,28 +186,32 @@ class CELFHandler(AlgorithmHandler):
 
 class ClosenessCentralityHandler(AlgorithmHandler):
     def closeness_centrality(self, **kwargs):
+        mode = kwargs.get("mode", "stream")
+        node_names = kwargs.get("nodes", None)
+        node_identifier_property = kwargs.get("nodeIdentifierProperty")
+
         G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
-            kwargs, ["graphName", "nodes", "nodeIdentifierProperty"]
+            kwargs, ["graphName", "mode", "nodes", "nodeIdentifierProperty"]
         )
         logger.info(f"Closeness centrality parameters: {gds_params}")
-        centrality = self.gds.closeness.stream(G, **gds_params)
 
-        # Add node names to the results if nodeIdentifierProperty is provided
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        translate_ids_to_identifiers(self.gds, node_identifier_property, centrality)
+        if mode == "mutate":
+            result = self.gds.closeness.mutate(G, **gds_params)
+        else:
+            result = self.gds.closeness.stream(G, **gds_params)
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
+            result = filter_identifiers(
+                self.gds, node_identifier_property, node_names, result
+            )
 
-        # Filter results by node names if provided
-        node_names = kwargs.get("nodes", None)
-        centrality = filter_identifiers(
-            self.gds, node_identifier_property, node_names, centrality
-        )
-
-        return centrality
+        return result
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.closeness_centrality(
             graphName=arguments.get("graphName"),
+            mode=arguments.get("mode"),
+            mutateProperty=arguments.get("mutateProperty"),
             nodes=arguments.get("nodes"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             useWassermanFaust=arguments.get("useWassermanFaust"),
@@ -190,28 +220,32 @@ class ClosenessCentralityHandler(AlgorithmHandler):
 
 class DegreeCentralityHandler(AlgorithmHandler):
     def degree_centrality(self, **kwargs):
+        mode = kwargs.get("mode", "stream")
+        node_names = kwargs.get("nodes", None)
+        node_identifier_property = kwargs.get("nodeIdentifierProperty")
+
         G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
-            kwargs, ["graphName", "nodes", "nodeIdentifierProperty"]
+            kwargs, ["graphName", "mode", "nodes", "nodeIdentifierProperty"]
         )
         logger.info(f"Degree centrality parameters: {gds_params}")
-        centrality = self.gds.degree.stream(G, **gds_params)
 
-        # Add node names to the results if nodeIdentifierProperty is provided
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        translate_ids_to_identifiers(self.gds, node_identifier_property, centrality)
+        if mode == "mutate":
+            result = self.gds.degree.mutate(G, **gds_params)
+        else:
+            result = self.gds.degree.stream(G, **gds_params)
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
+            result = filter_identifiers(
+                self.gds, node_identifier_property, node_names, result
+            )
 
-        # Filter results by node names if provided
-        node_names = kwargs.get("nodes", None)
-        centrality = filter_identifiers(
-            self.gds, node_identifier_property, node_names, centrality
-        )
-
-        return centrality
+        return result
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.degree_centrality(
             graphName=arguments.get("graphName"),
+            mode=arguments.get("mode"),
+            mutateProperty=arguments.get("mutateProperty"),
             nodes=arguments.get("nodes"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             orientation=arguments.get("orientation"),
@@ -221,20 +255,22 @@ class DegreeCentralityHandler(AlgorithmHandler):
 
 class EigenvectorCentralityHandler(AlgorithmHandler):
     def eigenvector_centrality(self, **kwargs):
+        mode = kwargs.get("mode", "stream")
+        node_names = kwargs.get("nodes", None)
+        node_identifier_property = kwargs.get("nodeIdentifierProperty")
+        source_nodes = kwargs.get("sourceNodes", None)
+
         G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
             kwargs,
             [
                 "graphName",
+                "mode",
                 "nodes",
                 "nodeIdentifierProperty",
                 "sourceNodes",
             ],
         )
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        source_nodes = kwargs.get("sourceNodes", None)
-
-        # Handle sourceNodes - convert names to IDs if nodeIdentifierProperty is provided
         translate_identifiers_to_ids(
             self.gds,
             source_nodes,
@@ -244,23 +280,22 @@ class EigenvectorCentralityHandler(AlgorithmHandler):
         )
 
         logger.info(f"Eigenvector centrality parameters: {gds_params}")
-        centrality = self.gds.eigenvector.stream(G, **gds_params)
+        if mode == "mutate":
+            result = self.gds.eigenvector.mutate(G, **gds_params)
+        else:
+            result = self.gds.eigenvector.stream(G, **gds_params)
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
+            result = filter_identifiers(
+                self.gds, node_identifier_property, node_names, result
+            )
 
-        # Add node names to the results if nodeIdentifierProperty is provided
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        translate_ids_to_identifiers(self.gds, node_identifier_property, centrality)
-
-        # Filter results by node names if provided
-        node_names = kwargs.get("nodes", None)
-        centrality = filter_identifiers(
-            self.gds, node_identifier_property, node_names, centrality
-        )
-
-        return centrality
+        return result
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.eigenvector_centrality(
             graphName=arguments.get("graphName"),
+            mode=arguments.get("mode"),
+            mutateProperty=arguments.get("mutateProperty"),
             nodes=arguments.get("nodes"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             maxIterations=arguments.get("maxIterations"),
@@ -273,20 +308,22 @@ class EigenvectorCentralityHandler(AlgorithmHandler):
 
 class PageRankHandler(AlgorithmHandler):
     def pagerank(self, **kwargs):
+        mode = kwargs.get("mode", "stream")
+        node_names = kwargs.get("nodes", None)
+        node_identifier_property = kwargs.get("nodeIdentifierProperty")
+        source_nodes = kwargs.get("sourceNodes", None)
+
         G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
             kwargs,
             [
                 "graphName",
+                "mode",
                 "nodes",
                 "nodeIdentifierProperty",
                 "sourceNodes",
             ],
         )
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        source_nodes = kwargs.get("sourceNodes", None)
-
-        # Handle sourceNodes - convert names to IDs if nodeIdentifierProperty is provided
         translate_identifiers_to_ids(
             self.gds,
             source_nodes,
@@ -294,24 +331,24 @@ class PageRankHandler(AlgorithmHandler):
             node_identifier_property,
             gds_params,
         )
+
         logger.info(f"Pagerank parameters: {gds_params}")
-        pageranks = self.gds.pageRank.stream(G, **gds_params)
+        if mode == "mutate":
+            result = self.gds.pageRank.mutate(G, **gds_params)
+        else:
+            result = self.gds.pageRank.stream(G, **gds_params)
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
+            result = filter_identifiers(
+                self.gds, node_identifier_property, node_names, result
+            )
 
-        # Add node names to the results if nodeIdentifierProperty is provided
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        translate_ids_to_identifiers(self.gds, node_identifier_property, pageranks)
-
-        # Filter results by node names if provided
-        node_names = kwargs.get("nodes", None)
-        pageranks = filter_identifiers(
-            self.gds, node_identifier_property, node_names, pageranks
-        )
-
-        return pageranks
+        return result
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.pagerank(
             graphName=arguments.get("graphName"),
+            mode=arguments.get("mode"),
+            mutateProperty=arguments.get("mutateProperty"),
             nodes=arguments.get("nodes"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             sourceNodes=arguments.get("sourceNodes"),
@@ -323,23 +360,31 @@ class PageRankHandler(AlgorithmHandler):
 
 class HarmonicCentralityHandler(AlgorithmHandler):
     def harmonic_centrality(self, **kwargs):
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        centrality = self.gds.closeness.harmonic.stream(G)
-
-        # Add node names to the results if nodeIdentifierProperty is provided
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        translate_ids_to_identifiers(self.gds, node_identifier_property, centrality)
-
-        # Filter results by node names if provided
+        mode = kwargs.get("mode", "stream")
         node_names = kwargs.get("nodes", None)
-        centrality = filter_identifiers(
-            self.gds, node_identifier_property, node_names, centrality
+        node_identifier_property = kwargs.get("nodeIdentifierProperty")
+
+        G = self.gds.graph.get(kwargs.get("graphName"))
+        gds_params = clean_params(
+            kwargs, ["graphName", "mode", "nodes", "nodeIdentifierProperty"]
         )
-        return centrality
+
+        if mode == "mutate":
+            result = self.gds.closeness.harmonic.mutate(G, **gds_params)
+        else:
+            result = self.gds.closeness.harmonic.stream(G)
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
+            result = filter_identifiers(
+                self.gds, node_identifier_property, node_names, result
+            )
+
+        return result
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.harmonic_centrality(
             graphName=arguments.get("graphName"),
+            mode=arguments.get("mode"),
+            mutateProperty=arguments.get("mutateProperty"),
             nodes=arguments.get("nodes"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
         )
@@ -347,31 +392,36 @@ class HarmonicCentralityHandler(AlgorithmHandler):
 
 class HITSHandler(AlgorithmHandler):
     def hits(self, **kwargs):
+        mode = kwargs.get("mode", "stream")
+        node_names = kwargs.get("nodes", None)
+        node_identifier_property = kwargs.get("nodeIdentifierProperty")
+
         G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
-            kwargs, ["graphName", "nodes", "nodeIdentifierProperty"]
+            kwargs, ["graphName", "mode", "nodes", "nodeIdentifierProperty"]
         )
+        gds_params["authProperty"] = "auth"
+        gds_params["hubProperty"] = "hub"
         logger.info(f"HITS parameters: {gds_params}")
-        result = self.gds.hits.stream(G, **gds_params)
 
-        # Add node names to the results if nodeIdentifierProperty is provided
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        translate_ids_to_identifiers(self.gds, node_identifier_property, result)
+        if mode == "mutate":
+            result = self.gds.hits.mutate(G, **gds_params)
+        else:
+            result = self.gds.hits.stream(G, **gds_params)
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
+            result = filter_identifiers(
+                self.gds, node_identifier_property, node_names, result
+            )
 
-        # Filter results by node names if provided
-        node_names = kwargs.get("nodes", None)
-        result = filter_identifiers(
-            self.gds, node_identifier_property, node_names, result
-        )
         return result
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.hits(
             graphName=arguments.get("graphName"),
+            mode=arguments.get("mode"),
+            mutateProperty=arguments.get("mutateProperty"),
             nodes=arguments.get("nodes"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             hitsIterations=arguments.get("hitsIterations"),
-            authProperty=arguments.get("authProperty"),
-            hubProperty=arguments.get("hubProperty"),
             partitioning=arguments.get("partitioning"),
         )
