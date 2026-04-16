@@ -229,7 +229,9 @@ async def test_leiden_mutate(mcp_client, projected_undirected_graph):
 
 
 @pytest.mark.asyncio
-async def test_local_clustering_coefficient_mutate(mcp_client, projected_undirected_graph):
+async def test_local_clustering_coefficient_mutate(
+    mcp_client, projected_undirected_graph
+):
     result = await mcp_client.call_tool(
         "local_clustering_coefficient",
         {
@@ -553,7 +555,9 @@ async def test_speaker_listener_label_propagation(mcp_client, projected_test_gra
 
 
 @pytest.mark.asyncio
-async def test_speaker_listener_label_propagation_mutate(mcp_client, projected_test_graph):
+async def test_speaker_listener_label_propagation_mutate(
+    mcp_client, projected_test_graph
+):
     result = await mcp_client.call_tool(
         "speaker_listener_label_propagation",
         {
