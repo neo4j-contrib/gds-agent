@@ -11,15 +11,6 @@ community_tool_definitions = [
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
-                "mode": {
-                    "type": "string",
-                    "enum": ["stream", "mutate"],
-                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
-                },
-                "mutateProperty": {
-                    "type": "string",
-                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
-                },
                 "communityProperty": {
                     "type": "string",
                     "description": "The node property that holds the community ID as an integer for each node. "
@@ -460,15 +451,6 @@ community_tool_definitions = [
                 "graphName": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
-                },
-                "mode": {
-                    "type": "string",
-                    "enum": ["stream", "mutate"],
-                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
-                },
-                "mutateProperty": {
-                    "type": "string",
-                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
                 "communityProperty": {
                     "type": "string",

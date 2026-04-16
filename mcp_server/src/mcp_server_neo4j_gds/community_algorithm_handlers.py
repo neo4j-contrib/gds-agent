@@ -12,21 +12,15 @@ logger = logging.getLogger("mcp_server_neo4j_gds")
 
 class ConductanceHandler(AlgorithmHandler):
     def conductance(self, **kwargs):
-        mode = kwargs.get("mode", "stream")
         G = self.gds.graph.get(kwargs.get("graphName"))
-        gds_params = clean_params(kwargs, ["graphName", "mode"])
+        gds_params = clean_params(kwargs, ["graphName"])
         logger.info(f"Conductance parameters: {gds_params}")
-        if mode == "mutate":
-            result = self.gds.conductance.mutate(G, **gds_params)
-        else:
-            result = self.gds.conductance.stream(G, **gds_params)
+        result = self.gds.conductance.stream(G, **gds_params)
         return result
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.conductance(
             graphName=arguments.get("graphName"),
-            mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
             communityProperty=arguments.get("communityProperty"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
         )
@@ -289,24 +283,16 @@ class LouvainHandler(AlgorithmHandler):
 
 class ModularityMetricHandler(AlgorithmHandler):
     def modularity_metric(self, **kwargs):
-        mode = kwargs.get("mode", "stream")
         G = self.gds.graph.get(kwargs.get("graphName"))
-        gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
-        )
+        gds_params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
         logger.info(f"Modularity Metric parameters: {gds_params}")
-        if mode == "mutate":
-            result = self.gds.modularity.mutate(G, **gds_params)
-        else:
-            result = self.gds.modularity.stream(G, **gds_params)
+        result = self.gds.modularity.stream(G, **gds_params)
 
         return result
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.modularity_metric(
             graphName=arguments.get("graphName"),
-            mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
             communityProperty=arguments.get("communityProperty"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
         )

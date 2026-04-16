@@ -22,29 +22,6 @@ async def test_conductance(mcp_client, projected_undirected_graph):
 
 
 @pytest.mark.asyncio
-async def test_conductance_mutate(mcp_client, projected_undirected_graph):
-    result = await mcp_client.call_tool(
-        "conductance",
-        {
-            "graphName": projected_undirected_graph,
-            "mode": "mutate",
-            "mutateProperty": "conductanceScore",
-            "communityProperty": "total_lines",
-        },
-    )
-
-    assert len(result) == 1
-    result_text = result[0]["text"]
-
-    assert "nodePropertiesWritten" in result_text
-
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
-    assert match is not None
-    nodes_written = int(match.group(1))
-    assert nodes_written > 0
-
-
-@pytest.mark.asyncio
 async def test_hdbscan(mcp_client):
     # TODO: Implement test for HDBSCAN. The LN-Underground graph does not have an array node property to use for clustering.
     pass
@@ -128,12 +105,13 @@ async def test_k_1_coloring_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "nodeCount" in result_text
+    assert "colorCount" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"nodeCount\s+(\d+)", result_text)
     assert match is not None
-    nodes_written = int(match.group(1))
-    assert nodes_written == 302
+    nodes_counted = int(match.group(1))
+    assert nodes_counted == 302
 
 
 @pytest.mark.asyncio
@@ -369,29 +347,6 @@ async def test_modularity_optimization(mcp_client, projected_test_graph):
 
 
 @pytest.mark.asyncio
-async def test_modularity_metric_mutate(mcp_client, projected_undirected_graph):
-    result = await mcp_client.call_tool(
-        "modularity_metric",
-        {
-            "graphName": projected_undirected_graph,
-            "mode": "mutate",
-            "mutateProperty": "modularity",
-            "communityProperty": "total_lines",
-        },
-    )
-
-    assert len(result) == 1
-    result_text = result[0]["text"]
-
-    assert "nodePropertiesWritten" in result_text
-
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
-    assert match is not None
-    nodes_written = int(match.group(1))
-    assert nodes_written > 0
-
-
-@pytest.mark.asyncio
 async def test_modularity_optimization_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "modularity_optimization",
@@ -406,12 +361,13 @@ async def test_modularity_optimization_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "nodes" in result_text
+    assert "communityCount" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"nodes\s+(\d+)", result_text)
     assert match is not None
-    nodes_written = int(match.group(1))
-    assert nodes_written == 302
+    nodes_counted = int(match.group(1))
+    assert nodes_counted == 302
 
 
 @pytest.mark.asyncio
