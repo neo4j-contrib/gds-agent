@@ -80,7 +80,7 @@ class DijkstraShortestPathHandler(AlgorithmHandler):
             graphName=arguments.get("graphName"),
             relationshipWeightProperty=arguments.get("relationship_property"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
+            mutateRelationshipType=arguments.get("mutateRelationshipType"),
         )
 
 
@@ -171,7 +171,7 @@ class DeltaSteppingShortestPathHandler(AlgorithmHandler):
             delta=arguments.get("delta"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
+            mutateRelationshipType=arguments.get("mutateRelationshipType"),
         )
 
 
@@ -261,7 +261,7 @@ class DijkstraSingleSourceShortestPathHandler(AlgorithmHandler):
             graphName=arguments.get("graphName"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
+            mutateRelationshipType=arguments.get("mutateRelationshipType"),
         )
 
 
@@ -344,7 +344,7 @@ class AStarShortestPathHandler(AlgorithmHandler):
             longitudeProperty=arguments.get("longitudeProperty"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
+            mutateRelationshipType=arguments.get("mutateRelationshipType"),
         )
 
 
@@ -442,7 +442,7 @@ class YensShortestPathsHandler(AlgorithmHandler):
             k=arguments.get("k"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
+            mutateRelationshipType=arguments.get("mutateRelationshipType"),
         )
 
 
@@ -529,6 +529,7 @@ class MinimumWeightSpanningTreeHandler(AlgorithmHandler):
             objective=arguments.get("objective"),
             mode=arguments.get("mode"),
             mutateProperty=arguments.get("mutateProperty"),
+            mutateRelationshipType=arguments.get("mutateRelationshipType"),
         )
 
 
@@ -540,7 +541,6 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
         node_identifier_property: str,
         **kwargs,
     ):
-        mode = kwargs.get("mode", "stream")
         # Find source node ID
         source_query = f"""
         MATCH (source)
@@ -590,61 +590,54 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
             return {"found": False, "message": "No target nodes found"}
 
         G = self.gds.graph.get(kwargs.get("graphName"))
-        params = clean_params(kwargs, ["graphName", "mode"])
+        params = clean_params(kwargs, ["graphName"])
         logger.info(f"Minimum Directed Steiner Tree parameters: {params}")
 
-        if mode == "mutate":
-            result = self.gds.steinerTree.mutate(
-                G, sourceNode=source_node_id, targetNodes=target_node_ids, **params
-            )
-        else:
-            # Run the steiner tree algorithm
-            steiner_data = self.gds.steinerTree.stream(
-                G, sourceNode=source_node_id, targetNodes=target_node_ids, **params
-            )
+        # Run the steiner tree algorithm
+        steiner_data = self.gds.steinerTree.stream(
+            G, sourceNode=source_node_id, targetNodes=target_node_ids, **params
+        )
 
-            if steiner_data.empty:
-                return {
-                    "found": False,
-                    "message": "No steiner tree found connecting the source to all target nodes",
-                }
-
-            # Convert to native Python types as needed
-            edges = []
-            total_weight = 0.0
-
-            for _, row in steiner_data.iterrows():
-                node_id = int(row["nodeId"])
-                parent_id = int(row["parentId"])
-                weight = float(row["weight"])
-
-                # Skip the root node (where nodeId == parentId)
-                if node_id == parent_id:
-                    continue
-
-                total_weight += weight
-
-                # Get node names using GDS utility function
-                node_name = self.gds.util.asNode(node_id)
-                parent_name = self.gds.util.asNode(parent_id)
-
-                edges.append(
-                    {
-                        "nodeId": node_id,
-                        "parentId": parent_id,
-                        "nodeName": node_name,
-                        "parentName": parent_name,
-                        "weight": weight,
-                    }
-                )
-
+        if steiner_data.empty:
             return {
-                "found": True,
-                "totalWeight": total_weight,
-                "edges": edges,
+                "found": False,
+                "message": "No steiner tree found connecting the source to all target nodes",
             }
 
-        return result
+        # Convert to native Python types as needed
+        edges = []
+        total_weight = 0.0
+
+        for _, row in steiner_data.iterrows():
+            node_id = int(row["nodeId"])
+            parent_id = int(row["parentId"])
+            weight = float(row["weight"])
+
+            # Skip the root node (where nodeId == parentId)
+            if node_id == parent_id:
+                continue
+
+            total_weight += weight
+
+            # Get node names using GDS utility function
+            node_name = self.gds.util.asNode(node_id)
+            parent_name = self.gds.util.asNode(parent_id)
+
+            edges.append(
+                {
+                    "nodeId": node_id,
+                    "parentId": parent_id,
+                    "nodeName": node_name,
+                    "parentName": parent_name,
+                    "weight": weight,
+                }
+            )
+
+        return {
+            "found": True,
+            "totalWeight": total_weight,
+            "edges": edges,
+        }
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.minimum_directed_steiner_tree(
@@ -655,125 +648,107 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
             delta=arguments.get("delta"),
             applyRerouting=arguments.get("applyRerouting"),
-            mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
         )
 
 
 class PrizeCollectingSteinerTreeHandler(AlgorithmHandler):
     def prize_collecting_steiner_tree(self, **kwargs):
-        mode = kwargs.get("mode", "stream")
         G = self.gds.graph.get(kwargs.get("graphName"))
-        params = clean_params(kwargs, ["graphName", "mode"])
+        params = clean_params(kwargs, ["graphName"])
         logger.info(f"Prize-Collecting Steiner Tree parameters: {params}")
 
-        if mode == "mutate":
-            result = self.gds.prizeSteinerTree.mutate(G, **params)
-        else:
-            # Run the prize-collecting steiner tree algorithm
-            steiner_data = self.gds.prizeSteinerTree.stream(G, **params)
+        # Run the prize-collecting steiner tree algorithm
+        steiner_data = self.gds.prizeSteinerTree.stream(G, **params)
 
-            if steiner_data.empty:
-                return {
-                    "found": False,
-                    "message": "No prize-collecting steiner tree found",
-                }
-
-            # Convert to native Python types as needed
-            edges = []
-            total_weight = 0.0
-
-            for _, row in steiner_data.iterrows():
-                node_id = int(row["nodeId"])
-                parent_id = int(row["parentId"])
-                weight = float(row["weight"])
-
-                # Skip the root node (where nodeId == parentId)
-                if node_id == parent_id:
-                    continue
-
-                total_weight += weight
-
-                # Get node names using GDS utility function if available
-                node_name = self.gds.util.asNode(node_id)
-                parent_name = self.gds.util.asNode(parent_id)
-
-                edges.append(
-                    {
-                        "nodeId": node_id,
-                        "parentId": parent_id,
-                        "nodeName": node_name,
-                        "parentName": parent_name,
-                        "weight": weight,
-                    }
-                )
-
+        if steiner_data.empty:
             return {
-                "found": True,
-                "totalWeight": total_weight,
-                "edges": edges,
+                "found": False,
+                "message": "No prize-collecting steiner tree found",
             }
 
-        return result
+        # Convert to native Python types as needed
+        edges = []
+        total_weight = 0.0
+
+        for _, row in steiner_data.iterrows():
+            node_id = int(row["nodeId"])
+            parent_id = int(row["parentId"])
+            weight = float(row["weight"])
+
+            # Skip the root node (where nodeId == parentId)
+            if node_id == parent_id:
+                continue
+
+            total_weight += weight
+
+            # Get node names using GDS utility function if available
+            node_name = self.gds.util.asNode(node_id)
+            parent_name = self.gds.util.asNode(parent_id)
+
+            edges.append(
+                {
+                    "nodeId": node_id,
+                    "parentId": parent_id,
+                    "nodeName": node_name,
+                    "parentName": parent_name,
+                    "weight": weight,
+                }
+            )
+
+        return {
+            "found": True,
+            "totalWeight": total_weight,
+            "edges": edges,
+        }
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.prize_collecting_steiner_tree(
             graphName=arguments.get("graphName"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
             prizeProperty=arguments.get("prizeProperty"),
-            mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
         )
 
 
 class AllPairsShortestPathsHandler(AlgorithmHandler):
     def all_pairs_shortest_paths(self, **kwargs):
-        mode = kwargs.get("mode", "stream")
         G = self.gds.graph.get(kwargs.get("graphName"))
-        params = clean_params(kwargs, ["graphName", "mode"])
+        params = clean_params(kwargs, ["graphName"])
         logger.info(f"All Pairs Shortest Paths parameters: {params}")
 
-        if mode == "mutate":
-            result = self.gds.allShortestPaths.mutate(G, **params)
-        else:
-            # Run the all pairs shortest paths algorithm
-            apsp_data = self.gds.allShortestPaths.stream(G, **params)
+        # Run the all pairs shortest paths algorithm
+        apsp_data = self.gds.allShortestPaths.stream(G, **params)
 
-            if apsp_data.empty:
-                return {"found": False, "message": "No shortest paths found"}
+        if apsp_data.empty:
+            return {"found": False, "message": "No shortest paths found"}
 
-            # Get node names using GDS utility function (batch operation)
-            apsp_data["sourceNodeName"] = self.gds.util.asNodes(
-                apsp_data["sourceNodeId"].tolist()
-            )
-            apsp_data["targetNodeName"] = self.gds.util.asNodes(
-                apsp_data["targetNodeId"].tolist()
-            )
+        # Get node names using GDS utility function (batch operation)
+        apsp_data["sourceNodeName"] = self.gds.util.asNodes(
+            apsp_data["sourceNodeId"].tolist()
+        )
+        apsp_data["targetNodeName"] = self.gds.util.asNodes(
+            apsp_data["targetNodeId"].tolist()
+        )
 
-            # Convert to list of dictionaries
-            paths = apsp_data[
-                [
-                    "sourceNodeId",
-                    "targetNodeId",
-                    "sourceNodeName",
-                    "targetNodeName",
-                    "distance",
-                ]
-            ].to_dict("records")
+        # Convert to list of dictionaries
+        paths = apsp_data[
+            [
+                "sourceNodeId",
+                "targetNodeId",
+                "sourceNodeName",
+                "targetNodeName",
+                "distance",
+            ]
+        ].to_dict("records")
 
-            return {
-                "found": True,
-                "paths": paths,
-            }
-
-        return result
+        return {
+            "found": True,
+            "paths": paths,
+        }
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.all_pairs_shortest_paths(
             graphName=arguments.get("graphName"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
-            mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
         )
 
 
@@ -963,7 +938,7 @@ class BreadthFirstSearchHandler(AlgorithmHandler):
             targetNodes=arguments.get("targetNodes"),
             maxDepth=arguments.get("maxDepth"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
+            mutateRelationshipType=arguments.get("mutateRelationshipType"),
         )
 
 
@@ -1063,7 +1038,7 @@ class DepthFirstSearchHandler(AlgorithmHandler):
             targetNodes=arguments.get("targetNodes"),
             maxDepth=arguments.get("maxDepth"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
+            mutateRelationshipType=arguments.get("mutateRelationshipType"),
         )
 
 
@@ -1154,13 +1129,12 @@ class BellmanFordSingleSourceShortestPathHandler(AlgorithmHandler):
             graphName=arguments.get("graphName"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
+            mutateRelationshipType=arguments.get("mutateRelationshipType"),
         )
 
 
 class LongestPathHandler(AlgorithmHandler):
     def longest_path(self, **kwargs):
-        mode = kwargs.get("mode", "stream")
         # Process target nodes if provided
         target_node_ids = []
         if "targetNodes" in kwargs and kwargs["targetNodes"]:
@@ -1185,64 +1159,59 @@ class LongestPathHandler(AlgorithmHandler):
         G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(
             kwargs,
-            ["graphName", "nodeIdentifierProperty", "targetNodes", "mode"],
+            ["graphName", "nodeIdentifierProperty", "targetNodes"],
         )
         logger.info(f"Longest Path parameters: {params}")
 
-        if mode == "mutate":
-            result = self.gds.dag.longestPath.mutate(G, **params)
-        else:
-            # Run the longest path algorithm
-            longest_path_data = self.gds.dag.longestPath.stream(G, **params)
+        # Run the longest path algorithm
+        longest_path_data = self.gds.dag.longestPath.stream(G, **params)
 
-            if longest_path_data.empty:
-                return {
-                    "found": False,
-                    "message": "No longest paths found. The graph may contain cycles or be empty.",
-                }
-
-            # Convert to native Python types as needed
-            paths = []
-
-            for _, row in longest_path_data.iterrows():
-                index = int(row["index"])
-                source_node = int(row["sourceNode"])
-                target_node = int(row["targetNode"])
-                total_cost = float(row["totalCost"])
-                node_ids = row["nodeIds"]
-                costs = row["costs"]
-
-                # Filter by target nodes if specified
-                if target_node_ids and target_node not in target_node_ids:
-                    continue
-
-                # Convert arrays to lists if needed
-                if hasattr(node_ids, "tolist"):
-                    node_ids = node_ids.tolist()
-                if hasattr(costs, "tolist"):
-                    costs = costs.tolist()
-
-                # Get node names using GDS utility function
-                node_names = self.gds.util.asNodes(node_ids)
-
-                paths.append(
-                    {
-                        "index": index,
-                        "sourceNode": source_node,
-                        "targetNode": target_node,
-                        "totalCost": total_cost,
-                        "nodeIds": node_ids,
-                        "nodeNames": node_names,
-                        "costs": costs,
-                    }
-                )
-
+        if longest_path_data.empty:
             return {
-                "found": True,
-                "paths": paths,
+                "found": False,
+                "message": "No longest paths found. The graph may contain cycles or be empty.",
             }
 
-        return result
+        # Convert to native Python types as needed
+        paths = []
+
+        for _, row in longest_path_data.iterrows():
+            index = int(row["index"])
+            source_node = int(row["sourceNode"])
+            target_node = int(row["targetNode"])
+            total_cost = float(row["totalCost"])
+            node_ids = row["nodeIds"]
+            costs = row["costs"]
+
+            # Filter by target nodes if specified
+            if target_node_ids and target_node not in target_node_ids:
+                continue
+
+            # Convert arrays to lists if needed
+            if hasattr(node_ids, "tolist"):
+                node_ids = node_ids.tolist()
+            if hasattr(costs, "tolist"):
+                costs = costs.tolist()
+
+            # Get node names using GDS utility function
+            node_names = self.gds.util.asNodes(node_ids)
+
+            paths.append(
+                {
+                    "index": index,
+                    "sourceNode": source_node,
+                    "targetNode": target_node,
+                    "totalCost": total_cost,
+                    "nodeIds": node_ids,
+                    "nodeNames": node_names,
+                    "costs": costs,
+                }
+            )
+
+        return {
+            "found": True,
+            "paths": paths,
+        }
 
     def execute(self, arguments: Dict[str, Any]) -> Any:
         return self.longest_path(
@@ -1250,8 +1219,6 @@ class LongestPathHandler(AlgorithmHandler):
             targetNodes=arguments.get("targetNodes"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
-            mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
         )
 
 
@@ -1375,4 +1342,5 @@ class MaxFlowHandler(AlgorithmHandler):
             capacityProperty=arguments.get("capacityProperty"),
             mode=arguments.get("mode"),
             mutateProperty=arguments.get("mutateProperty"),
+            mutateRelationshipType=arguments.get("mutateRelationshipType"),
         )
