@@ -428,7 +428,7 @@ centrality_tool_definitions = [
                 },
                 "mutateProperty": {
                     "type": "string",
-                    "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
+                    "description": "Required when mode is 'mutate'. Used as a prefix for the two properties written: {mutateProperty}_auth and {mutateProperty}_hub.",
                 },
                 "nodes": {
                     "type": "array",
@@ -442,14 +442,6 @@ centrality_tool_definitions = [
                 "hitsIterations": {
                     "type": "integer",
                     "description": "The number of hits iterations to run. The number of pregel iterations will be equal to hitsIterations * 4.",
-                },
-                "authProperty": {
-                    "type": "string",
-                    "description": "The name of the auth property to use.",
-                },
-                "hubProperty": {
-                    "type": "string",
-                    "description": "The name of the hub property to use.",
                 },
                 "partitioning": {
                     "type": "string",

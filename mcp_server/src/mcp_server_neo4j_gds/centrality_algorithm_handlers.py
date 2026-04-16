@@ -400,6 +400,8 @@ class HITSHandler(AlgorithmHandler):
         gds_params = clean_params(
             kwargs, ["graphName", "mode", "nodes", "nodeIdentifierProperty"]
         )
+        gds_params["authProperty"] = "auth"
+        gds_params["hubProperty"] = "hub"
         logger.info(f"HITS parameters: {gds_params}")
 
         if mode == "mutate":
@@ -421,7 +423,5 @@ class HITSHandler(AlgorithmHandler):
             nodes=arguments.get("nodes"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             hitsIterations=arguments.get("hitsIterations"),
-            authProperty=arguments.get("authProperty"),
-            hubProperty=arguments.get("hubProperty"),
             partitioning=arguments.get("partitioning"),
         )
