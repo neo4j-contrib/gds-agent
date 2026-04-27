@@ -1,10 +1,16 @@
 from typing import Dict, Any
 from .algorithm_handler import AlgorithmHandler
+from .gds import is_session_gds
 
 
 class ProjectGraphCypherHandler(AlgorithmHandler):
     def project_graph_cypher(self, graph_name: str, cypher_query: str, **kwargs):
-        G, result = self.gds.graph.cypher.project(cypher_query, graph_name=graph_name)
+        if is_session_gds(self.gds):
+            G, result = self.gds.graph.project(graph_name, cypher_query)
+        else:
+            G, result = self.gds.graph.cypher.project(
+                cypher_query, graph_name=graph_name
+            )
         return {
             "graphName": graph_name,
             "nodeCount": G.node_count(),

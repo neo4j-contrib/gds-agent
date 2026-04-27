@@ -8,9 +8,7 @@ graph_projection_tool_definitions = [
 The graph will persist in memory until explicitly dropped with drop_graph.
 Use this to create a graph projection, then reference it by name when running algorithms.
 
-The Cypher query should use the $graph_name parameter placeholder and call gds.graph.project().
-
-Example Cypher query:
+Plugin (on-prem) mode — call gds.graph.project() with $graph_name as the first argument:
 MATCH (n:Station)-[r:CONNECTED]->(m:Station)
 RETURN gds.graph.project(
     $graph_name,
@@ -24,8 +22,22 @@ RETURN gds.graph.project(
     }
 )
 
-For more information on GDS Cypher projection syntax, see:
-https://neo4j.com/docs/graph-data-science/current/management-ops/graph-creation/graph-project-cypher-projection/
+Aura Graph Analytics (session) mode — call gds.graph.project.remote() with NO graph_name argument:
+MATCH (n:Station)-[r:CONNECTED]->(m:Station)
+RETURN gds.graph.project.remote(
+    n,
+    m,
+    {
+        sourceNodeLabels: labels(n),
+        targetNodeLabels: labels(m),
+        relationshipType: type(r),
+        relationshipProperties: {distance: toFloat(r.distance)}
+    }
+)
+
+References:
+- Plugin: https://neo4j.com/docs/graph-data-science/current/management-ops/graph-creation/graph-project-cypher-projection/
+- Sessions: https://neo4j.com/docs/graph-data-science-client/current/aura-graph-analytics/#_projecting_graphs_into_a_gds_session
 """,
         inputSchema={
             "type": "object",
