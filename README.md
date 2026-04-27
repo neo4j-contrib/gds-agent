@@ -41,6 +41,21 @@ If you have `uvx` [installed](https://docs.astral.sh/uv/getting-started/installa
 Replace command with your `uvx` location. Find out by running `which uvx` in the command line.
 Replace `NEOJ_URI`, `NEO4J_USERNAME`, `NEO4J_PASSWORD` with your database login details. You can also optionally specify `NEO4J_DATABASE`.
 
+## GDS Aura Graph Analytics (sessions)
+The server detects whether the connected Neo4j has the GDS plugin installed or whether to use a GDS Aura Graph Analytics session. Detection runs `gds.session.list()` on startup; if it succeeds, session mode is used and graph projections fall back to `gds.graph.project.remote`.
+
+Session mode requires Aura API credentials. Add them to the same `.env` file (or `env` block in your MCP config) used for the database credentials:
+```bash
+AURA_API_CLIENT_ID=...
+AURA_API_CLIENT_SECRET=...
+AURA_API_PROJECT_ID=...
+# optional
+SESSION_MEMORY_GB=8
+SESSION_NAME=mcp_gds_session
+SESSION_TTL_HOURS=24
+```
+The session is created lazily on the first algorithm/projection call. Three extra tools become available in session mode: `list_sessions`, `delete_session`, and `recreate_session` (the last is useful to bump memory after an OOM).
+
 
 # Example dataset
 To load the London underground example dataset:

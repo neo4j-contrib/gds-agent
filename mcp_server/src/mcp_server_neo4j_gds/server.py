@@ -22,7 +22,6 @@ from .gds import (
     get_relationship_properties_keys,
     get_node_labels,
     get_relationship_types,
-    is_session_mode,
 )
 from .graph_projection_handlers import (
     ProjectGraphCypherHandler,
@@ -92,8 +91,6 @@ async def main(db_url: str, username: str, password: str, database: str = None):
                 )
             return session_manager.session_gds
         return base_gds
-
-    gds = base_gds
 
     @server.list_tools()
     async def handle_list_tools() -> list[types.Tool]:
@@ -207,7 +204,7 @@ async def main(db_url: str, username: str, password: str, database: str = None):
 
             elif name == "recreate_session":
                 memory_gb = arguments.get("memoryGB") if arguments else None
-                result = session_manager.recreate_session(memory_gb)
+                session_manager.recreate_session(memory_gb)
                 return [
                     types.TextContent(
                         type="text", text="Session recreated successfully"

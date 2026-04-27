@@ -1,8 +1,10 @@
 import logging
 import os
+from datetime import timedelta
 from typing import Optional, Tuple
 from graphdatascience import GraphDataScience
 from graphdatascience.session import GdsSessions, AuraAPICredentials, SessionMemory
+from graphdatascience.session.dbms_connection_info import DbmsConnectionInfo
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
 
@@ -17,7 +19,6 @@ class SessionManager:
         self.mode: Optional[str] = None
         self.session_gds: Optional[GraphDataScience] = None
         self.session_name: Optional[str] = None
-        self._aura_credentials: Optional[AuraAPICredentials] = None
         self._sessions_client: Optional[GdsSessions] = None
         self._db_url: Optional[str] = None
         self._auth: Optional[Tuple[str, str]] = None
@@ -28,29 +29,18 @@ class SessionManager:
             return self.mode
 
         try:
-            result = gds.run_cypher(
-                "CALL gds.session.list() YIELD name RETURN name LIMIT 1"
-            )
+            gds.run_cypher("CALL gds.session.list() YIELD name RETURN name LIMIT 1")
             self.mode = GdsMode.SESSION
             logger.info("Detected GDS Aura Graph Analytics (sessions) mode")
         except Exception as e:
-            error_msg = str(e).lower()
-            if (
-                "no procedure" in error_msg
-                or "unknown function" in error_msg
-                or "there is no procedure" in error_msg
-            ):
-                self.mode = GdsMode.PLUGIN
-                logger.info("Detected GDS Plugin (on-prem) mode")
-            else:
-                logger.warning(
-                    f"Could not determine GDS mode, defaulting to plugin: {e}"
-                )
-                self.mode = GdsMode.PLUGIN
+            logger.info(f"Detected GDS Plugin (on-prem) mode ({e})")
+            self.mode = GdsMode.PLUGIN
 
         return self.mode
 
-    def initialize_aura_credentials(self):
+    def _ensure_sessions_client(self):
+        if self._sessions_client is not None:
+            return
         client_id = os.getenv("AURA_API_CLIENT_ID")
         client_secret = os.getenv("AURA_API_CLIENT_SECRET")
         project_id = os.getenv("AURA_API_PROJECT_ID")
@@ -60,25 +50,22 @@ class SessionManager:
                 "Missing Aura API credentials. Set AURA_API_CLIENT_ID, AURA_API_CLIENT_SECRET, and AURA_API_PROJECT_ID"
             )
 
-        self._aura_credentials = AuraAPICredentials(
-            client_id, client_secret, project_id
+        self._sessions_client = GdsSessions(
+            api_credentials=AuraAPICredentials(client_id, client_secret, project_id)
         )
-        self._sessions_client = GdsSessions(api_credentials=self._aura_credentials)
         logger.info("Aura API credentials initialized")
 
     def create_or_get_session(
         self, db_url: str, auth: Tuple[str, str], database: Optional[str] = None
     ) -> GraphDataScience:
         if self.session_gds is not None:
-            logger.info(f"Reusing existing session: {self.session_name}")
             return self.session_gds
 
         self._db_url = db_url
         self._auth = auth
         self._database = database
 
-        if self._sessions_client is None:
-            self.initialize_aura_credentials()
+        self._ensure_sessions_client()
 
         memory_gb = int(os.getenv("SESSION_MEMORY_GB", "8"))
         memory = getattr(SessionMemory, f"m_{memory_gb}GB")
@@ -89,96 +76,72 @@ class SessionManager:
             f"Creating or getting session '{session_name}' with {memory_gb}GB memory and {ttl_hours}h TTL"
         )
 
-        try:
-            self.session_gds = self._sessions_client.get_or_create(
-                session_name=session_name,
-                memory=memory,
-                ttl=ttl_hours * 3600,
-                db_connection=(db_url, auth[0], auth[1]),
-            )
-            self.session_name = session_name
-            logger.info(f"Session '{session_name}' created/retrieved successfully")
+        db_connection = DbmsConnectionInfo(
+            uri=db_url, username=auth[0], password=auth[1], database=database
+        )
 
-            self.session_gds.verify_connectivity()
-            logger.info("Session connectivity verified")
-
-            return self.session_gds
-        except Exception as e:
-            logger.error(f"Failed to create/get session: {e}")
-            raise
+        self.session_gds = self._sessions_client.get_or_create(
+            session_name=session_name,
+            memory=memory,
+            ttl=timedelta(hours=ttl_hours),
+            db_connection=db_connection,
+        )
+        self.session_name = session_name
+        logger.info(f"Session '{session_name}' created/retrieved successfully")
+        return self.session_gds
 
     def list_sessions(self):
-        if self._sessions_client is None:
-            self.initialize_aura_credentials()
-
-        sessions_df = self._sessions_client.list()
-        if sessions_df.empty:
-            return {"sessions": [], "count": 0}
+        self._ensure_sessions_client()
 
         sessions = []
-        for _, row in sessions_df.iterrows():
+        for s in self._sessions_client.list():
             sessions.append(
                 {
-                    "name": row.get("name"),
-                    "status": row.get("status"),
-                    "memory": row.get("memory"),
-                    "created_at": str(row.get("created_at")),
-                    "expires_at": str(row.get("expires_at")),
+                    "name": s.name,
+                    "status": s.status,
+                    "memory": str(s.memory),
+                    "created_at": str(s.created_at),
+                    "expiry_date": str(s.expiry_date) if s.expiry_date else None,
                 }
             )
-
         return {"sessions": sessions, "count": len(sessions)}
 
     def delete_session(self, session_name: Optional[str] = None):
-        if self._sessions_client is None:
-            self.initialize_aura_credentials()
+        self._ensure_sessions_client()
 
         name_to_delete = session_name or self.session_name
         if not name_to_delete:
             raise ValueError("No session name specified")
 
         logger.info(f"Deleting session: {name_to_delete}")
-        self._sessions_client.delete(session_name=name_to_delete)
+        deleted = self._sessions_client.delete(session_name=name_to_delete)
 
         if name_to_delete == self.session_name:
             self.session_gds = None
             self.session_name = None
 
-        return {"session_name": name_to_delete, "deleted": True}
+        return {"session_name": name_to_delete, "deleted": deleted}
 
     def recreate_session(self, memory_gb: Optional[int] = None):
-        if self.session_name:
-            logger.info(
-                f"Deleting existing session before recreation: {self.session_name}"
+        if self._db_url is None:
+            raise RuntimeError(
+                "Cannot recreate session before one has been created. Run an algorithm first."
             )
+
+        if self.session_name:
             try:
                 self.delete_session(self.session_name)
             except Exception as e:
                 logger.warning(f"Failed to delete existing session: {e}")
 
-        if memory_gb:
+        if memory_gb is not None:
             os.environ["SESSION_MEMORY_GB"] = str(memory_gb)
 
         return self.create_or_get_session(self._db_url, self._auth, self._database)
 
-    def get_gds(self, base_gds: GraphDataScience) -> GraphDataScience:
-        mode = self.detect_mode(base_gds)
-
-        if mode == GdsMode.PLUGIN:
-            return base_gds
-        elif mode == GdsMode.SESSION:
-            if self.session_gds is None:
-                raise RuntimeError(
-                    "Session mode detected but no session created. Session will be created on first use."
-                )
-            return self.session_gds
-        else:
-            raise ValueError(f"Unknown GDS mode: {mode}")
-
     def close(self):
         if self.session_gds is not None:
             try:
-                logger.info("Closing session GDS connection")
                 self.session_gds.close()
             except Exception as e:
                 logger.warning(f"Error closing session: {e}")
