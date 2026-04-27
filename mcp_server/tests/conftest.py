@@ -10,7 +10,7 @@ import atexit
 from neo4j import GraphDatabase
 from pathlib import Path
 
-NEO4J_IMAGE = "neo4j:2025.05.0"
+NEO4J_IMAGE = "neo4j:2025.11.2"
 NEO4J_BOLT_PORT = 7687
 NEO4J_HTTP_PORT = 7474
 NEO4J_USER = "neo4j"
@@ -23,7 +23,7 @@ def cleanup_containers():
     try:
         print("Cleaning up Neo4j containers...", flush=True)
         result = subprocess.run(
-            ["docker", "ps", "-a", "--filter", "ancestor=neo4j:2025.05.0", "-q"],
+            ["docker", "ps", "-a", "--filter", f"ancestor={NEO4J_IMAGE}", "-q"],
             capture_output=True,
             text=True,
             check=False,

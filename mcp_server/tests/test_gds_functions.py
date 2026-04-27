@@ -5,7 +5,7 @@ from graphdatascience import GraphDataScience
 
 from neo4j import GraphDatabase
 
-NEO4J_IMAGE = "neo4j:2025.05.0"
+NEO4J_IMAGE = "neo4j:2025.11.2"
 NEO4J_BOLT_PORT = 7687
 NEO4J_HTTP_PORT = 7474
 NEO4J_USER = "neo4j"
@@ -48,7 +48,7 @@ def test_node_projection_properties(neo4j_container):
         res = session.run("MATCH (n) WHERE 'Foo' IN labels(n) RETURN count(n) as count")
         existing_count1 = res.single()["count"]
 
-    from mcp_server.src.mcp_server_neo4j_gds.gds import validate_node_properties
+    from mcp_server_neo4j_gds.gds import validate_node_properties
 
     projection_properties = validate_node_properties(
         gds,
@@ -117,7 +117,7 @@ def test_node_projection_properties_with_node_labels(neo4j_container):
         existing_count1 = res.single()["count"]
 
     # do validations
-    from mcp_server.src.mcp_server_neo4j_gds.gds import validate_node_properties
+    from mcp_server_neo4j_gds.gds import validate_node_properties
 
     projection_properties_foo = validate_node_properties(gds, ["prop"], ["Foo"])
     projection_properties_bar = validate_node_properties(gds, ["prop"], ["Bar"])
@@ -163,7 +163,7 @@ def test_rel_projection_properties(neo4j_container):
         existing_count1 = res.single()["count"]
 
     # do validations
-    from mcp_server.src.mcp_server_neo4j_gds.gds import validate_rel_properties
+    from mcp_server_neo4j_gds.gds import validate_rel_properties
 
     projection_properties = validate_rel_properties(
         gds, ["prop_ok1", "prop_ok2", "prop_bad"]
@@ -208,7 +208,7 @@ def test_rel_projection_properties_with_node_labels(neo4j_container):
         existing_count1 = res.single()["count"]
 
     # do validations
-    from mcp_server.src.mcp_server_neo4j_gds.gds import validate_rel_properties
+    from mcp_server_neo4j_gds.gds import validate_rel_properties
 
     projection_properties_foo = validate_rel_properties(gds, ["prop"], ["Foo"])
     projection_properties_bar = validate_rel_properties(gds, ["prop"], ["Bar"])
@@ -252,7 +252,7 @@ def test_rel_projection_properties_with_rel_types(neo4j_container):
         existing_count1 = res.single()["count"]
 
     # do validations
-    from mcp_server.src.mcp_server_neo4j_gds.gds import validate_rel_properties
+    from mcp_server_neo4j_gds.gds import validate_rel_properties
 
     projection_properties_rel1 = validate_rel_properties(gds, ["prop"], [], ["REL1"])
     projection_properties_rel2 = validate_rel_properties(gds, ["prop"], [], ["REL2"])
@@ -291,7 +291,7 @@ def test_projection_with_labels_and_types(neo4j_container):
             "CREATE (:Bar)-[:REL3{ prop: 2.0, relprop2:2.0}] ->(:IGNOREME{prop2:[4]})"
         )
 
-    from mcp_server.src.mcp_server_neo4j_gds.gds import projected_graph_from_params
+    from mcp_server_neo4j_gds.gds import projected_graph_from_params
 
     with projected_graph_from_params(
         gds,
@@ -349,7 +349,7 @@ def test_get_labels_and_types_and_properties(neo4j_container):
             "CREATE (:Foo{prop1:1, prop3:5})-[:R1{relprop1:2}]->(:Bar:SpareBar), (:Bar)-[:R2{relprop2:2}]->(:Bar{prop2:2})"
         )
 
-    from mcp_server.src.mcp_server_neo4j_gds.gds import (
+    from mcp_server_neo4j_gds.gds import (
         get_node_labels,
         get_relationship_types,
         get_relationship_properties_keys,
