@@ -2,9 +2,26 @@ from graphdatascience import GraphDataScience
 import uuid
 from contextlib import contextmanager
 import logging
-
+from typing import Optional
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
+
+
+def is_session_mode(gds: GraphDataScience) -> bool:
+    try:
+        result = gds.run_cypher(
+            "CALL gds.session.list() YIELD name RETURN name LIMIT 1"
+        )
+        return True
+    except Exception as e:
+        error_msg = str(e).lower()
+        if (
+            "no procedure" in error_msg
+            or "unknown function" in error_msg
+            or "there is no procedure" in error_msg
+        ):
+            return False
+        return False
 
 
 @contextmanager
@@ -110,12 +127,20 @@ def projected_graph(gds, node_labels=None, relationship_types=None, undirected=F
             ", ".join(additional_config_parts) if additional_config_parts else ""
         )
 
+        session_mode = is_session_mode(gds)
+        project_function = (
+            "gds.graph.project.remote" if session_mode else "gds.graph.project"
+        )
+
+        if session_mode:
+            logger.info("Using remote projection for session mode")
+
         # Use separate data and additional configuration parameters
         if additional_config:
             project_query = f"""
                        {match_proj_query}
                        WITH n, r, m
-                       RETURN gds.graph.project(
+                       RETURN {project_function}(
                            $graph_name,
                            n,
                            m,
@@ -132,7 +157,7 @@ def projected_graph(gds, node_labels=None, relationship_types=None, undirected=F
             projection_query = f"""
                        {match_proj_query}
                        WITH n, r, m
-                       RETURN gds.graph.project(
+                       RETURN {project_function}(
                            $graph_name,
                            n,
                            m,
