@@ -1,4 +1,5 @@
 from unittest.mock import Mock, MagicMock
+from src.mcp_server_neo4j_gds import server as server_module
 from src.mcp_server_neo4j_gds.session_manager import SessionManager, GdsMode
 
 
@@ -34,3 +35,23 @@ def test_mode_cached_after_first_detection():
 
     assert mode1 == mode2 == GdsMode.SESSION
     assert mock_gds.run_cypher.call_count == 1
+
+
+def test_create_base_gds_uses_driver_connection_for_versionless_aura(monkeypatch):
+    class FakeGraphDataScience:
+        def __init__(self, *args, **kwargs):
+            raise RuntimeError("Aura Graph Analytics is versionless.")
+
+    class FakeNeo4jDriverConnection:
+        def __init__(self, db_url, username, password, database):
+            self.args = (db_url, username, password, database)
+
+    monkeypatch.setattr(server_module, "GraphDataScience", FakeGraphDataScience)
+    monkeypatch.setattr(
+        server_module, "Neo4jDriverConnection", FakeNeo4jDriverConnection
+    )
+
+    connection = server_module.create_base_gds("neo4j+s://example", "neo4j", "pw")
+
+    assert isinstance(connection, FakeNeo4jDriverConnection)
+    assert connection.args == ("neo4j+s://example", "neo4j", "pw", None)

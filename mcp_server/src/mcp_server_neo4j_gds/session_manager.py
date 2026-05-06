@@ -1,5 +1,6 @@
 import logging
 import os
+from contextlib import suppress
 from datetime import timedelta
 from typing import Optional, Tuple
 from graphdatascience import GraphDataScience
@@ -113,10 +114,15 @@ class SessionManager:
         if not name_to_delete:
             raise ValueError("No session name specified")
 
+        deleting_current_session = name_to_delete == self.session_name
+        if deleting_current_session and self.session_gds is not None:
+            with suppress(Exception):
+                self.session_gds.close()
+
         logger.info(f"Deleting session: {name_to_delete}")
         deleted = self._sessions_client.delete(session_name=name_to_delete)
 
-        if name_to_delete == self.session_name:
+        if deleting_current_session:
             self.session_gds = None
             self.session_name = None
 

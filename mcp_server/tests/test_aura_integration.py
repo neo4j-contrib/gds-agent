@@ -15,23 +15,25 @@ What this verifies end-to-end against a real AuraDB:
     - SessionManager detects SESSION mode
     - Session creation via the Aura sessions API
     - Session listing
-    - Remote graph projection via projected_graph() (programmatic path)
+    - Remote graph projection via the Python client
     - Remote graph projection via ProjectGraphCypherHandler (MCP tool path)
     - Algorithm execution (PageRank.stream)
     - Session deletion (teardown)
 
-The AuraDB instance must contain at least one node with one relationship;
-projected_graph() projects all of them.
+The AuraDB instance must contain at least one node with one relationship.
 """
 
 import os
+from pathlib import Path
 
 import pytest
-from graphdatascience import GraphDataScience
+from dotenv import load_dotenv
 
-from mcp_server_neo4j_gds.gds import projected_graph
 from mcp_server_neo4j_gds.graph_projection_handlers import ProjectGraphCypherHandler
+from mcp_server_neo4j_gds.server import create_base_gds
 from mcp_server_neo4j_gds.session_manager import GdsMode, SessionManager
+
+load_dotenv(Path(__file__).resolve().parents[2] / ".env")
 
 REQUIRED_ENV = [
     "NEO4J_URI",
@@ -50,10 +52,10 @@ pytestmark = pytest.mark.skipif(
 
 @pytest.fixture
 def base_gds():
-    gds = GraphDataScience(
+    gds = create_base_gds(
         os.environ["NEO4J_URI"],
-        auth=(os.environ["NEO4J_USERNAME"], os.environ["NEO4J_PASSWORD"]),
-        aura_ds=False,
+        os.environ["NEO4J_USERNAME"],
+        os.environ["NEO4J_PASSWORD"],
         database=os.getenv("NEO4J_DATABASE"),
     )
     yield gds
@@ -86,14 +88,10 @@ def test_aura_session_full_cycle(base_gds, session_manager):
     listing = session_manager.list_sessions()
     assert any(s["name"] == session_manager.session_name for s in listing["sessions"])
 
-    with projected_graph(session_gds) as G:
-        assert G.node_count() > 0
-        result = session_gds.pageRank.stream(G)
-        assert len(result) > 0
-
-    handler = ProjectGraphCypherHandler(session_gds)
     cypher = """
         MATCH (n)-[r]->(m)
+        WITH n, r, m
+        LIMIT 1000
         RETURN gds.graph.project.remote(
             n, m,
             {
@@ -103,6 +101,16 @@ def test_aura_session_full_cycle(base_gds, session_manager):
             }
         )
     """
+
+    G, _ = session_gds.graph.project("integration_direct_graph", cypher)
+    try:
+        assert G.node_count() > 0
+        result = session_gds.pageRank.stream(G)
+        assert len(result) > 0
+    finally:
+        session_gds.graph.drop("integration_direct_graph")
+
+    handler = ProjectGraphCypherHandler(session_gds)
     handler_result = handler.project_graph_cypher("integration_test_graph", cypher)
     try:
         assert handler_result["nodeCount"] > 0

@@ -9,6 +9,7 @@ import mcp.server.stdio
 import pandas as pd
 import json
 from graphdatascience import GraphDataScience
+from neo4j import GraphDatabase
 
 from .similarity_algorithm_specs import similarity_tool_definitions
 from .centrality_algorithm_specs import centrality_tool_definitions
@@ -31,6 +32,44 @@ from .graph_projection_handlers import (
 from .session_manager import SessionManager, GdsMode
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
+
+
+class Neo4jDriverConnection:
+    def __init__(self, db_url: str, username: str, password: str, database: str = None):
+        self._driver = GraphDatabase.driver(db_url, auth=(username, password))
+        self._database = database
+
+    def run_cypher(
+        self, query: str, params: dict[str, Any] = None, database: str = None
+    ) -> pd.DataFrame:
+        with self._driver.session(database=database or self._database) as session:
+            result = session.run(query, params or {})
+            keys = result.keys()
+            return pd.DataFrame([record.data() for record in result], columns=keys)
+
+    def close(self):
+        self._driver.close()
+
+
+def is_aura_graph_analytics_versionless_error(error: Exception) -> bool:
+    return "Aura Graph Analytics is versionless" in str(error)
+
+
+def create_base_gds(db_url: str, username: str, password: str, database: str = None):
+    try:
+        if database:
+            return GraphDataScience(
+                db_url, auth=(username, password), aura_ds=False, database=database
+            )
+        return GraphDataScience(db_url, auth=(username, password), aura_ds=False)
+    except Exception as e:
+        if is_aura_graph_analytics_versionless_error(e):
+            logger.info(
+                "Using Neo4j driver connection for Aura Graph Analytics session detection"
+            )
+            return Neo4jDriverConnection(db_url, username, password, database)
+        logger.error(f"Failed to connect to Neo4j database: {e}")
+        raise
 
 
 def serialize_result(result: Any) -> str:
@@ -64,19 +103,8 @@ async def main(db_url: str, username: str, password: str, database: str = None):
     server = Server("gds-agent")
 
     # Create GraphDataScience object with optional database parameter
-    try:
-        if database:
-            base_gds = GraphDataScience(
-                db_url, auth=(username, password), aura_ds=False, database=database
-            )
-        else:
-            base_gds = GraphDataScience(
-                db_url, auth=(username, password), aura_ds=False
-            )
-        logger.info("Successfully connected to Neo4j database")
-    except Exception as e:
-        logger.error(f"Failed to connect to Neo4j database: {e}")
-        raise
+    base_gds = create_base_gds(db_url, username, password, database)
+    logger.info("Successfully connected to Neo4j database")
 
     session_manager = SessionManager()
     mode = session_manager.detect_mode(base_gds)
@@ -191,18 +219,33 @@ async def main(db_url: str, username: str, password: str, database: str = None):
     ) -> list[types.TextContent | types.ImageContent | types.EmbeddedResource]:
         """Handle tool execution requests"""
         try:
-            active_gds = get_gds()
+            session_tool_names = {
+                "list_sessions",
+                "delete_session",
+                "recreate_session",
+            }
+            if name in session_tool_names:
+                if mode != GdsMode.SESSION:
+                    return [
+                        types.TextContent(
+                            type="text",
+                            text=f"Error: Session tool '{name}' is not available in plugin mode",
+                        )
+                    ]
 
-            if name == "list_sessions":
-                result = session_manager.list_sessions()
-                return [types.TextContent(type="text", text=serialize_result(result))]
+                if name == "list_sessions":
+                    result = session_manager.list_sessions()
+                    return [
+                        types.TextContent(type="text", text=serialize_result(result))
+                    ]
 
-            elif name == "delete_session":
-                session_name = arguments.get("sessionName") if arguments else None
-                result = session_manager.delete_session(session_name)
-                return [types.TextContent(type="text", text=serialize_result(result))]
+                if name == "delete_session":
+                    session_name = arguments.get("sessionName") if arguments else None
+                    result = session_manager.delete_session(session_name)
+                    return [
+                        types.TextContent(type="text", text=serialize_result(result))
+                    ]
 
-            elif name == "recreate_session":
                 memory_gb = arguments.get("memoryGB") if arguments else None
                 session_manager.recreate_session(memory_gb)
                 return [
@@ -211,7 +254,9 @@ async def main(db_url: str, username: str, password: str, database: str = None):
                     )
                 ]
 
-            elif name == "count_nodes":
+            active_gds = get_gds()
+
+            if name == "count_nodes":
                 result = count_nodes(active_gds)
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
