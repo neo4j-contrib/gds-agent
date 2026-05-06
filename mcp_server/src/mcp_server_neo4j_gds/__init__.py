@@ -1,7 +1,7 @@
 import logging
 import os
 import sys
-from dotenv import load_dotenv
+from dotenv import find_dotenv, load_dotenv
 
 from . import server
 import asyncio
@@ -21,7 +21,9 @@ logger.propagate = False
 
 def main():
     """Main entry point for the package."""
-    load_dotenv("../../../.env")
+    env_path = find_dotenv(usecwd=True)
+    if env_path:
+        load_dotenv(env_path)
     parser = argparse.ArgumentParser(description="Neo4j GDS MCP Server")
     parser.add_argument(
         "--db-url", default=os.environ.get("NEO4J_URI"), help="URL to Neo4j database"

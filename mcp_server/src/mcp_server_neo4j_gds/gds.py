@@ -1,10 +1,14 @@
 from graphdatascience import GraphDataScience
+from graphdatascience.session.aura_graph_data_science import AuraGraphDataScience
 import uuid
 from contextlib import contextmanager
 import logging
 
-
 logger = logging.getLogger("mcp_server_neo4j_gds")
+
+
+def is_session_gds(gds) -> bool:
+    return isinstance(gds, AuraGraphDataScience)
 
 
 @contextmanager
@@ -110,8 +114,25 @@ def projected_graph(gds, node_labels=None, relationship_types=None, undirected=F
             ", ".join(additional_config_parts) if additional_config_parts else ""
         )
 
-        # Use separate data and additional configuration parameters
-        if additional_config:
+        if is_session_gds(gds):
+            # Remote projection: graph_name is a Python kwarg, not a Cypher arg.
+            # Undirected/inverse-indexed are also Python kwargs (not in inner config).
+            project_query = f"""
+                       {match_proj_query}
+                       WITH n, r, m
+                       RETURN gds.graph.project.remote(
+                           n,
+                           m,
+                           {{{data_config}}}
+                       )
+                       """
+            logger.info(f"Remote projection query: '{project_query}'")
+            G, _ = gds.graph.project(
+                graph_name,
+                project_query,
+                undirected_relationship_types=["*"] if undirected else None,
+            )
+        elif additional_config:
             project_query = f"""
                        {match_proj_query}
                        WITH n, r, m

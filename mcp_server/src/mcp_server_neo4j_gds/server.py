@@ -9,6 +9,7 @@ import mcp.server.stdio
 import pandas as pd
 import json
 from graphdatascience import GraphDataScience
+from neo4j import GraphDatabase
 
 from .similarity_algorithm_specs import similarity_tool_definitions
 from .centrality_algorithm_specs import centrality_tool_definitions
@@ -28,8 +29,47 @@ from .graph_projection_handlers import (
     DropGraphHandler,
     ListGraphsHandler,
 )
+from .session_manager import SessionManager, GdsMode
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
+
+
+class Neo4jDriverConnection:
+    def __init__(self, db_url: str, username: str, password: str, database: str = None):
+        self._driver = GraphDatabase.driver(db_url, auth=(username, password))
+        self._database = database
+
+    def run_cypher(
+        self, query: str, params: dict[str, Any] = None, database: str = None
+    ) -> pd.DataFrame:
+        with self._driver.session(database=database or self._database) as session:
+            result = session.run(query, params or {})
+            keys = result.keys()
+            return pd.DataFrame([record.data() for record in result], columns=keys)
+
+    def close(self):
+        self._driver.close()
+
+
+def is_aura_graph_analytics_versionless_error(error: Exception) -> bool:
+    return "Aura Graph Analytics is versionless" in str(error)
+
+
+def create_base_gds(db_url: str, username: str, password: str, database: str = None):
+    try:
+        if database:
+            return GraphDataScience(
+                db_url, auth=(username, password), aura_ds=False, database=database
+            )
+        return GraphDataScience(db_url, auth=(username, password), aura_ds=False)
+    except Exception as e:
+        if is_aura_graph_analytics_versionless_error(e):
+            logger.info(
+                "Using Neo4j driver connection for Aura Graph Analytics session detection"
+            )
+            return Neo4jDriverConnection(db_url, username, password, database)
+        logger.error(f"Failed to connect to Neo4j database: {e}")
+        raise
 
 
 def serialize_result(result: Any) -> str:
@@ -63,22 +103,65 @@ async def main(db_url: str, username: str, password: str, database: str = None):
     server = Server("gds-agent")
 
     # Create GraphDataScience object with optional database parameter
-    try:
-        if database:
-            gds = GraphDataScience(
-                db_url, auth=(username, password), aura_ds=False, database=database
-            )
-        else:
-            gds = GraphDataScience(db_url, auth=(username, password), aura_ds=False)
-        logger.info("Successfully connected to Neo4j database")
-    except Exception as e:
-        logger.error(f"Failed to connect to Neo4j database: {e}")
-        raise
+    base_gds = create_base_gds(db_url, username, password, database)
+    logger.info("Successfully connected to Neo4j database")
+
+    session_manager = SessionManager()
+    mode = session_manager.detect_mode(base_gds)
+    logger.info(f"Detected GDS mode: {mode}")
+
+    def get_gds() -> GraphDataScience:
+        if mode == GdsMode.SESSION:
+            if session_manager.session_gds is None:
+                logger.info("Creating session on first use")
+                return session_manager.create_or_get_session(
+                    db_url, (username, password), database
+                )
+            return session_manager.session_gds
+        return base_gds
 
     @server.list_tools()
     async def handle_list_tools() -> list[types.Tool]:
         """List available tools"""
         try:
+            session_tools = []
+            if mode == GdsMode.SESSION:
+                session_tools = [
+                    types.Tool(
+                        name="list_sessions",
+                        description="""List all GDS sessions""",
+                        inputSchema={
+                            "type": "object",
+                        },
+                    ),
+                    types.Tool(
+                        name="delete_session",
+                        description="""Delete a GDS session""",
+                        inputSchema={
+                            "type": "object",
+                            "properties": {
+                                "sessionName": {
+                                    "type": "string",
+                                    "description": "Name of the session to delete (optional, defaults to current session)",
+                                }
+                            },
+                        },
+                    ),
+                    types.Tool(
+                        name="recreate_session",
+                        description="""Recreate the current session with a new memory size (useful for OOM errors)""",
+                        inputSchema={
+                            "type": "object",
+                            "properties": {
+                                "memoryGB": {
+                                    "type": "integer",
+                                    "description": "Memory size in GB for the new session",
+                                }
+                            },
+                        },
+                    ),
+                ]
+
             tools = (
                 [
                     types.Tool(
@@ -117,6 +200,7 @@ async def main(db_url: str, username: str, password: str, database: str = None):
                         },
                     ),
                 ]
+                + session_tools
                 + graph_projection_tool_definitions
                 + centrality_tool_definitions
                 + community_tool_definitions
@@ -135,41 +219,78 @@ async def main(db_url: str, username: str, password: str, database: str = None):
     ) -> list[types.TextContent | types.ImageContent | types.EmbeddedResource]:
         """Handle tool execution requests"""
         try:
+            session_tool_names = {
+                "list_sessions",
+                "delete_session",
+                "recreate_session",
+            }
+            if name in session_tool_names:
+                if mode != GdsMode.SESSION:
+                    return [
+                        types.TextContent(
+                            type="text",
+                            text=f"Error: Session tool '{name}' is not available in plugin mode",
+                        )
+                    ]
+
+                if name == "list_sessions":
+                    result = session_manager.list_sessions()
+                    return [
+                        types.TextContent(type="text", text=serialize_result(result))
+                    ]
+
+                if name == "delete_session":
+                    session_name = arguments.get("sessionName") if arguments else None
+                    result = session_manager.delete_session(session_name)
+                    return [
+                        types.TextContent(type="text", text=serialize_result(result))
+                    ]
+
+                memory_gb = arguments.get("memoryGB") if arguments else None
+                session_manager.recreate_session(memory_gb)
+                return [
+                    types.TextContent(
+                        type="text", text="Session recreated successfully"
+                    )
+                ]
+
+            active_gds = get_gds()
+
             if name == "count_nodes":
-                result = count_nodes(gds)
+                result = count_nodes(active_gds)
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
             elif name == "get_node_properties_keys":
-                result = get_node_properties_keys(gds)
+                result = get_node_properties_keys(active_gds)
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
             elif name == "get_relationship_properties_keys":
-                result = get_relationship_properties_keys(gds)
+                result = get_relationship_properties_keys(active_gds)
                 return [types.TextContent(type="text", text=serialize_result(result))]
             elif name == "get_node_labels":
-                result = get_node_labels(gds)
+                result = get_node_labels(active_gds)
                 return [types.TextContent(type="text", text=serialize_result(result))]
             elif name == "get_relationship_types":
-                result = get_relationship_types(gds)
+                result = get_relationship_types(active_gds)
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
             elif name == "project_graph_cypher":
-                handler = ProjectGraphCypherHandler(gds)
+                handler = ProjectGraphCypherHandler(active_gds)
                 result = handler.execute(arguments or {})
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
             elif name == "drop_graph":
-                handler = DropGraphHandler(gds)
+                handler = DropGraphHandler(active_gds)
                 result = handler.execute(arguments or {})
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
             elif name == "list_graphs":
-                handler = ListGraphsHandler(gds)
+                handler = ListGraphsHandler(active_gds)
                 result = handler.execute(arguments or {})
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
             else:
-                handler = AlgorithmRegistry.get_handler(name, gds)
+                handler = AlgorithmRegistry.get_handler(name, active_gds)
                 result = handler.execute(arguments or {})
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
@@ -199,7 +320,8 @@ async def main(db_url: str, username: str, password: str, database: str = None):
             logger.info(f"Server shutdown with error: {e}")
     finally:
         with contextlib.suppress(Exception):
-            gds.close()
+            session_manager.close()
+            base_gds.close()
 
 
 if __name__ == "__main__":
