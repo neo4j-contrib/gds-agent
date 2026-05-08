@@ -3,6 +3,7 @@ import contextlib
 import logging
 from mcp.server import NotificationOptions, Server
 from mcp.server.models import InitializationOptions
+from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
 import mcp.types as types
 from typing import Any
 import mcp.server.stdio
@@ -32,6 +33,18 @@ from .graph_projection_handlers import (
 from .session_manager import SessionManager, GdsMode
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
+SERVER_NAME = "neo4j_gds"
+SERVER_VERSION = "0.5.1"
+DEFAULT_HTTP_HOST = "127.0.0.1"
+DEFAULT_HTTP_PORT = 8000
+DEFAULT_HTTP_PATH = "/mcp"
+STDIO_TRANSPORT = "stdio"
+HTTP_TRANSPORT = "streamable-http"
+TRANSPORT_ALIASES = {
+    STDIO_TRANSPORT: STDIO_TRANSPORT,
+    "http": HTTP_TRANSPORT,
+    HTTP_TRANSPORT: HTTP_TRANSPORT,
+}
 
 
 class Neo4jDriverConnection:
@@ -95,12 +108,32 @@ def serialize_result(result: Any) -> str:
         return str(result)
 
 
-async def main(db_url: str, username: str, password: str, database: str = None):
+def normalize_transport(transport: str) -> str:
+    normalized_transport = (transport or STDIO_TRANSPORT).strip().lower()
+    if normalized_transport not in TRANSPORT_ALIASES:
+        supported = ", ".join(sorted(TRANSPORT_ALIASES))
+        raise ValueError(
+            f"Unsupported transport '{transport}'. Supported transports: {supported}"
+        )
+    return TRANSPORT_ALIASES[normalized_transport]
+
+
+def normalize_http_path(path: str) -> str:
+    if not path:
+        return DEFAULT_HTTP_PATH
+    if path.startswith("/"):
+        return path
+    return f"/{path}"
+
+
+def create_mcp_server(
+    db_url: str, username: str, password: str, database: str = None
+) -> tuple[Server, SessionManager, GraphDataScience | Neo4jDriverConnection]:
     logger.info(f"Starting MCP Server for {db_url} with username {username}")
     if database:
         logger.info(f"Connecting to database: {database}")
 
-    server = Server("gds-agent")
+    server = Server(SERVER_NAME, version=SERVER_VERSION)
 
     # Create GraphDataScience object with optional database parameter
     base_gds = create_base_gds(db_url, username, password, database)
@@ -297,27 +330,107 @@ async def main(db_url: str, username: str, password: str, database: str = None):
         except Exception as e:
             return [types.TextContent(type="text", text=f"Error: {str(e)}")]
 
+    return server, session_manager, base_gds
+
+
+def initialization_options(server: Server) -> InitializationOptions:
+    return InitializationOptions(
+        server_name=SERVER_NAME,
+        server_version=SERVER_VERSION,
+        capabilities=server.get_capabilities(
+            notification_options=NotificationOptions(),
+            experimental_capabilities={},
+        ),
+    )
+
+
+class StreamableHTTPASGIApp:
+    def __init__(self, session_manager: StreamableHTTPSessionManager):
+        self.session_manager = session_manager
+
+    async def __call__(self, scope, receive, send):
+        await self.session_manager.handle_request(scope, receive, send)
+
+
+def create_streamable_http_app(
+    server: Server,
+    path: str = DEFAULT_HTTP_PATH,
+    stateless: bool = False,
+    json_response: bool = False,
+):
+    from starlette.applications import Starlette
+    from starlette.routing import Route
+
+    http_session_manager = StreamableHTTPSessionManager(
+        app=server,
+        json_response=json_response,
+        stateless=stateless,
+    )
+    http_app = StreamableHTTPASGIApp(http_session_manager)
+
+    @contextlib.asynccontextmanager
+    async def lifespan(app):
+        async with http_session_manager.run():
+            yield
+
+    return Starlette(
+        routes=[Route(normalize_http_path(path), endpoint=http_app)],
+        lifespan=lifespan,
+    )
+
+
+async def run_stdio_server(server: Server):
+    async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
+        await server.run(
+            read_stream,
+            write_stream,
+            initialization_options(server),
+            raise_exceptions=False,
+        )
+
+
+async def run_streamable_http_server(
+    server: Server,
+    host: str = DEFAULT_HTTP_HOST,
+    port: int = DEFAULT_HTTP_PORT,
+    path: str = DEFAULT_HTTP_PATH,
+):
+    import uvicorn
+
+    app = create_streamable_http_app(server, path)
+    config = uvicorn.Config(app, host=host, port=port, log_level="info")
+    uvicorn_server = uvicorn.Server(config)
+    await uvicorn_server.serve()
+
+
+async def main(
+    db_url: str,
+    username: str,
+    password: str,
+    database: str = None,
+    transport: str = STDIO_TRANSPORT,
+    host: str = DEFAULT_HTTP_HOST,
+    port: int = DEFAULT_HTTP_PORT,
+    path: str = DEFAULT_HTTP_PATH,
+):
+    transport_mode = normalize_transport(transport)
+    server, session_manager, base_gds = create_mcp_server(
+        db_url, username, password, database
+    )
     try:
-        async with mcp.server.stdio.stdio_server() as (read_stream, write_stream):
-            await server.run(
-                read_stream,
-                write_stream,
-                InitializationOptions(
-                    server_name="neo4j_gds",
-                    server_version="0.5.1",
-                    capabilities=server.get_capabilities(
-                        notification_options=NotificationOptions(),
-                        experimental_capabilities={},
-                    ),
-                ),
-                raise_exceptions=False,
-            )
+        if transport_mode == HTTP_TRANSPORT:
+            await run_streamable_http_server(server, host, port, path)
+        else:
+            await run_stdio_server(server)
     except Exception as e:
-        # Log shutdown info - connection errors are expected, others may need attention
-        if isinstance(e, (BrokenPipeError, ConnectionResetError, OSError)):
+        stdio_disconnect = transport_mode == STDIO_TRANSPORT and isinstance(
+            e, (BrokenPipeError, ConnectionResetError, OSError)
+        )
+        if stdio_disconnect:
             logger.info("Server shutdown (client disconnected)")
         else:
             logger.info(f"Server shutdown with error: {e}")
+            raise
     finally:
         with contextlib.suppress(Exception):
             session_manager.close()
@@ -325,18 +438,34 @@ async def main(db_url: str, username: str, password: str, database: str = None):
 
 
 if __name__ == "__main__":
-    import sys
     import asyncio
+    import argparse
 
-    if len(sys.argv) < 4:
-        print(
-            "Usage: python -m mcp_server_neo4j_gds.server <db_url> <username> <password> [database]"
+    parser = argparse.ArgumentParser(description="Neo4j GDS MCP Server")
+    parser.add_argument("db_url", help="URL to Neo4j database")
+    parser.add_argument("username", help="Username for Neo4j database")
+    parser.add_argument("password", help="Password for Neo4j database")
+    parser.add_argument("database", nargs="?", help="Database name to connect to")
+    parser.add_argument(
+        "--transport",
+        choices=sorted(TRANSPORT_ALIASES),
+        default=STDIO_TRANSPORT,
+        help="MCP transport to use",
+    )
+    parser.add_argument("--host", default=DEFAULT_HTTP_HOST, help="HTTP host")
+    parser.add_argument("--port", type=int, default=DEFAULT_HTTP_PORT, help="HTTP port")
+    parser.add_argument("--path", default=DEFAULT_HTTP_PATH, help="HTTP MCP path")
+    args = parser.parse_args()
+
+    asyncio.run(
+        main(
+            args.db_url,
+            args.username,
+            args.password,
+            args.database,
+            transport=args.transport,
+            host=args.host,
+            port=args.port,
+            path=args.path,
         )
-        sys.exit(1)
-
-    db_url = sys.argv[1]
-    username = sys.argv[2]
-    password = sys.argv[3]
-    database = sys.argv[4] if len(sys.argv) > 4 else None
-
-    asyncio.run(main(db_url, username, password, database))
+    )

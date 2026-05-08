@@ -27,5 +27,11 @@ If you have `uvx` [installed](https://docs.astral.sh/uv/getting-started/installa
 Replace command with your `uvx` location. Find out by running `which uvx` in the command line.
 Replace `NEOJ_URI`, `NEO4J_USERNAME`, `NEO4J_PASSWORD` with your database login details. You can also optionally specify `NEO4J_DATABASE`.
 
+By default the server uses STDIO transport. For HTTP-native clients, run:
+```bash
+gds-agent --transport http --host 127.0.0.1 --port 8000 --path /mcp
+```
+You can also set `GDS_AGENT_TRANSPORT`, `GDS_AGENT_HOST`, `GDS_AGENT_PORT`, and `GDS_AGENT_PATH`. The Neo4j MCP-style `NEO4J_TRANSPORT` and `NEO4J_MCP_SERVER_*` names are also supported.
+
 # Full documentation
 For complete documentation and development guidelines, please refer to: https://github.com/neo4j-contrib/gds-agent.
