@@ -41,6 +41,12 @@ If you have `uvx` [installed](https://docs.astral.sh/uv/getting-started/installa
 Replace command with your `uvx` location. Find out by running `which uvx` in the command line.
 Replace `NEOJ_URI`, `NEO4J_USERNAME`, `NEO4J_PASSWORD` with your database login details. You can also optionally specify `NEO4J_DATABASE`.
 
+By default the server uses STDIO transport for local MCP clients. For HTTP-native clients, run the server with streamable HTTP:
+```bash
+gds-agent --transport http --host 127.0.0.1 --port 8000 --path /mcp
+```
+The equivalent environment variables are `GDS_AGENT_TRANSPORT`, `GDS_AGENT_HOST`, `GDS_AGENT_PORT`, and `GDS_AGENT_PATH`. The Neo4j MCP-style `NEO4J_TRANSPORT` and `NEO4J_MCP_SERVER_*` names are also supported.
+
 ## GDS Aura Graph Analytics (sessions)
 The server detects whether the connected Neo4j has the GDS plugin installed or whether to use a GDS Aura Graph Analytics session. Detection runs `gds.session.list()` on startup; if it succeeds, session mode is used and graph projections fall back to `gds.graph.project.remote`.
 
@@ -109,4 +115,4 @@ When available, attach relevant logs in `mcp_server_neo4j_gds.log`. This file is
 # Additional resources
 The GDS agent can be used with other MCP servers, such as those that provide additional Neo4j toolings: https://github.com/neo4j-contrib/mcp-neo4j
 
-Arxiv paper including details about the architecture and benchmark results: https://arxiv.org/abs/2508.20637. 
+Arxiv paper including details about the architecture and benchmark results: https://arxiv.org/abs/2508.20637.

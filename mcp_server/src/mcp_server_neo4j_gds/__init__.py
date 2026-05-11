@@ -19,6 +19,14 @@ logger.setLevel(logging.INFO)
 logger.propagate = False
 
 
+def env_value(*names: str, default=None):
+    for name in names:
+        value = os.environ.get(name)
+        if value is not None:
+            return value
+    return default
+
+
 def main():
     """Main entry point for the package."""
     env_path = find_dotenv(usecwd=True)
@@ -43,6 +51,50 @@ def main():
         default=os.environ.get("NEO4J_DATABASE"),
         help="Database name to connect to (optional). By default, the server will connect to the 'neo4j' database.",
     )
+    parser.add_argument(
+        "--transport",
+        choices=sorted(server.TRANSPORT_ALIASES),
+        default=env_value(
+            "GDS_AGENT_TRANSPORT",
+            "NEO4J_TRANSPORT",
+            "MCP_TRANSPORT",
+            default=server.STDIO_TRANSPORT,
+        ),
+        help="MCP transport to use. Use 'stdio' for local MCP clients or 'http'/'streamable-http' for HTTP clients.",
+    )
+    parser.add_argument(
+        "--host",
+        default=env_value(
+            "GDS_AGENT_HOST",
+            "NEO4J_MCP_SERVER_HOST",
+            "MCP_SERVER_HOST",
+            default=server.DEFAULT_HTTP_HOST,
+        ),
+        help="HTTP host when using HTTP transport.",
+    )
+    parser.add_argument(
+        "--port",
+        type=int,
+        default=int(
+            env_value(
+                "GDS_AGENT_PORT",
+                "NEO4J_MCP_SERVER_PORT",
+                "MCP_SERVER_PORT",
+                default=server.DEFAULT_HTTP_PORT,
+            )
+        ),
+        help="HTTP port when using HTTP transport.",
+    )
+    parser.add_argument(
+        "--path",
+        default=env_value(
+            "GDS_AGENT_PATH",
+            "NEO4J_MCP_SERVER_PATH",
+            "MCP_SERVER_PATH",
+            default=server.DEFAULT_HTTP_PATH,
+        ),
+        help="HTTP path when using HTTP transport.",
+    )
 
     args = parser.parse_args()
 
@@ -52,6 +104,10 @@ def main():
             username=args.username,
             password=args.password,
             database=args.database,
+            transport=args.transport,
+            host=args.host,
+            port=args.port,
+            path=args.path,
         )
     )
 
