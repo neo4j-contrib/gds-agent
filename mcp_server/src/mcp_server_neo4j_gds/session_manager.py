@@ -46,9 +46,9 @@ class SessionManager:
         client_secret = os.getenv("AURA_API_CLIENT_SECRET")
         project_id = os.getenv("AURA_API_PROJECT_ID")
 
-        if not all([client_id, client_secret, project_id]):
+        if not all([client_id, client_secret]):
             raise ValueError(
-                "Missing Aura API credentials. Set AURA_API_CLIENT_ID, AURA_API_CLIENT_SECRET, and AURA_API_PROJECT_ID"
+                "Missing Aura API credentials. Set AURA_API_CLIENT_ID and AURA_API_CLIENT_SECRET"
             )
 
         self._sessions_client = GdsSessions(

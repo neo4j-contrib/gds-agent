@@ -3,8 +3,8 @@ Live integration test for GDS Aura Graph Analytics session mode.
 
 Skipped automatically unless all of these env vars are set:
     NEO4J_URI, NEO4J_USERNAME, NEO4J_PASSWORD
-    AURA_API_CLIENT_ID, AURA_API_CLIENT_SECRET, AURA_API_PROJECT_ID
-Optional: NEO4J_DATABASE.
+    AURA_API_CLIENT_ID, AURA_API_CLIENT_SECRET
+Optional: NEO4J_DATABASE, AURA_API_PROJECT_ID.
 
 For local runs, put creds in a .env file at the repo root (already
 gitignored) and source it (or use direnv), then:
@@ -41,7 +41,6 @@ REQUIRED_ENV = [
     "NEO4J_PASSWORD",
     "AURA_API_CLIENT_ID",
     "AURA_API_CLIENT_SECRET",
-    "AURA_API_PROJECT_ID",
 ]
 
 pytestmark = pytest.mark.skipif(
