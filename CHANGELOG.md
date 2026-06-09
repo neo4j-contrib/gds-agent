@@ -15,7 +15,7 @@ This allows the LLMs to use Cypher project to manage a catalog of projected grap
 5. Add graph accessor tools: get_graph_info, stream_node_properties, stream_relationship_properties and stream_relationships.
 
 ### Bug Fixes
-1. Limit oversized tool outputs and post-process only returned rows to keep stream results from making the MCP server unresponsive.
+1. Limit oversized tool outputs, post-process only returned rows, and batch node lookups to keep stream results from making the MCP server unresponsive.
 
 ### Other Changes
 
