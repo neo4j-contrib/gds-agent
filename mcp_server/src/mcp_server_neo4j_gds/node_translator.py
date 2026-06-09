@@ -1,5 +1,20 @@
 from graphdatascience import GraphDataScience
 
+from .result_limits import limit_dataframe_rows
+
+
+def _replace_dataframe_contents(target, source):
+    if source is target:
+        return
+
+    target.drop(target.index, inplace=True)
+    for column in list(target.columns):
+        if column not in source.columns:
+            target.drop(columns=[column], inplace=True)
+    for column in source.columns:
+        target[column] = source[column]
+    target.attrs.update(source.attrs)
+
 
 def translate_identifiers_to_ids(
     gds: GraphDataScience,
@@ -54,6 +69,9 @@ def translate_ids_to_identifiers(
     node_identifier_output_name="nodeName",
 ):
     if node_identifier_property is not None:
+        limited_results = limit_dataframe_rows(results)
+        _replace_dataframe_contents(results, limited_results)
+
         node_name_values = [
             gds.util.asNode(node_id).get(node_identifier_property)
             for node_id in results[id_name]

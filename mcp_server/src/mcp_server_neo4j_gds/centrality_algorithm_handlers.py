@@ -43,11 +43,11 @@ class ArticleRankHandler(AlgorithmHandler):
             result = self.gds.articleRank.mutate(G, **gds_params)
         else:
             result = self.gds.articleRank.stream(G, **gds_params)
-            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
             logger.info(f"Filtering ArticleRank results for nodes: {node_names}")
             result = filter_identifiers(
                 self.gds, node_identifier_property, node_names, result
             )
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
 
         return result
 
@@ -109,10 +109,10 @@ class BetweennessCentralityHandler(AlgorithmHandler):
             result = self.gds.betweenness.mutate(G, **gds_params)
         else:
             result = self.gds.betweenness.stream(G, **gds_params)
-            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
             result = filter_identifiers(
                 self.gds, node_identifier_property, node_names, result
             )
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
 
         return result
 
@@ -200,10 +200,10 @@ class ClosenessCentralityHandler(AlgorithmHandler):
             result = self.gds.closeness.mutate(G, **gds_params)
         else:
             result = self.gds.closeness.stream(G, **gds_params)
-            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
             result = filter_identifiers(
                 self.gds, node_identifier_property, node_names, result
             )
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
 
         return result
 
@@ -234,10 +234,10 @@ class DegreeCentralityHandler(AlgorithmHandler):
             result = self.gds.degree.mutate(G, **gds_params)
         else:
             result = self.gds.degree.stream(G, **gds_params)
-            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
             result = filter_identifiers(
                 self.gds, node_identifier_property, node_names, result
             )
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
 
         return result
 
@@ -284,10 +284,10 @@ class EigenvectorCentralityHandler(AlgorithmHandler):
             result = self.gds.eigenvector.mutate(G, **gds_params)
         else:
             result = self.gds.eigenvector.stream(G, **gds_params)
-            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
             result = filter_identifiers(
                 self.gds, node_identifier_property, node_names, result
             )
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
 
         return result
 
@@ -337,10 +337,10 @@ class PageRankHandler(AlgorithmHandler):
             result = self.gds.pageRank.mutate(G, **gds_params)
         else:
             result = self.gds.pageRank.stream(G, **gds_params)
-            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
             result = filter_identifiers(
                 self.gds, node_identifier_property, node_names, result
             )
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
 
         return result
 
@@ -373,10 +373,10 @@ class HarmonicCentralityHandler(AlgorithmHandler):
             result = self.gds.closeness.harmonic.mutate(G, **gds_params)
         else:
             result = self.gds.closeness.harmonic.stream(G)
-            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
             result = filter_identifiers(
                 self.gds, node_identifier_property, node_names, result
             )
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
 
         return result
 
@@ -408,10 +408,10 @@ class HITSHandler(AlgorithmHandler):
             result = self.gds.hits.mutate(G, **gds_params)
         else:
             result = self.gds.hits.stream(G, **gds_params)
-            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
             result = filter_identifiers(
                 self.gds, node_identifier_property, node_names, result
             )
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
 
         return result
 

@@ -224,13 +224,13 @@ class LocalClusteringCoefficientHandler(AlgorithmHandler):
             result = self.gds.localClusteringCoefficient.mutate(G, **gds_params)
         else:
             result = self.gds.localClusteringCoefficient.stream(G, **gds_params)
-            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
             result = filter_identifiers(
                 self.gds,
                 node_identifier_property,
                 node_names,
                 result,
             )
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
 
         return result
 
@@ -371,10 +371,10 @@ class TriangleCountHandler(AlgorithmHandler):
             result = self.gds.triangleCount.mutate(G, **gds_params)
         else:
             result = self.gds.triangleCount.stream(G, **gds_params)
-            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
             result = filter_identifiers(
                 self.gds, node_identifier_property, node_names, result
             )
+            translate_ids_to_identifiers(self.gds, node_identifier_property, result)
 
         return result
 

@@ -1,6 +1,7 @@
 # server.py
 import contextlib
 import logging
+from anyio import BrokenResourceError
 from mcp.server import NotificationOptions, Server
 from mcp.server.models import InitializationOptions
 from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
@@ -35,6 +36,12 @@ from .graph_projection_handlers import (
     StreamRelationshipsHandler,
 )
 from .session_manager import SessionManager, GdsMode
+from .result_limits import (
+    dataframe_limit_warning,
+    limit_dataframe_rows,
+    limit_text,
+    max_cell_chars,
+)
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
 SERVER_NAME = "neo4j_gds"
@@ -92,7 +99,8 @@ def create_base_gds(db_url: str, username: str, password: str, database: str = N
 def serialize_result(result: Any) -> str:
     """Serialize results to string without truncation, handling DataFrames specially"""
     if isinstance(result, pd.DataFrame):
-        # Configure pandas to show all rows and columns
+        result = limit_dataframe_rows(result)
+        warning = dataframe_limit_warning(result)
         with pd.option_context(
             "display.max_rows",
             None,
@@ -101,15 +109,18 @@ def serialize_result(result: Any) -> str:
             "display.width",
             None,
             "display.max_colwidth",
-            None,
+            max_cell_chars(),
         ):
-            return result.to_string(index=True)
+            text = result.to_string(index=True)
+        if warning:
+            text = f"{warning}\n\n{text}"
+        return limit_text(text)
     elif isinstance(result, (list, dict)):
         # Use JSON for better formatting of complex data structures
-        return json.dumps(result, indent=2, default=str)
+        return limit_text(json.dumps(result, indent=2, default=str))
     else:
         # For other types, use string conversion
-        return str(result)
+        return limit_text(str(result))
 
 
 def normalize_transport(transport: str) -> str:
@@ -367,6 +378,18 @@ def initialization_options(server: Server) -> InitializationOptions:
     )
 
 
+def is_stdio_disconnect_error(error: BaseException) -> bool:
+    if isinstance(
+        error, (BrokenResourceError, BrokenPipeError, ConnectionResetError, OSError)
+    ):
+        return True
+    if isinstance(error, BaseExceptionGroup):
+        return any(
+            is_stdio_disconnect_error(sub_error) for sub_error in error.exceptions
+        )
+    return False
+
+
 class StreamableHTTPASGIApp:
     def __init__(self, session_manager: StreamableHTTPSessionManager):
         self.session_manager = session_manager
@@ -446,8 +469,8 @@ async def main(
         else:
             await run_stdio_server(server)
     except Exception as e:
-        stdio_disconnect = transport_mode == STDIO_TRANSPORT and isinstance(
-            e, (BrokenPipeError, ConnectionResetError, OSError)
+        stdio_disconnect = (
+            transport_mode == STDIO_TRANSPORT and is_stdio_disconnect_error(e)
         )
         if stdio_disconnect:
             logger.info("Server shutdown (client disconnected)")

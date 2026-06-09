@@ -1,4 +1,6 @@
 import pytest
+import pandas as pd
+from anyio import BrokenResourceError
 from mcp.server import Server
 from starlette.testclient import TestClient
 
@@ -53,6 +55,24 @@ def test_streamable_http_app_handles_initialize_request():
     assert '"serverInfo":{"name":"test","version":"1"}' in response.text
 
 
+def test_serialize_result_truncates_large_dataframes(monkeypatch):
+    monkeypatch.setenv("GDS_AGENT_MAX_RESULT_ROWS", "2")
+    result = server_module.serialize_result(pd.DataFrame({"nodeId": [1, 2, 3]}))
+
+    assert "Warning: output truncated to the first 2 of 3 rows" in result
+    assert "0       1" in result
+    assert "1       2" in result
+    assert "2       3" not in result
+
+
+def test_serialize_result_truncates_large_text(monkeypatch):
+    monkeypatch.setenv("GDS_AGENT_MAX_RESULT_CHARS", "10")
+    result = server_module.serialize_result("x" * 20)
+
+    assert "Warning: output truncated to 10 characters" in result
+    assert "[truncated 10 characters]" in result
+
+
 @pytest.mark.asyncio
 async def test_main_dispatches_http_transport_and_closes_resources(monkeypatch):
     fake_server = Server("test", version="1")
@@ -99,6 +119,29 @@ async def test_main_dispatches_http_transport_and_closes_resources(monkeypatch):
     assert "stdio" not in calls
     assert fake_session_manager.closed
     assert fake_base_gds.closed
+
+
+@pytest.mark.asyncio
+async def test_main_treats_stdio_broken_resource_as_disconnect(monkeypatch):
+    fake_server = Server("test", version="1")
+    calls = {}
+
+    class Closable:
+        def close(self):
+            calls["closed"] = calls.get("closed", 0) + 1
+
+    def fake_create_mcp_server(db_url, username, password, database):
+        return fake_server, Closable(), Closable()
+
+    async def fake_run_stdio_server(server):
+        raise ExceptionGroup("stdio failed", [BrokenResourceError()])
+
+    monkeypatch.setattr(server_module, "create_mcp_server", fake_create_mcp_server)
+    monkeypatch.setattr(server_module, "run_stdio_server", fake_run_stdio_server)
+
+    await server_module.main("bolt://example", "neo4j", "password")
+
+    assert calls["closed"] == 2
 
 
 @pytest.mark.asyncio
