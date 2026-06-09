@@ -29,6 +29,10 @@ from .graph_projection_handlers import (
     ProjectGraphCypherHandler,
     DropGraphHandler,
     ListGraphsHandler,
+    GraphInfoHandler,
+    StreamNodePropertiesHandler,
+    StreamRelationshipPropertiesHandler,
+    StreamRelationshipsHandler,
 )
 from .session_manager import SessionManager, GdsMode
 
@@ -147,10 +151,9 @@ def create_mcp_server(
         if mode == GdsMode.SESSION:
             if session_manager.session_gds is None:
                 logger.info("Creating session on first use")
-                return session_manager.create_or_get_session(
-                    db_url, (username, password), database
-                )
-            return session_manager.session_gds
+            return session_manager.create_or_get_session(
+                db_url, (username, password), database
+            )
         return base_gds
 
     @server.list_tools()
@@ -319,6 +322,26 @@ def create_mcp_server(
 
             elif name == "list_graphs":
                 handler = ListGraphsHandler(active_gds)
+                result = handler.execute(arguments or {})
+                return [types.TextContent(type="text", text=serialize_result(result))]
+
+            elif name == "get_graph_info":
+                handler = GraphInfoHandler(active_gds)
+                result = handler.execute(arguments or {})
+                return [types.TextContent(type="text", text=serialize_result(result))]
+
+            elif name == "stream_node_properties":
+                handler = StreamNodePropertiesHandler(active_gds)
+                result = handler.execute(arguments or {})
+                return [types.TextContent(type="text", text=serialize_result(result))]
+
+            elif name == "stream_relationship_properties":
+                handler = StreamRelationshipPropertiesHandler(active_gds)
+                result = handler.execute(arguments or {})
+                return [types.TextContent(type="text", text=serialize_result(result))]
+
+            elif name == "stream_relationships":
+                handler = StreamRelationshipsHandler(active_gds)
                 result = handler.execute(arguments or {})
                 return [types.TextContent(type="text", text=serialize_result(result))]
 

@@ -56,11 +56,37 @@ class SessionManager:
         )
         logger.info("Aura API credentials initialized")
 
+    def _clear_cached_session(self):
+        if self.session_gds is not None:
+            with suppress(Exception):
+                self.session_gds.close()
+        self.session_gds = None
+        self.session_name = None
+
+    def _cached_session_exists(self, session_name: str) -> bool:
+        self._ensure_sessions_client()
+        try:
+            inactive_statuses = {"deleted", "deleting", "failed", "terminated"}
+            for session in self._sessions_client.list():
+                if session.name != session_name:
+                    continue
+                return str(session.status).lower() not in inactive_statuses
+            return False
+        except Exception as e:
+            logger.warning(f"Failed to validate cached session '{session_name}': {e}")
+            return True
+
     def create_or_get_session(
         self, db_url: str, auth: Tuple[str, str], database: Optional[str] = None
     ) -> GraphDataScience:
+        session_name = os.getenv("SESSION_NAME", "mcp_gds_session")
         if self.session_gds is not None:
-            return self.session_gds
+            if self.session_name == session_name and self._cached_session_exists(
+                session_name
+            ):
+                return self.session_gds
+            logger.info(f"Cached session '{self.session_name}' is no longer available")
+            self._clear_cached_session()
 
         self._db_url = db_url
         self._auth = auth
@@ -70,7 +96,6 @@ class SessionManager:
 
         memory_gb = int(os.getenv("SESSION_MEMORY_GB", "8"))
         memory = getattr(SessionMemory, f"m_{memory_gb}GB")
-        session_name = os.getenv("SESSION_NAME", "mcp_gds_session")
         ttl_hours = int(os.getenv("SESSION_TTL_HOURS", "24"))
 
         logger.info(
@@ -123,8 +148,7 @@ class SessionManager:
         deleted = self._sessions_client.delete(session_name=name_to_delete)
 
         if deleting_current_session:
-            self.session_gds = None
-            self.session_name = None
+            self._clear_cached_session()
 
         return {"session_name": name_to_delete, "deleted": deleted}
 
@@ -143,11 +167,8 @@ class SessionManager:
         if memory_gb is not None:
             os.environ["SESSION_MEMORY_GB"] = str(memory_gb)
 
+        self._clear_cached_session()
         return self.create_or_get_session(self._db_url, self._auth, self._database)
 
     def close(self):
-        if self.session_gds is not None:
-            try:
-                self.session_gds.close()
-            except Exception as e:
-                logger.warning(f"Error closing session: {e}")
+        self._clear_cached_session()

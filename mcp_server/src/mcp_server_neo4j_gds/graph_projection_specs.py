@@ -48,7 +48,7 @@ References:
                 },
                 "cypherQuery": {
                     "type": "string",
-                    "description": "Cypher query that calls gds.graph.project(). Must use $graph_name as the graph name parameter. The query should match nodes and relationships, then return the gds.graph.project() call with appropriate configuration.",
+                    "description": "Cypher query that matches nodes and relationships, then returns the graph projection call. In plugin mode, call gds.graph.project() with $graph_name as the first argument. In Aura session mode, call gds.graph.project.remote() with exactly three arguments: source node, target node, and data config; do not pass graph name or a fourth config argument.",
                 },
             },
             "required": ["graphName", "cypherQuery"],
@@ -80,5 +80,104 @@ Returns information about each graph including node count, relationship count, m
 Use this to see what graphs are available for running algorithms on.
 """,
         inputSchema={"type": "object", "properties": {}},
+    ),
+    types.Tool(
+        name="get_graph_info",
+        description="""Inspect one projected graph in the GDS graph catalog.
+
+Returns graph object metadata including counts, labels, relationship types, projected properties, degree distribution, density, memory usage, configuration, and timestamps.
+Use this before running mutate/stream algorithms to understand the graph schema and available in-memory properties.
+""",
+        inputSchema={
+            "type": "object",
+            "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph to inspect.",
+                }
+            },
+            "required": ["graphName"],
+        },
+    ),
+    types.Tool(
+        name="stream_node_properties",
+        description="""Stream node properties from a projected GDS graph.
+
+Use this after running algorithms in mutate mode to inspect mutated node properties, or to inspect properties included during graph projection. This reads from the in-memory GDS graph, not directly from Neo4j, except for optional dbNodeProperties.
+""",
+        inputSchema={
+            "type": "object",
+            "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph.",
+                },
+                "nodeProperties": {
+                    "type": ["string", "array"],
+                    "items": {"type": "string"},
+                    "description": "Projected node property or properties to stream, such as a mutateProperty written by an algorithm.",
+                },
+                "nodeLabels": {
+                    "type": ["string", "array"],
+                    "items": {"type": "string"},
+                    "description": "Optional node label or labels to stream from. Defaults to all labels.",
+                },
+                "dbNodeProperties": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Optional Neo4j database node properties to include alongside projected properties, such as name or identifier fields.",
+                },
+            },
+            "required": ["graphName", "nodeProperties"],
+        },
+    ),
+    types.Tool(
+        name="stream_relationship_properties",
+        description="""Stream relationship properties from a projected GDS graph.
+
+Use this after mutate mode algorithms that write relationship properties, or to inspect relationship properties included during projection.
+""",
+        inputSchema={
+            "type": "object",
+            "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph.",
+                },
+                "relationshipProperties": {
+                    "type": ["string", "array"],
+                    "items": {"type": "string"},
+                    "description": "Projected relationship property or properties to stream.",
+                },
+                "relationshipTypes": {
+                    "type": ["string", "array"],
+                    "items": {"type": "string"},
+                    "description": "Optional relationship type or types to stream from. Defaults to all types.",
+                },
+            },
+            "required": ["graphName", "relationshipProperties"],
+        },
+    ),
+    types.Tool(
+        name="stream_relationships",
+        description="""Stream relationship topology from a projected GDS graph.
+
+Returns source node id, target node id, and relationship type rows from the in-memory graph. Use this to inspect projected topology by relationship type.
+""",
+        inputSchema={
+            "type": "object",
+            "properties": {
+                "graphName": {
+                    "type": "string",
+                    "description": "Name of the projected graph.",
+                },
+                "relationshipTypes": {
+                    "type": ["string", "array"],
+                    "items": {"type": "string"},
+                    "description": "Optional relationship type or types to stream. Defaults to all types.",
+                },
+            },
+            "required": ["graphName"],
+        },
     ),
 ]
