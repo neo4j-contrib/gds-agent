@@ -32,6 +32,10 @@ async def test_list_tools(mcp_client):
         "project_graph_cypher",
         "drop_graph",
         "list_graphs",
+        "get_graph_info",
+        "stream_node_properties",
+        "stream_relationship_properties",
+        "stream_relationships",
         # Centrality algorithms
         "article_rank",
         "articulation_points",
