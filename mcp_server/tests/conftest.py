@@ -165,6 +165,12 @@ async def mcp_server_process(import_test_data):
         stdout=asyncio.subprocess.PIPE,
         stderr=asyncio.subprocess.PIPE,
         limit=1024 * 1024 * 10,  # 10MB buffer limit
+        env={
+            **os.environ,
+            # Tests assert on full results; truncation is covered by unit tests
+            "GDS_AGENT_MAX_RESULT_ROWS": "1000000",
+            "GDS_AGENT_MAX_RESULT_CHARS": "100000000",
+        },
     )
 
     # Wait a moment for the server to initialize

@@ -7,6 +7,14 @@ from .algorithm_handler import AlgorithmHandler, clean_params
 logger = logging.getLogger("mcp_server_neo4j_gds")
 
 
+def _as_node_pairs(gds, node_id_pairs):
+    node_ids = [node_id for pair in node_id_pairs for node_id in pair]
+    if not node_ids:
+        return []
+    nodes = iter(gds.util.asNodes(node_ids))
+    return list(zip(nodes, nodes))
+
+
 class DijkstraShortestPathHandler(AlgorithmHandler):
     def find_shortest_path(
         self, start_node: str, end_node: str, node_identifier_property: str, **kwargs
@@ -484,7 +492,7 @@ class MinimumWeightSpanningTreeHandler(AlgorithmHandler):
                 }
 
             # Convert to native Python types as needed
-            edges = []
+            edge_rows = []
             total_weight = 0.0
 
             for _, row in mst_data.iterrows():
@@ -498,10 +506,16 @@ class MinimumWeightSpanningTreeHandler(AlgorithmHandler):
 
                 total_weight += weight
 
-                # Get node names using GDS utility function
-                parent_name = self.gds.util.asNode(parent_id)
-                node_name = self.gds.util.asNode(node_id)
+                edge_rows.append((node_id, parent_id, weight))
 
+            node_pairs = _as_node_pairs(
+                self.gds, [(node_id, parent_id) for node_id, parent_id, _ in edge_rows]
+            )
+
+            edges = []
+            for (node_id, parent_id, weight), (node_name, parent_name) in zip(
+                edge_rows, node_pairs
+            ):
                 edges.append(
                     {
                         "nodeId": node_id,
@@ -605,7 +619,7 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
             }
 
         # Convert to native Python types as needed
-        edges = []
+        edge_rows = []
         total_weight = 0.0
 
         for _, row in steiner_data.iterrows():
@@ -619,10 +633,16 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
 
             total_weight += weight
 
-            # Get node names using GDS utility function
-            node_name = self.gds.util.asNode(node_id)
-            parent_name = self.gds.util.asNode(parent_id)
+            edge_rows.append((node_id, parent_id, weight))
 
+        node_pairs = _as_node_pairs(
+            self.gds, [(node_id, parent_id) for node_id, parent_id, _ in edge_rows]
+        )
+
+        edges = []
+        for (node_id, parent_id, weight), (node_name, parent_name) in zip(
+            edge_rows, node_pairs
+        ):
             edges.append(
                 {
                     "nodeId": node_id,
@@ -667,7 +687,7 @@ class PrizeCollectingSteinerTreeHandler(AlgorithmHandler):
             }
 
         # Convert to native Python types as needed
-        edges = []
+        edge_rows = []
         total_weight = 0.0
 
         for _, row in steiner_data.iterrows():
@@ -681,10 +701,16 @@ class PrizeCollectingSteinerTreeHandler(AlgorithmHandler):
 
             total_weight += weight
 
-            # Get node names using GDS utility function if available
-            node_name = self.gds.util.asNode(node_id)
-            parent_name = self.gds.util.asNode(parent_id)
+            edge_rows.append((node_id, parent_id, weight))
 
+        node_pairs = _as_node_pairs(
+            self.gds, [(node_id, parent_id) for node_id, parent_id, _ in edge_rows]
+        )
+
+        edges = []
+        for (node_id, parent_id, weight), (node_name, parent_name) in zip(
+            edge_rows, node_pairs
+        ):
             edges.append(
                 {
                     "nodeId": node_id,

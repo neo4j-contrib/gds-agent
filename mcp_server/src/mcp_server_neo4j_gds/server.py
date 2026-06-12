@@ -1,6 +1,7 @@
 # server.py
 import contextlib
 import logging
+from anyio import BrokenResourceError
 from mcp.server import NotificationOptions, Server
 from mcp.server.models import InitializationOptions
 from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
@@ -29,8 +30,18 @@ from .graph_projection_handlers import (
     ProjectGraphCypherHandler,
     DropGraphHandler,
     ListGraphsHandler,
+    GraphInfoHandler,
+    StreamNodePropertiesHandler,
+    StreamRelationshipPropertiesHandler,
+    StreamRelationshipsHandler,
 )
 from .session_manager import SessionManager, GdsMode
+from .result_limits import (
+    dataframe_limit_warning,
+    limit_dataframe_rows,
+    limit_text,
+    max_cell_chars,
+)
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
 SERVER_NAME = "neo4j_gds"
@@ -88,7 +99,8 @@ def create_base_gds(db_url: str, username: str, password: str, database: str = N
 def serialize_result(result: Any) -> str:
     """Serialize results to string without truncation, handling DataFrames specially"""
     if isinstance(result, pd.DataFrame):
-        # Configure pandas to show all rows and columns
+        result = limit_dataframe_rows(result)
+        warning = dataframe_limit_warning(result)
         with pd.option_context(
             "display.max_rows",
             None,
@@ -97,15 +109,18 @@ def serialize_result(result: Any) -> str:
             "display.width",
             None,
             "display.max_colwidth",
-            None,
+            max_cell_chars(),
         ):
-            return result.to_string(index=True)
+            text = result.to_string(index=True)
+        if warning:
+            text = f"{warning}\n\n{text}"
+        return limit_text(text)
     elif isinstance(result, (list, dict)):
         # Use JSON for better formatting of complex data structures
-        return json.dumps(result, indent=2, default=str)
+        return limit_text(json.dumps(result, indent=2, default=str))
     else:
         # For other types, use string conversion
-        return str(result)
+        return limit_text(str(result))
 
 
 def normalize_transport(transport: str) -> str:
@@ -147,10 +162,9 @@ def create_mcp_server(
         if mode == GdsMode.SESSION:
             if session_manager.session_gds is None:
                 logger.info("Creating session on first use")
-                return session_manager.create_or_get_session(
-                    db_url, (username, password), database
-                )
-            return session_manager.session_gds
+            return session_manager.create_or_get_session(
+                db_url, (username, password), database
+            )
         return base_gds
 
     @server.list_tools()
@@ -322,6 +336,26 @@ def create_mcp_server(
                 result = handler.execute(arguments or {})
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
+            elif name == "get_graph_info":
+                handler = GraphInfoHandler(active_gds)
+                result = handler.execute(arguments or {})
+                return [types.TextContent(type="text", text=serialize_result(result))]
+
+            elif name == "stream_node_properties":
+                handler = StreamNodePropertiesHandler(active_gds)
+                result = handler.execute(arguments or {})
+                return [types.TextContent(type="text", text=serialize_result(result))]
+
+            elif name == "stream_relationship_properties":
+                handler = StreamRelationshipPropertiesHandler(active_gds)
+                result = handler.execute(arguments or {})
+                return [types.TextContent(type="text", text=serialize_result(result))]
+
+            elif name == "stream_relationships":
+                handler = StreamRelationshipsHandler(active_gds)
+                result = handler.execute(arguments or {})
+                return [types.TextContent(type="text", text=serialize_result(result))]
+
             else:
                 handler = AlgorithmRegistry.get_handler(name, active_gds)
                 result = handler.execute(arguments or {})
@@ -342,6 +376,18 @@ def initialization_options(server: Server) -> InitializationOptions:
             experimental_capabilities={},
         ),
     )
+
+
+def is_stdio_disconnect_error(error: BaseException) -> bool:
+    if isinstance(
+        error, (BrokenResourceError, BrokenPipeError, ConnectionResetError, OSError)
+    ):
+        return True
+    if isinstance(error, BaseExceptionGroup):
+        return any(
+            is_stdio_disconnect_error(sub_error) for sub_error in error.exceptions
+        )
+    return False
 
 
 class StreamableHTTPASGIApp:
@@ -423,8 +469,8 @@ async def main(
         else:
             await run_stdio_server(server)
     except Exception as e:
-        stdio_disconnect = transport_mode == STDIO_TRANSPORT and isinstance(
-            e, (BrokenPipeError, ConnectionResetError, OSError)
+        stdio_disconnect = (
+            transport_mode == STDIO_TRANSPORT and is_stdio_disconnect_error(e)
         )
         if stdio_disconnect:
             logger.info("Server shutdown (client disconnected)")

@@ -12,8 +12,10 @@ This allows the LLMs to use Cypher project to manage a catalog of projected grap
 2. Support mutate mode for all algorithm tools.
 3. Support GDS sessions (Aura Graph Analytics) on Aura DB.
 4. Support HTTP transport mode.
+5. Add graph accessor tools: get_graph_info, stream_node_properties, stream_relationship_properties and stream_relationships.
 
 ### Bug Fixes
+1. Limit oversized tool outputs, post-process only returned rows, and batch node lookups to keep stream results from making the MCP server unresponsive.
 
 ### Other Changes
 
