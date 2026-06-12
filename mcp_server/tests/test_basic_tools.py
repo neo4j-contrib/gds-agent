@@ -84,6 +84,21 @@ async def test_list_tools(mcp_client):
         # similarity
         "node_similarity",
         "k_nearest_neighbors",
+        # Node embedding algorithms
+        "fast_rp",
+        "node2vec",
+        "hashgnn",
+        "graph_sage_train",
+        "graph_sage_predict",
+        # ML pipelines and model catalog
+        "train_node_classification_model",
+        "predict_node_classification",
+        "train_link_prediction_model",
+        "predict_link_prediction",
+        "train_node_regression_model",
+        "predict_node_regression",
+        "list_models",
+        "drop_model",
     ]
 
     # Check that we have the expected tools

@@ -2,7 +2,7 @@
 
 Neither LLMs nor any existing toolings (MCP Servers) are capable of complex reasoning on graphs at the moment.
 
-This MCP Server includes toolings from Neo4j Graph Data Science (GDS) library, which allows you to run all common graph algorithms.
+This MCP Server includes toolings from Neo4j Graph Data Science (GDS) library, which allows you to run all common graph algorithms, node embeddings (FastRP, Node2Vec, HashGNN, GraphSAGE), and machine learning pipelines (node classification, link prediction, node regression).
 
 Once the server is running, you are able to **ask any graph questions about your Neo4j graph** and get answers. LLMs equipped with GDS agent can decide and accurately execute the appropriate parameterised graph algorithms over the graph you have in your Neo4j database.
 

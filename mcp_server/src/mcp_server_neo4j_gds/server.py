@@ -18,6 +18,8 @@ from .centrality_algorithm_specs import centrality_tool_definitions
 from .community_algorithm_specs import community_tool_definitions
 from .path_algorithm_specs import path_tool_definitions
 from .graph_projection_specs import graph_projection_tool_definitions
+from .embedding_algorithm_specs import embedding_tool_definitions
+from .ml_pipeline_specs import ml_pipeline_tool_definitions
 from .registry import AlgorithmRegistry
 from .gds import (
     count_nodes,
@@ -253,6 +255,8 @@ def create_mcp_server(
                 + community_tool_definitions
                 + path_tool_definitions
                 + similarity_tool_definitions
+                + embedding_tool_definitions
+                + ml_pipeline_tool_definitions
             )
             logger.info(f"Returning {len(tools)} tools")
             return tools
