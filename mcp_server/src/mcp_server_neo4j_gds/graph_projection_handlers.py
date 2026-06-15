@@ -14,10 +14,32 @@ def _as_list(value, default=None):
 
 
 class ProjectGraphCypherHandler(AlgorithmHandler):
-    def project_graph_cypher(self, graph_name: str, cypher_query: str, **kwargs):
+    def project_graph_cypher(
+        self,
+        graph_name: str,
+        cypher_query: str,
+        undirected_relationship_types=None,
+        **kwargs,
+    ):
         if is_session_gds(self.gds):
-            G, result = self.gds.graph.project(graph_name, cypher_query)
+            # In session (remote) mode undirectedRelationshipTypes is a top-level
+            # projection parameter, not a key inside the gds.graph.project.remote
+            # data config map, which rejects it.
+            G, result = self.gds.graph.project(
+                graph_name,
+                cypher_query,
+                undirected_relationship_types=undirected_relationship_types,
+            )
         else:
+            if undirected_relationship_types:
+                raise ValueError(
+                    "In plugin (on-prem) mode, undirected relationships are declared "
+                    "inside the Cypher query as the projection config (4th argument of "
+                    "gds.graph.project), e.g. "
+                    "{ undirectedRelationshipTypes: ['LINK'] }. The "
+                    "undirectedRelationshipTypes tool parameter only applies to Aura "
+                    "session mode."
+                )
             G, result = self.gds.graph.cypher.project(
                 cypher_query, graph_name=graph_name
             )
@@ -33,6 +55,7 @@ class ProjectGraphCypherHandler(AlgorithmHandler):
         return self.project_graph_cypher(
             graph_name=arguments.get("graphName"),
             cypher_query=arguments.get("cypherQuery"),
+            undirected_relationship_types=arguments.get("undirectedRelationshipTypes"),
         )
 
 
