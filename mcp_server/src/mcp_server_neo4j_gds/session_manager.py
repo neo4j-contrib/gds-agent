@@ -1,5 +1,6 @@
 import logging
 import os
+import hashlib
 from contextlib import suppress
 from datetime import timedelta
 from typing import Optional, Tuple
@@ -8,6 +9,13 @@ from graphdatascience.session import GdsSessions, AuraAPICredentials, SessionMem
 from graphdatascience.session.dbms_connection_info import DbmsConnectionInfo
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
+DEFAULT_SESSION_NAME_PREFIX = "mcp_gds_session"
+
+
+def default_session_name(db_url: str, database: Optional[str] = None) -> str:
+    session_identity = f"{db_url}|{database or ''}"
+    session_hash = hashlib.sha1(session_identity.encode("utf-8")).hexdigest()[:12]
+    return f"{DEFAULT_SESSION_NAME_PREFIX}_{session_hash}"
 
 
 class GdsMode:
@@ -79,7 +87,7 @@ class SessionManager:
     def create_or_get_session(
         self, db_url: str, auth: Tuple[str, str], database: Optional[str] = None
     ) -> GraphDataScience:
-        session_name = os.getenv("SESSION_NAME", "mcp_gds_session")
+        session_name = default_session_name(db_url, database)
         if self.session_gds is not None:
             if self.session_name == session_name and self._cached_session_exists(
                 session_name
