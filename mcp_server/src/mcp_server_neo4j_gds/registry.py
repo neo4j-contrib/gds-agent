@@ -53,6 +53,23 @@ from .path_algorithm_handlers import (
     LongestPathHandler,
     MaxFlowHandler,
 )
+from .embedding_algorithm_handlers import (
+    FastRPHandler,
+    Node2VecHandler,
+    HashGNNHandler,
+    GraphSageTrainHandler,
+    GraphSagePredictHandler,
+)
+from .ml_pipeline_handlers import (
+    NodeClassificationTrainHandler,
+    NodeClassificationPredictHandler,
+    LinkPredictionTrainHandler,
+    LinkPredictionPredictHandler,
+    NodeRegressionTrainHandler,
+    NodeRegressionPredictHandler,
+    ListModelsHandler,
+    DropModelHandler,
+)
 
 
 class AlgorithmRegistry:
@@ -105,6 +122,21 @@ class AlgorithmRegistry:
         "bellman_ford_single_source_shortest_path": BellmanFordSingleSourceShortestPathHandler,
         "longest_path": LongestPathHandler,
         "max_flow": MaxFlowHandler,
+        # Node embedding algorithms
+        "fast_rp": FastRPHandler,
+        "node2vec": Node2VecHandler,
+        "hashgnn": HashGNNHandler,
+        "graph_sage_train": GraphSageTrainHandler,
+        "graph_sage_predict": GraphSagePredictHandler,
+        # ML pipelines and model catalog
+        "train_node_classification_model": NodeClassificationTrainHandler,
+        "predict_node_classification": NodeClassificationPredictHandler,
+        "train_link_prediction_model": LinkPredictionTrainHandler,
+        "predict_link_prediction": LinkPredictionPredictHandler,
+        "train_node_regression_model": NodeRegressionTrainHandler,
+        "predict_node_regression": NodeRegressionPredictHandler,
+        "list_models": ListModelsHandler,
+        "drop_model": DropModelHandler,
     }
 
     @classmethod

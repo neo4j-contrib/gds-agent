@@ -2,7 +2,7 @@
 
 Neither LLMs nor any existing toolings (MCP Servers) are capable of complex reasoning on graphs at the moment.
 
-This MCP Server includes toolings from Neo4j Graph Data Science (GDS) library, which allows you to run all common graph algorithms.
+This MCP Server includes toolings from Neo4j Graph Data Science (GDS) library, which allows you to run all common graph algorithms, node embeddings (FastRP, Node2Vec, HashGNN, GraphSAGE), and machine learning pipelines (node classification, link prediction, node regression).
 
 Once the server is running, you are able to **ask any graph questions about your Neo4j graph** and get answers. LLMs equipped with GDS agent can decide and accurately execute the appropriate parameterised graph algorithms over the graph you have in your Neo4j database.
 
@@ -32,6 +32,19 @@ By default the server uses STDIO transport. For HTTP-native clients, run:
 gds-agent --transport http --host 127.0.0.1 --port 8000 --path /mcp
 ```
 You can also set `GDS_AGENT_TRANSPORT`, `GDS_AGENT_HOST`, `GDS_AGENT_PORT`, and `GDS_AGENT_PATH`. The Neo4j MCP-style `NEO4J_TRANSPORT` and `NEO4J_MCP_SERVER_*` names are also supported.
+
+## GDS Aura Graph Analytics (sessions)
+The server detects whether the connected Neo4j has the GDS plugin installed or whether to use a GDS Aura Graph Analytics session. Detection runs `gds.session.list()` on startup; if it succeeds, session mode is used and graph projections fall back to `gds.graph.project.remote`.
+
+Session mode requires Aura API credentials. Add them to the same `env` block (or `.env` file) used for the database credentials:
+```
+"AURA_API_CLIENT_ID": "...",
+"AURA_API_CLIENT_SECRET": "...",
+"AURA_API_PROJECT_ID": "...",
+"SESSION_MEMORY_GB": "8",
+"SESSION_TTL_HOURS": "24"
+```
+`AURA_API_PROJECT_ID` is optional (needed only if your Aura API client has access to multiple projects), as are `SESSION_MEMORY_GB` (default 8) and `SESSION_TTL_HOURS` (default 24). The session is created lazily on the first algorithm/projection call. Three extra tools become available in session mode: `list_sessions`, `delete_session`, and `recreate_session` (the last is useful to bump memory after an OOM).
 
 # Full documentation
 For complete documentation and development guidelines, please refer to: https://github.com/neo4j-contrib/gds-agent.

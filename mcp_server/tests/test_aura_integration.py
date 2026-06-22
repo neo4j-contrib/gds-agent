@@ -62,8 +62,7 @@ def base_gds():
 
 
 @pytest.fixture
-def session_manager(monkeypatch):
-    monkeypatch.setenv("SESSION_NAME", "mcp_gds_integration_test")
+def session_manager():
     sm = SessionManager()
     yield sm
     if sm.session_name:

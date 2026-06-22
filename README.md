@@ -2,7 +2,7 @@
 
 Neither LLMs nor any existing toolings (MCP Servers) are capable of complex reasoning on graphs at the moment.
 
-This MCP Server includes toolings from Neo4j Graph Data Science (GDS) library, which allows you to run all common graph algorithms.
+This MCP Server includes toolings from Neo4j Graph Data Science (GDS) library, which allows you to run all common graph algorithms, node embeddings (FastRP, Node2Vec, HashGNN, GraphSAGE), and machine learning pipelines (node classification, link prediction, node regression).
 
 Once the server is running, you are able to **ask any graph questions about your Neo4j graph** and get answers. LLMs equipped with GDS agent can decide and accurately execute the appropriate parameterised graph algorithms over the graph you have in your Neo4j database.
 
@@ -58,7 +58,6 @@ AURA_API_CLIENT_SECRET=...
 AURA_API_PROJECT_ID=...
 # optional
 SESSION_MEMORY_GB=8
-SESSION_NAME=mcp_gds_session
 SESSION_TTL_HOURS=24
 ```
 The session is created lazily on the first algorithm/projection call. Three extra tools become available in session mode: `list_sessions`, `delete_session`, and `recreate_session` (the last is useful to bump memory after an OOM).

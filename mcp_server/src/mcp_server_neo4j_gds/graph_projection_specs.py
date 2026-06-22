@@ -35,6 +35,8 @@ RETURN gds.graph.project.remote(
     }
 )
 
+To project UNDIRECTED relationships in session mode (required by algorithms such as link prediction pipeline training), use the separate undirectedRelationshipTypes tool parameter, e.g. ["CONNECTED"]. Do NOT add undirectedRelationshipTypes or orientation to the gds.graph.project.remote() data config map — the remote projection rejects them there. In plugin (on-prem) mode, declare undirected relationships inside the query instead, as the projection config (4th argument of gds.graph.project): { undirectedRelationshipTypes: ['CONNECTED'] }.
+
 References:
 - Plugin: https://neo4j.com/docs/graph-data-science/current/management-ops/graph-creation/graph-project-cypher-projection/
 - Sessions: https://neo4j.com/docs/graph-data-science-client/current/aura-graph-analytics/#_projecting_graphs_into_a_gds_session
@@ -49,6 +51,11 @@ References:
                 "cypherQuery": {
                     "type": "string",
                     "description": "Cypher query that matches nodes and relationships, then returns the graph projection call. In plugin mode, call gds.graph.project() with $graph_name as the first argument. In Aura session mode, call gds.graph.project.remote() with exactly three arguments: source node, target node, and data config; do not pass graph name or a fourth config argument.",
+                },
+                "undirectedRelationshipTypes": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Optional. Relationship types to project as UNDIRECTED, e.g. ['LINK']. Required by algorithms that need undirected input, such as link prediction pipeline training. Only applies to Aura session mode, where it is a top-level projection parameter and must NOT appear in the gds.graph.project.remote() data config map. In plugin (on-prem) mode, omit this parameter and declare undirected relationships inside the Cypher query instead.",
                 },
             },
             "required": ["graphName", "cypherQuery"],
