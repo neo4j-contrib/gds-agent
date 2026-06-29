@@ -1,10 +1,35 @@
 import logging
+import re
 from typing import Dict, Any
 
 
 from .algorithm_handler import AlgorithmHandler, clean_params
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
+
+# Cypher identifiers that can be used without backtick quoting must match
+# this shape. We use it to reject node_identifier_property values that
+# would otherwise be interpolated as raw Cypher fragments into the
+# `n.<property>` accessor and could break out of the surrounding query.
+_IDENTIFIER_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
+
+def _validate_property_name(name):
+    """Validate a Cypher property name supplied by the MCP client.
+
+    The ``nodeIdentifierProperty`` tool argument is interpolated directly
+    into Cypher queries (``n.<name>``). Without validation a crafted
+    value can break out of the property accessor and execute arbitrary
+    Cypher. Restricting it to unquoted-identifier shape preserves the
+    documented contract ("e.g. 'name', 'Name', 'title'") while making
+    injection impossible.
+    """
+    if not isinstance(name, str) or not _IDENTIFIER_RE.match(name):
+        raise ValueError(
+            "Invalid nodeIdentifierProperty: must match "
+            "[A-Za-z_][A-Za-z0-9_]* (e.g. 'name', 'Name', 'title')."
+        )
+    return name
 
 
 def _as_node_pairs(gds, node_id_pairs):
@@ -19,6 +44,7 @@ class DijkstraShortestPathHandler(AlgorithmHandler):
     def find_shortest_path(
         self, start_node: str, end_node: str, node_identifier_property: str, **kwargs
     ):
+        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
         query = f"""
         MATCH (start)
@@ -96,6 +122,7 @@ class DeltaSteppingShortestPathHandler(AlgorithmHandler):
     def delta_stepping_shortest_path(
         self, source_node: str, node_identifier_property: str, **kwargs
     ):
+        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
         query = f"""
         MATCH (source)
@@ -187,6 +214,7 @@ class DijkstraSingleSourceShortestPathHandler(AlgorithmHandler):
     def dijkstra_single_source_shortest_path(
         self, source_node: str, node_identifier_property: str, **kwargs
     ):
+        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
         query = f"""
         MATCH (source)
@@ -281,6 +309,7 @@ class AStarShortestPathHandler(AlgorithmHandler):
         node_identifier_property: str,
         **kwargs,
     ):
+        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
         query = f"""
         MATCH (source)
@@ -364,6 +393,7 @@ class YensShortestPathsHandler(AlgorithmHandler):
         node_identifier_property: str,
         **kwargs,
     ):
+        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
         query = f"""
         MATCH (source)
@@ -458,6 +488,7 @@ class MinimumWeightSpanningTreeHandler(AlgorithmHandler):
     def minimum_weight_spanning_tree(
         self, source_node: str, node_identifier_property: str, **kwargs
     ):
+        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
         query = f"""
         MATCH (source)
@@ -555,6 +586,7 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
         node_identifier_property: str,
         **kwargs,
     ):
+        node_identifier_property = _validate_property_name(node_identifier_property)
         # Find source node ID
         source_query = f"""
         MATCH (source)
@@ -790,6 +822,7 @@ class RandomWalkHandler(AlgorithmHandler):
                     "found": False,
                     "message": "nodeIdentifierProperty is required when sourceNodes are provided",
                 }
+            node_identifier_property = _validate_property_name(node_identifier_property)
 
             for source_name in kwargs["sourceNodes"]:
                 source_query = f"""
@@ -871,6 +904,7 @@ class BreadthFirstSearchHandler(AlgorithmHandler):
     def breadth_first_search(
         self, source_node: str, node_identifier_property: str, **kwargs
     ):
+        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
         # Find source node ID
         source_query = f"""
@@ -972,6 +1006,7 @@ class DepthFirstSearchHandler(AlgorithmHandler):
     def depth_first_search(
         self, source_node: str, node_identifier_property: str, **kwargs
     ):
+        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
         # Find source node ID
         source_query = f"""
@@ -1072,6 +1107,7 @@ class BellmanFordSingleSourceShortestPathHandler(AlgorithmHandler):
     def bellman_ford_single_source_shortest_path(
         self, source_node: str, node_identifier_property: str, **kwargs
     ):
+        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
         # Find source node ID
         source_query = f"""
@@ -1170,6 +1206,7 @@ class LongestPathHandler(AlgorithmHandler):
                     "found": False,
                     "message": "nodeIdentifierProperty is required when targetNodes are provided",
                 }
+            node_identifier_property = _validate_property_name(node_identifier_property)
 
             for target_name in kwargs["targetNodes"]:
                 target_query = f"""
@@ -1256,6 +1293,7 @@ class MaxFlowHandler(AlgorithmHandler):
         node_identifier_property: str,
         **kwargs,
     ):
+        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
         source_node_ids = []
         source_node_names = []
