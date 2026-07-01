@@ -903,3 +903,53 @@ async def test_max_flow_mutate(mcp_client, projected_test_graph):
     assert match is not None
     relationships_written = int(match.group(1))
     assert relationships_written > 0
+
+
+# ---------------------------------------------------------------------------
+# CWE-943 regression: nodeIdentifierProperty must be validated before it
+# reaches run_cypher. These tests execute against the dockerised Neo4j+GDS
+# fixture used by the rest of this file so that we exercise the actual
+# query engine — not just a mocked handler.
+#
+# All 13 path-algorithm handlers share a single validator, so we cover the
+# rejection contract at the MCP-tool boundary with one representative tool.
+# Pure-Python coverage of the validator (edge cases, non-string inputs,
+# every handler class) lives in ``test_path_property_injection.py``.
+# ---------------------------------------------------------------------------
+
+
+# Payload with a trivial predicate in the WHERE clause so that, without
+# the validator, the interpolated Cypher would actually parse:
+#   MATCH (start)
+#   WHERE toLower(start.name) IS NOT NULL WITH 1 AS pwned RETURN pwned //)
+#         CONTAINS toLower($start_name)
+#   ...
+# The `IS NOT NULL` gives WHERE a boolean predicate, then `WITH ... RETURN`
+# emits attacker-chosen data and `//` comments out the rest of the query.
+_MALICIOUS_NODE_IDENTIFIER_PROPERTY = (
+    "name) IS NOT NULL WITH 1 AS pwned RETURN pwned //"
+)
+
+
+@pytest.mark.asyncio
+async def test_find_shortest_path_rejects_injection_in_node_identifier_property(
+    mcp_client, projected_test_graph
+):
+    result = await mcp_client.call_tool(
+        "find_shortest_path",
+        {
+            "start_node": "Bayswater",
+            "end_node": "Westbourne Park",
+            "nodeIdentifierProperty": _MALICIOUS_NODE_IDENTIFIER_PROPERTY,
+            "relationship_property": "time",
+            "graphName": projected_test_graph,
+        },
+    )
+
+    # handle_call_tool wraps handler exceptions as "Error: <msg>".
+    assert len(result) == 1
+    result_text = result[0]["text"]
+    assert "Error" in result_text
+    assert "Invalid nodeIdentifierProperty" in result_text
+    # The injected marker must not have made it back through Neo4j.
+    assert "pwned" not in result_text
