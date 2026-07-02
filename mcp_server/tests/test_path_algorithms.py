@@ -905,27 +905,6 @@ async def test_max_flow_mutate(mcp_client, projected_test_graph):
     assert relationships_written > 0
 
 
-# ---------------------------------------------------------------------------
-# CWE-943 regression: nodeIdentifierProperty must be validated before it
-# reaches run_cypher. These tests execute against the dockerised Neo4j+GDS
-# fixture used by the rest of this file so that we exercise the actual
-# query engine — not just a mocked handler.
-#
-# All 13 path-algorithm handlers share a single validator, so we cover the
-# rejection contract at the MCP-tool boundary with one representative tool.
-# Pure-Python coverage of the validator (edge cases, non-string inputs,
-# every handler class) lives in ``test_path_property_injection.py``.
-# ---------------------------------------------------------------------------
-
-
-# Payload with a trivial predicate in the WHERE clause so that, without
-# the validator, the interpolated Cypher would actually parse:
-#   MATCH (start)
-#   WHERE toLower(start.name) IS NOT NULL WITH 1 AS pwned RETURN pwned //)
-#         CONTAINS toLower($start_name)
-#   ...
-# The `IS NOT NULL` gives WHERE a boolean predicate, then `WITH ... RETURN`
-# emits attacker-chosen data and `//` comments out the rest of the query.
 _MALICIOUS_NODE_IDENTIFIER_PROPERTY = (
     "name) IS NOT NULL WITH 1 AS pwned RETURN pwned //"
 )

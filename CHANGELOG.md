@@ -19,6 +19,7 @@ This allows the LLMs to use Cypher project to manage a catalog of projected grap
 
 ### Bug Fixes
 1. Limit oversized tool outputs, post-process only returned rows, and batch node lookups to keep stream results from making the MCP server unresponsive.
+2. Add regex checks in query parameters to avoid query injection for path algorithm tools.
 
 ### Other Changes
 
