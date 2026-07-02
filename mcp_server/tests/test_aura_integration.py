@@ -65,9 +65,9 @@ def base_gds():
 def session_manager():
     sm = SessionManager()
     yield sm
-    if sm.session_name:
+    for name, _ in sm.active_sessions():
         try:
-            sm.delete_session()
+            sm.delete_session(name)
         except Exception:
             pass
     sm.close()
@@ -76,15 +76,17 @@ def session_manager():
 def test_aura_session_full_cycle(base_gds, session_manager):
     assert session_manager.detect_mode(base_gds) == GdsMode.SESSION
 
+    session_name = "mcp_integration_test_session"
     session_gds = session_manager.create_or_get_session(
         os.environ["NEO4J_URI"],
         (os.environ["NEO4J_USERNAME"], os.environ["NEO4J_PASSWORD"]),
         os.getenv("NEO4J_DATABASE"),
+        session_name=session_name,
     )
-    assert session_manager.session_name is not None
+    assert session_manager.get_session(session_name) is session_gds
 
     listing = session_manager.list_sessions()
-    assert any(s["name"] == session_manager.session_name for s in listing["sessions"])
+    assert any(s["name"] == session_name for s in listing["sessions"])
 
     cypher = """
         MATCH (n)-[r]->(m)

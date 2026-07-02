@@ -8,6 +8,8 @@ graph_projection_tool_definitions = [
 The graph will persist in memory until explicitly dropped with drop_graph.
 Use this to create a graph projection, then reference it by name when running algorithms.
 
+In Aura session mode, sessionName is required and must name a session previously created with create_session. All other tools locate a graph's session automatically from graphName, so multiple graphs in one session need no extra parameters.
+
 Plugin (on-prem) mode — call gds.graph.project() with $graph_name as the first argument:
 MATCH (n:Station)-[r:CONNECTED]->(m:Station)
 RETURN gds.graph.project(
@@ -57,6 +59,10 @@ References:
                     "items": {"type": "string"},
                     "description": "Optional. Relationship types to project as UNDIRECTED, e.g. ['LINK']. Required by algorithms that need undirected input, such as link prediction pipeline training. Only applies to Aura session mode, where it is a top-level projection parameter and must NOT appear in the gds.graph.project.remote() data config map. In plugin (on-prem) mode, omit this parameter and declare undirected relationships inside the Cypher query instead.",
                 },
+                "sessionName": {
+                    "type": "string",
+                    "description": "Required in Aura session mode, not allowed in plugin mode. GDS session to project the graph into; must already exist (use create_session). 'mcp_' is prepended if missing. Most workflows project all graphs into one session; use separate sessions only to isolate graphs on separate compute, e.g. for parallel analyses.",
+                },
             },
             "required": ["graphName", "cypherQuery"],
         },
@@ -84,6 +90,7 @@ This does not affect the underlying data in the Neo4j database - only the in-mem
         description="""List all projected graphs currently in memory with their metadata.
 
 Returns information about each graph including node count, relationship count, memory usage, and schema.
+In Aura session mode, graphs from all active sessions are listed, each tagged with its sessionName.
 Use this to see what graphs are available for running algorithms on.
 """,
         inputSchema={"type": "object", "properties": {}},

@@ -44,7 +44,7 @@ Session mode requires Aura API credentials. Add them to the same `env` block (or
 "SESSION_MEMORY_GB": "8",
 "SESSION_TTL_HOURS": "24"
 ```
-`AURA_API_PROJECT_ID` is optional (needed only if your Aura API client has access to multiple projects), as are `SESSION_MEMORY_GB` (default 8) and `SESSION_TTL_HOURS` (default 24). The session is created lazily on the first algorithm/projection call. Three extra tools become available in session mode: `list_sessions`, `delete_session`, and `recreate_session` (the last is useful to bump memory after an OOM).
+`AURA_API_PROJECT_ID` is optional (needed only if your Aura API client has access to multiple projects), as are `SESSION_MEMORY_GB` (default 8) and `SESSION_TTL_HOURS` (default 24). Sessions are managed explicitly by the agent: four extra tools become available in session mode (`list_sessions`, `create_session`, `delete_session`, and `recreate_session` — the last is useful to bump memory after an OOM). A session must first be created with `create_session`, `project_graph_cypher` then projects each graph into the session named by its required `sessionName` parameter, and algorithm calls are routed to the right session automatically by `graphName`. Most workflows need a single session holding all graphs; multiple sessions allow running analyses in parallel. All sessions created by the server are named with an `mcp_` prefix.
 
 # Full documentation
 For complete documentation and development guidelines, please refer to: https://github.com/neo4j-contrib/gds-agent.

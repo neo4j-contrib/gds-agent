@@ -1,4 +1,5 @@
 # server.py
+import asyncio
 import contextlib
 import logging
 from anyio import BrokenResourceError
@@ -37,7 +38,8 @@ from .graph_projection_handlers import (
     StreamRelationshipPropertiesHandler,
     StreamRelationshipsHandler,
 )
-from .session_manager import SessionManager, GdsMode
+from .ml_pipeline_handlers import ListModelsHandler, DropModelHandler
+from .session_manager import SessionManager, GdsMode, ensure_mcp_session_name
 from .result_limits import (
     dataframe_limit_warning,
     limit_dataframe_rows,
@@ -160,14 +162,22 @@ def create_mcp_server(
     mode = session_manager.detect_mode(base_gds)
     logger.info(f"Detected GDS mode: {mode}")
 
-    def get_gds() -> GraphDataScience:
-        if mode == GdsMode.SESSION:
-            if session_manager.session_gds is None:
-                logger.info("Creating session on first use")
-            return session_manager.create_or_get_session(
-                db_url, (username, password), database
+    def get_gds_for_graph(graph_name: str = None) -> GraphDataScience:
+        # Tools without a graphName only query the database and run on the base connection
+        if mode != GdsMode.SESSION or not graph_name:
+            return base_gds
+        session_name = session_manager.session_for_graph(graph_name)
+        if session_name is None:
+            raise ValueError(
+                f"Graph '{graph_name}' was not found in any active session. "
+                "Create a session with create_session and project the graph with project_graph_cypher."
             )
-        return base_gds
+        session_gds = session_manager.get_session(session_name)
+        if session_gds is None:
+            raise ValueError(
+                f"Session '{session_name}' is no longer available. Recreate it with create_session."
+            )
+        return session_gds
 
     @server.list_tools()
     async def handle_list_tools() -> list[types.Tool]:
@@ -191,22 +201,50 @@ def create_mcp_server(
                             "properties": {
                                 "sessionName": {
                                     "type": "string",
-                                    "description": "Name of the session to delete (optional, defaults to current session)",
+                                    "description": "Name of the session to delete",
                                 }
                             },
+                            "required": ["sessionName"],
                         },
                     ),
                     types.Tool(
                         name="recreate_session",
-                        description="""Recreate the current session with a new memory size (useful for OOM errors)""",
+                        description="""Delete and recreate a session, optionally with a new memory size (useful for OOM errors). Recreating a session drops all graphs projected into it.""",
                         inputSchema={
                             "type": "object",
                             "properties": {
+                                "sessionName": {
+                                    "type": "string",
+                                    "description": "Name of the session to recreate",
+                                },
                                 "memoryGB": {
                                     "type": "integer",
                                     "description": "Memory size in GB for the new session",
-                                }
+                                },
                             },
+                            "required": ["sessionName"],
+                        },
+                    ),
+                    types.Tool(
+                        name="create_session",
+                        description="""Create a named GDS session, or reconnect to an existing one.
+
+Sessions are never created implicitly: create one with this tool before projecting graphs with project_graph_cypher (its sessionName parameter picks the target session). All other tools locate a graph's session automatically from graphName.
+Most workflows need a single session holding all projected graphs; create additional sessions only to isolate graphs on separate compute, e.g. to run independent analyses in parallel.
+Session names are prefixed with 'mcp_' if not already; the returned sessionName is the actual name.""",
+                        inputSchema={
+                            "type": "object",
+                            "properties": {
+                                "sessionName": {
+                                    "type": "string",
+                                    "description": "Name for the session. 'mcp_' is prepended if missing.",
+                                },
+                                "memoryGB": {
+                                    "type": "integer",
+                                    "description": "Optional memory size in GB (defaults to SESSION_MEMORY_GB or 8)",
+                                },
+                            },
+                            "required": ["sessionName"],
                         },
                     ),
                 ]
@@ -264,16 +302,15 @@ def create_mcp_server(
             logger.error(f"Error in handle_list_tools: {e}")
             raise
 
-    @server.call_tool()
-    async def handle_call_tool(
+    def execute_tool(
         name: str, arguments: dict[str, Any] | None
     ) -> list[types.TextContent | types.ImageContent | types.EmbeddedResource]:
-        """Handle tool execution requests"""
         try:
             session_tool_names = {
                 "list_sessions",
                 "delete_session",
                 "recreate_session",
+                "create_session",
             }
             if name in session_tool_names:
                 if mode != GdsMode.SESSION:
@@ -297,15 +334,73 @@ def create_mcp_server(
                         types.TextContent(type="text", text=serialize_result(result))
                     ]
 
-                memory_gb = arguments.get("memoryGB") if arguments else None
-                session_manager.recreate_session(memory_gb)
+                if name == "create_session":
+                    session_name = ensure_mcp_session_name(
+                        arguments.get("sessionName") if arguments else None
+                    )
+                    session_manager.create_or_get_session(
+                        db_url,
+                        (username, password),
+                        database,
+                        session_name=session_name,
+                        memory_gb=arguments.get("memoryGB"),
+                    )
+                    result = {"sessionName": session_name, "status": "ready"}
+                    return [
+                        types.TextContent(type="text", text=serialize_result(result))
+                    ]
+
+                arguments = arguments or {}
+                session_manager.recreate_session(
+                    arguments.get("sessionName"), arguments.get("memoryGB")
+                )
                 return [
                     types.TextContent(
                         type="text", text="Session recreated successfully"
                     )
                 ]
 
-            active_gds = get_gds()
+            arguments = arguments or {}
+            graph_name = arguments.get("graphName")
+
+            if name == "project_graph_cypher":
+                requested_session = arguments.get("sessionName")
+                if mode == GdsMode.SESSION:
+                    if not requested_session:
+                        return [
+                            types.TextContent(
+                                type="text",
+                                text="Error: sessionName is required in Aura session mode. "
+                                "Create a session with create_session first.",
+                            )
+                        ]
+                    target_session = ensure_mcp_session_name(requested_session)
+                    project_gds = session_manager.get_session(target_session)
+                    if project_gds is None:
+                        return [
+                            types.TextContent(
+                                type="text",
+                                text=f"Error: Session '{target_session}' not found. "
+                                "Create it with create_session.",
+                            )
+                        ]
+                    session_manager.assert_graph_unmapped(graph_name, target_session)
+                else:
+                    if requested_session:
+                        return [
+                            types.TextContent(
+                                type="text",
+                                text="Error: sessionName is only available in Aura session mode",
+                            )
+                        ]
+                    project_gds = base_gds
+                handler = ProjectGraphCypherHandler(project_gds)
+                result = handler.execute(arguments)
+                if mode == GdsMode.SESSION:
+                    session_manager.record_graph(result["graphName"], target_session)
+                return [types.TextContent(type="text", text=serialize_result(result))]
+
+            active_gds = get_gds_for_graph(graph_name)
 
             if name == "count_nodes":
                 result = count_nodes(active_gds)
@@ -325,19 +420,24 @@ def create_mcp_server(
                 result = get_relationship_types(active_gds)
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
-            elif name == "project_graph_cypher":
-                handler = ProjectGraphCypherHandler(active_gds)
-                result = handler.execute(arguments or {})
-                return [types.TextContent(type="text", text=serialize_result(result))]
-
             elif name == "drop_graph":
                 handler = DropGraphHandler(active_gds)
-                result = handler.execute(arguments or {})
+                result = handler.execute(arguments)
+                if mode == GdsMode.SESSION:
+                    session_manager.forget_graph(graph_name)
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
             elif name == "list_graphs":
-                handler = ListGraphsHandler(active_gds)
-                result = handler.execute(arguments or {})
+                if mode == GdsMode.SESSION:
+                    graphs = []
+                    for s_name, s_gds in session_manager.active_sessions():
+                        listing = ListGraphsHandler(s_gds).execute({})
+                        for graph in listing["graphs"]:
+                            graph["sessionName"] = s_name
+                        graphs.extend(listing["graphs"])
+                    result = {"graphs": graphs, "count": len(graphs)}
+                else:
+                    result = ListGraphsHandler(active_gds).execute(arguments)
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
             elif name == "get_graph_info":
@@ -360,6 +460,33 @@ def create_mcp_server(
                 result = handler.execute(arguments or {})
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
+            # Model catalog tools carry no graphName; in session mode they span all sessions
+            elif name == "list_models" and mode == GdsMode.SESSION:
+                models = []
+                for s_name, s_gds in session_manager.active_sessions():
+                    listing = ListModelsHandler(s_gds).execute({})
+                    for model in listing["models"]:
+                        model["sessionName"] = s_name
+                    models.extend(listing["models"])
+                result = {"models": models, "count": len(models)}
+                return [types.TextContent(type="text", text=serialize_result(result))]
+
+            elif name == "drop_model" and mode == GdsMode.SESSION:
+                for _, s_gds in session_manager.active_sessions():
+                    try:
+                        result = DropModelHandler(s_gds).execute(arguments)
+                    except Exception:
+                        continue
+                    return [
+                        types.TextContent(type="text", text=serialize_result(result))
+                    ]
+                return [
+                    types.TextContent(
+                        type="text",
+                        text=f"Error: Model '{arguments.get('modelName')}' not found in any active session",
+                    )
+                ]
+
             else:
                 handler = AlgorithmRegistry.get_handler(name, active_gds)
                 result = handler.execute(arguments or {})
@@ -367,6 +494,14 @@ def create_mcp_server(
 
         except Exception as e:
             return [types.TextContent(type="text", text=f"Error: {str(e)}")]
+
+    @server.call_tool()
+    async def handle_call_tool(
+        name: str, arguments: dict[str, Any] | None
+    ) -> list[types.TextContent | types.ImageContent | types.EmbeddedResource]:
+        """Handle tool execution requests"""
+        # Run blocking GDS calls off the event loop so tool calls can execute in parallel
+        return await asyncio.to_thread(execute_tool, name, arguments)
 
     return server, session_manager, base_gds
 
