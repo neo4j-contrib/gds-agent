@@ -16,6 +16,7 @@ This allows the LLMs to use Cypher project to manage a catalog of projected grap
 6. Add node embedding tools: fast_rp, node2vec, hashgnn, graph_sage_train and graph_sage_predict.
 7. Add ML pipeline tools that train and apply models via the GDS model catalog: train_node_classification_model, predict_node_classification, train_link_prediction_model, predict_link_prediction, train_node_regression_model and predict_node_regression.
 8. Add model catalog tools: list_models and drop_model.
+9. Support multiple explicitly managed GDS sessions per server: sessions are created with the create_session tool, project_graph_cypher requires a sessionName in session mode, and tool calls are routed to the right session by graphName.
 
 ### Bug Fixes
 1. Limit oversized tool outputs, post-process only returned rows, and batch node lookups to keep stream results from making the MCP server unresponsive.

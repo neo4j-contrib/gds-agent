@@ -60,7 +60,7 @@ AURA_API_PROJECT_ID=...
 SESSION_MEMORY_GB=8
 SESSION_TTL_HOURS=24
 ```
-The session is created lazily on the first algorithm/projection call. Three extra tools become available in session mode: `list_sessions`, `delete_session`, and `recreate_session` (the last is useful to bump memory after an OOM).
+Sessions are managed explicitly by the agent: four extra tools become available in session mode (`list_sessions`, `create_session`, `delete_session`, and `recreate_session` — the last is useful to bump memory after an OOM). A session must first be created with `create_session`, `project_graph_cypher` then projects each graph into the session named by its required `sessionName` parameter, and algorithm calls are routed to the right session automatically by `graphName`. Most workflows need a single session holding all graphs; multiple sessions allow running analyses in parallel. All sessions created by the server are named with an `mcp_` prefix.
 
 
 # Example dataset

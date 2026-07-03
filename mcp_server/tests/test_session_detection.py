@@ -5,7 +5,7 @@ from src.mcp_server_neo4j_gds import session_manager as session_manager_module
 from src.mcp_server_neo4j_gds.session_manager import (
     SessionManager,
     GdsMode,
-    default_session_name,
+    ensure_mcp_session_name,
 )
 
 
@@ -81,49 +81,9 @@ def test_sessions_client_accepts_missing_project_id(monkeypatch):
     assert captured["credentials"] == ("client-id", "client-secret", None)
 
 
-def test_default_session_name_depends_on_database_identity():
-    name1 = default_session_name("neo4j+s://db1.databases.neo4j.io", "neo4j")
-    name2 = default_session_name("neo4j+s://db2.databases.neo4j.io", "neo4j")
-    name3 = default_session_name("neo4j+s://db1.databases.neo4j.io", "analytics")
-
-    assert name1.startswith("mcp_gds_session_")
-    assert name1 != name2
-    assert name1 != name3
-
-
-def test_create_or_get_session_uses_database_specific_default_name():
-    class FakeGds:
-        pass
-
-    class FakeGdsSessions:
-        def __init__(self):
-            self.created_session_name = None
-
-        def list(self):
-            return []
-
-        def get_or_create(self, *args, **kwargs):
-            self.created_session_name = kwargs["session_name"]
-            return FakeGds()
-
-    fake_sessions = FakeGdsSessions()
-    session_manager = SessionManager()
-    session_manager._sessions_client = fake_sessions
-
-    session_manager.create_or_get_session(
-        "neo4j+s://db1.databases.neo4j.io", ("neo4j", "pw"), "neo4j"
-    )
-
-    assert fake_sessions.created_session_name == default_session_name(
-        "neo4j+s://db1.databases.neo4j.io", "neo4j"
-    )
-
-
 def test_create_or_get_session_reuses_available_cached_session():
-    session_name = default_session_name("bolt://example")
-
     class FakeSessionInfo:
-        name = session_name
+        name = "mcp_analytics"
         status = "Ready"
 
     class FakeGds:
@@ -142,18 +102,17 @@ def test_create_or_get_session_reuses_available_cached_session():
     cached_gds = FakeGds()
     session_manager = SessionManager()
     session_manager._sessions_client = FakeGdsSessions()
-    session_manager.session_gds = cached_gds
-    session_manager.session_name = session_name
+    session_manager._sessions["mcp_analytics"] = cached_gds
 
-    result = session_manager.create_or_get_session("bolt://example", ("neo4j", "pw"))
+    result = session_manager.create_or_get_session(
+        "bolt://example", ("neo4j", "pw"), session_name="analytics"
+    )
 
     assert result is cached_gds
     assert not cached_gds.closed
 
 
 def test_create_or_get_session_recreates_missing_cached_session():
-    session_name = default_session_name("bolt://example")
-
     class FakeGds:
         def __init__(self):
             self.closed = False
@@ -178,16 +137,155 @@ def test_create_or_get_session_recreates_missing_cached_session():
     fake_sessions = FakeGdsSessions(new_gds)
     session_manager = SessionManager()
     session_manager._sessions_client = fake_sessions
-    session_manager.session_gds = cached_gds
-    session_manager.session_name = session_name
+    session_manager._sessions["mcp_analytics"] = cached_gds
 
-    result = session_manager.create_or_get_session("bolt://example", ("neo4j", "pw"))
+    result = session_manager.create_or_get_session(
+        "bolt://example", ("neo4j", "pw"), session_name="analytics"
+    )
 
     assert cached_gds.closed
     assert result is new_gds
     assert fake_sessions.created == 1
-    assert session_manager.session_gds is new_gds
-    assert session_manager.session_name == session_name
+    assert session_manager._sessions["mcp_analytics"] is new_gds
+
+
+def test_ensure_mcp_session_name_enforces_prefix():
+    assert ensure_mcp_session_name("analytics") == "mcp_analytics"
+    assert ensure_mcp_session_name("mcp_analytics") == "mcp_analytics"
+    with pytest.raises(ValueError):
+        ensure_mcp_session_name("")
+    with pytest.raises(ValueError):
+        ensure_mcp_session_name(None)
+
+
+def test_sessions_are_cached_independently():
+    class FakeSessionInfo:
+        def __init__(self, name):
+            self.name = name
+            self.status = "Ready"
+
+    class FakeGds:
+        def close(self):
+            pass
+
+    class FakeGdsSessions:
+        def __init__(self):
+            self.created = []
+
+        def list(self):
+            return [FakeSessionInfo(name) for name in self.created]
+
+        def get_or_create(self, *args, **kwargs):
+            self.created.append(kwargs["session_name"])
+            return FakeGds()
+
+    fake_sessions = FakeGdsSessions()
+    manager = SessionManager()
+    manager._sessions_client = fake_sessions
+
+    first = manager.create_or_get_session(
+        "bolt://example", ("neo4j", "pw"), session_name="analytics"
+    )
+    second = manager.create_or_get_session(
+        "bolt://example", ("neo4j", "pw"), session_name="reporting"
+    )
+
+    assert fake_sessions.created == ["mcp_analytics", "mcp_reporting"]
+    assert first is not second
+    assert dict(manager.active_sessions()) == {
+        "mcp_analytics": first,
+        "mcp_reporting": second,
+    }
+
+    reused = manager.create_or_get_session(
+        "bolt://example", ("neo4j", "pw"), session_name="mcp_analytics"
+    )
+
+    assert reused is first
+    assert fake_sessions.created == ["mcp_analytics", "mcp_reporting"]
+
+
+def test_get_session_returns_cached_session_or_none():
+    class FakeSessionInfo:
+        name = "mcp_analytics"
+        status = "Ready"
+
+    class FakeGdsSessions:
+        def list(self):
+            return [FakeSessionInfo()]
+
+    manager = SessionManager()
+    manager._sessions_client = FakeGdsSessions()
+    cached = Mock()
+    manager._sessions["mcp_analytics"] = cached
+
+    assert manager.get_session("analytics") is cached
+    assert manager.get_session("missing") is None
+
+
+def test_graph_routing_tracks_sessions_and_conflicts():
+    manager = SessionManager()
+    manager._sessions["mcp_first"] = Mock()
+    manager._sessions["mcp_analytics"] = Mock()
+
+    manager.record_graph("g1", "mcp_first")
+    manager.record_graph("g2", "mcp_analytics")
+
+    assert manager.session_for_graph("g1") == "mcp_first"
+    assert manager.session_for_graph("g2") == "mcp_analytics"
+
+    with pytest.raises(ValueError, match="already exists in session"):
+        manager.assert_graph_unmapped("g2", "mcp_first")
+    manager.assert_graph_unmapped("g2", "mcp_analytics")
+
+    manager.forget_graph("g2")
+    manager.assert_graph_unmapped("g2", "mcp_first")
+
+
+def test_session_for_graph_scans_sessions_for_unmapped_graphs():
+    manager = SessionManager()
+    session_gds = Mock()
+    session_gds.graph.exists.return_value = {"exists": True}
+    manager._sessions["mcp_analytics"] = session_gds
+
+    assert manager.session_for_graph("unmapped") == "mcp_analytics"
+    assert manager.graph_sessions["unmapped"] == "mcp_analytics"
+
+
+def test_session_for_graph_returns_none_when_graph_not_found():
+    manager = SessionManager()
+    session_gds = Mock()
+    session_gds.graph.exists.return_value = {"exists": False}
+    manager._sessions["mcp_analytics"] = session_gds
+
+    assert manager.session_for_graph("missing") is None
+
+
+def test_delete_session_purges_session_and_graph_routing():
+    class FakeGdsSessions:
+        def __init__(self):
+            self.deleted = None
+
+        def list(self):
+            return []
+
+        def delete(self, session_name):
+            self.deleted = session_name
+            return True
+
+    manager = SessionManager()
+    manager._sessions_client = FakeGdsSessions()
+    session_gds = Mock()
+    manager._sessions["mcp_analytics"] = session_gds
+    manager.record_graph("g", "mcp_analytics")
+
+    result = manager.delete_session("analytics")
+
+    assert result == {"session_name": "mcp_analytics", "deleted": True}
+    assert manager._sessions_client.deleted == "mcp_analytics"
+    assert "mcp_analytics" not in manager._sessions
+    assert manager.graph_sessions == {}
+    session_gds.close.assert_called_once()
 
 
 def test_create_base_gds_uses_driver_connection_for_versionless_aura(monkeypatch):

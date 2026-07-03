@@ -18,4 +18,3 @@ __pycache__/
 # Misc
 .worktreeinclude
 CLAUDE.md
-run_projection.py
