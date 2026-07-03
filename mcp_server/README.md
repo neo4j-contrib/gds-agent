@@ -1,3 +1,5 @@
+<!-- mcp-name: io.github.neo4j-contrib/gds-agent -->
+
 # GDS Agent
 
 Neither LLMs nor any existing toolings (MCP Servers) are capable of complex reasoning on graphs at the moment.
@@ -45,6 +47,9 @@ Session mode requires Aura API credentials. Add them to the same `env` block (or
 "SESSION_TTL_HOURS": "24"
 ```
 `AURA_API_PROJECT_ID` is optional (needed only if your Aura API client has access to multiple projects), as are `SESSION_MEMORY_GB` (default 8) and `SESSION_TTL_HOURS` (default 24). Sessions are managed explicitly by the agent: three extra tools become available in session mode (`list_sessions`, `create_session`, and `delete_session`). A session must first be created with `create_session`, `project_graph_cypher` then projects each graph into the session named by its required `sessionName` parameter, and algorithm calls are routed to the right session automatically by `graphName`. Most workflows need a single session holding all graphs; multiple sessions allow running analyses in parallel. To resize a session (e.g. after an OOM), delete it and create it again with a larger `memoryGB`. All sessions created by the server are named with an `mcp_` prefix.
+
+# Other clients and the graph-analysis skill
+This package is one half of the GDS Agent: the repository also ships a `neo4j-graph-analysis` Agent Skill and one-step installers for Claude Code (plugin), Claude Desktop (MCPB bundle), OpenAI Codex, Cursor, VS Code/Copilot, and Gemini CLI. See the per-harness setup guides: https://github.com/neo4j-contrib/gds-agent#install.
 
 # Full documentation
 For complete documentation and development guidelines, please refer to: https://github.com/neo4j-contrib/gds-agent.

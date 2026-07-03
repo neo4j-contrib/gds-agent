@@ -1,0 +1,93 @@
+{
+  "manifest_version": "0.4",
+  "name": "gds-agent",
+  "display_name": "Neo4j GDS Agent",
+  "version": "0.5.1",
+  "description": "Neo4j Graph Data Science MCP server: graph algorithms, embeddings, and ML pipelines",
+  "long_description": "Run centrality, community detection, path finding, similarity, node embedding, and ML pipeline algorithms on your Neo4j database. Works with the GDS plugin on self-managed Neo4j and with Aura Graph Analytics sessions on AuraDB.",
+  "author": {
+    "name": "Neo4j"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/neo4j-contrib/gds-agent.git"
+  },
+  "homepage": "https://github.com/neo4j-contrib/gds-agent",
+  "license": "MIT",
+  "keywords": ["neo4j", "graph", "gds", "graph-data-science", "graph-algorithms"],
+  "server": {
+    "type": "uv",
+    "entry_point": "src/mcp_server_neo4j_gds/__init__.py",
+    "mcp_config": {
+      "command": "uv",
+      "args": ["run", "--directory", "${__dirname}", "gds-agent"],
+      "env": {
+        "NEO4J_URI": "${user_config.neo4j_uri}",
+        "NEO4J_USERNAME": "${user_config.neo4j_username}",
+        "NEO4J_PASSWORD": "${user_config.neo4j_password}",
+        "NEO4J_DATABASE": "${user_config.neo4j_database}",
+        "AURA_API_CLIENT_ID": "${user_config.aura_api_client_id}",
+        "AURA_API_CLIENT_SECRET": "${user_config.aura_api_client_secret}",
+        "AURA_API_PROJECT_ID": "${user_config.aura_api_project_id}"
+      }
+    }
+  },
+  "user_config": {
+    "neo4j_uri": {
+      "type": "string",
+      "title": "Neo4j URI",
+      "description": "Connection URI, e.g. neo4j://localhost:7687 or neo4j+s://xxxx.databases.neo4j.io",
+      "required": true,
+      "default": "neo4j://localhost:7687"
+    },
+    "neo4j_username": {
+      "type": "string",
+      "title": "Neo4j username",
+      "description": "Database user",
+      "required": true,
+      "default": "neo4j"
+    },
+    "neo4j_password": {
+      "type": "string",
+      "title": "Neo4j password",
+      "description": "Database password",
+      "required": true,
+      "sensitive": true
+    },
+    "neo4j_database": {
+      "type": "string",
+      "title": "Neo4j database",
+      "description": "Optional database name",
+      "required": false,
+      "default": ""
+    },
+    "aura_api_client_id": {
+      "type": "string",
+      "title": "Aura API client ID",
+      "description": "Optional: enables Aura Graph Analytics session mode",
+      "required": false,
+      "default": ""
+    },
+    "aura_api_client_secret": {
+      "type": "string",
+      "title": "Aura API client secret",
+      "description": "Optional: Aura Graph Analytics session mode",
+      "required": false,
+      "sensitive": true,
+      "default": ""
+    },
+    "aura_api_project_id": {
+      "type": "string",
+      "title": "Aura project ID",
+      "description": "Optional: only needed if the Aura API client can access multiple projects",
+      "required": false,
+      "default": ""
+    }
+  },
+  "compatibility": {
+    "platforms": ["darwin", "win32", "linux"],
+    "runtimes": {
+      "python": ">=3.11"
+    }
+  }
+}

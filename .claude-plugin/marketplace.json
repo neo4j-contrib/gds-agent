@@ -1,0 +1,19 @@
+{
+  "name": "neo4j-gds",
+  "owner": {
+    "name": "Neo4j",
+    "url": "https://github.com/neo4j-contrib"
+  },
+  "metadata": {
+    "description": "Neo4j Graph Data Science agent plugin: the gds-agent MCP server plus graph-analysis skills"
+  },
+  "plugins": [
+    {
+      "name": "gds-agent",
+      "source": "./",
+      "description": "Run graph algorithms (centrality, community detection, path finding, similarity, embeddings, ML pipelines) on any Neo4j database, with a graph-analysis skill that guides algorithm selection.",
+      "category": "database",
+      "tags": ["neo4j", "graph", "gds", "graph-data-science", "mcp"]
+    }
+  ]
+}

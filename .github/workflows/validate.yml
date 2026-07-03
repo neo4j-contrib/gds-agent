@@ -1,0 +1,46 @@
+name: Validate Distribution Artifacts
+
+on:
+  pull_request:
+    paths:
+      - 'skills/**'
+      - '.claude-plugin/**'
+      - 'mcp.json'
+      - 'server.json'
+      - 'gemini-extension.json'
+      - 'GEMINI.md'
+      - 'mcp_server/manifest.json'
+      - 'mcp_server/.mcpbignore'
+      - 'mcp_server/pyproject.toml'
+      - 'scripts/bump_version.py'
+      - '.github/workflows/validate.yml'
+
+jobs:
+  manifests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Versions agree across manifests
+        run: python3 scripts/bump_version.py --check
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v6
+      - name: Install dependencies
+        run: uv sync --dev
+        working-directory: mcp_server
+      - name: Validate skills and server metadata
+        run: uv run pytest tests/test_skills.py tests/test_server_metadata.py -v
+        working-directory: mcp_server
+      - name: Validate MCPB manifest
+        run: npx -y @anthropic-ai/mcpb validate mcp_server/manifest.json
+      - name: Dry-run MCPB pack
+        run: npx -y @anthropic-ai/mcpb pack mcp_server "${{ runner.temp }}/gds-agent-test.mcpb"
+
+  secret-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
