@@ -208,29 +208,12 @@ def create_mcp_server(
                         },
                     ),
                     types.Tool(
-                        name="recreate_session",
-                        description="""Delete and recreate a session, optionally with a new memory size (useful for OOM errors). Recreating a session drops all graphs projected into it.""",
-                        inputSchema={
-                            "type": "object",
-                            "properties": {
-                                "sessionName": {
-                                    "type": "string",
-                                    "description": "Name of the session to recreate",
-                                },
-                                "memoryGB": {
-                                    "type": "integer",
-                                    "description": "Memory size in GB for the new session",
-                                },
-                            },
-                            "required": ["sessionName"],
-                        },
-                    ),
-                    types.Tool(
                         name="create_session",
                         description="""Create a named GDS session, or reconnect to an existing one.
 
 Sessions are never created implicitly: create one with this tool before projecting graphs with project_graph_cypher (its sessionName parameter picks the target session). All other tools locate a graph's session automatically from graphName.
 Most workflows need a single session holding all projected graphs; create additional sessions only to isolate graphs on separate compute, e.g. to run independent analyses in parallel.
+To resize an existing session (e.g. after an OOM), delete it with delete_session and create it again with a larger memoryGB; this drops all graphs projected into it.
 Session names are prefixed with 'mcp_' if not already; the returned sessionName is the actual name.""",
                         inputSchema={
                             "type": "object",
@@ -309,7 +292,6 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
             session_tool_names = {
                 "list_sessions",
                 "delete_session",
-                "recreate_session",
                 "create_session",
             }
             if name in session_tool_names:
@@ -334,31 +316,18 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                         types.TextContent(type="text", text=serialize_result(result))
                     ]
 
-                if name == "create_session":
-                    session_name = ensure_mcp_session_name(
-                        arguments.get("sessionName") if arguments else None
-                    )
-                    session_manager.create_or_get_session(
-                        db_url,
-                        (username, password),
-                        database,
-                        session_name=session_name,
-                        memory_gb=arguments.get("memoryGB"),
-                    )
-                    result = {"sessionName": session_name, "status": "ready"}
-                    return [
-                        types.TextContent(type="text", text=serialize_result(result))
-                    ]
-
+                # create_session
                 arguments = arguments or {}
-                session_manager.recreate_session(
-                    arguments.get("sessionName"), arguments.get("memoryGB")
+                session_name = ensure_mcp_session_name(arguments.get("sessionName"))
+                session_manager.create_or_get_session(
+                    db_url,
+                    (username, password),
+                    database,
+                    session_name=session_name,
+                    memory_gb=arguments.get("memoryGB"),
                 )
-                return [
-                    types.TextContent(
-                        type="text", text="Session recreated successfully"
-                    )
-                ]
+                result = {"sessionName": session_name, "status": "ready"}
+                return [types.TextContent(type="text", text=serialize_result(result))]
 
             arguments = arguments or {}
             graph_name = arguments.get("graphName")

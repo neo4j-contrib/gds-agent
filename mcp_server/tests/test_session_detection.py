@@ -288,40 +288,6 @@ def test_delete_session_purges_session_and_graph_routing():
     session_gds.close.assert_called_once()
 
 
-def test_recreate_session_supports_named_sessions():
-    class FakeGds:
-        def close(self):
-            pass
-
-    class FakeGdsSessions:
-        def __init__(self):
-            self.deleted = []
-            self.created = []
-
-        def list(self):
-            return []
-
-        def delete(self, session_name):
-            self.deleted.append(session_name)
-            return True
-
-        def get_or_create(self, *args, **kwargs):
-            self.created.append(kwargs["session_name"])
-            return FakeGds()
-
-    fake_sessions = FakeGdsSessions()
-    manager = SessionManager()
-    manager._sessions_client = fake_sessions
-    manager._db_url = "bolt://example"
-    manager._auth = ("neo4j", "pw")
-    manager._database = None
-
-    manager.recreate_session(session_name="analytics")
-
-    assert fake_sessions.deleted == ["mcp_analytics"]
-    assert fake_sessions.created == ["mcp_analytics"]
-
-
 def test_create_base_gds_uses_driver_connection_for_versionless_aura(monkeypatch):
     class FakeGraphDataScience:
         def __init__(self, *args, **kwargs):

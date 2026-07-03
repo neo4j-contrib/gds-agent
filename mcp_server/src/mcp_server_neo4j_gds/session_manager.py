@@ -32,9 +32,6 @@ class SessionManager:
         self.graph_sessions: Dict[str, str] = {}
         self._lock = threading.Lock()
         self._sessions_client: Optional[GdsSessions] = None
-        self._db_url: Optional[str] = None
-        self._auth: Optional[Tuple[str, str]] = None
-        self._database: Optional[str] = None
 
     def detect_mode(self, gds: GraphDataScience) -> str:
         if self.mode is not None:
@@ -110,10 +107,6 @@ class SessionManager:
             logger.info(f"Cached session '{resolved_name}' is no longer available")
             with self._lock:
                 self._evict(resolved_name)
-
-        self._db_url = db_url
-        self._auth = auth
-        self._database = database
 
         self._ensure_sessions_client()
 
@@ -225,26 +218,6 @@ class SessionManager:
         deleted = self._sessions_client.delete(session_name=resolved_name)
 
         return {"session_name": resolved_name, "deleted": deleted}
-
-    def recreate_session(self, session_name: str, memory_gb: Optional[int] = None):
-        if self._db_url is None:
-            raise RuntimeError(
-                "Cannot recreate a session before one has been created. Use create_session first."
-            )
-
-        resolved_name = ensure_mcp_session_name(session_name)
-        try:
-            self.delete_session(resolved_name)
-        except Exception as e:
-            logger.warning(f"Failed to delete existing session: {e}")
-
-        return self.create_or_get_session(
-            self._db_url,
-            self._auth,
-            self._database,
-            session_name=resolved_name,
-            memory_gb=memory_gb,
-        )
 
     def close(self):
         with self._lock:
