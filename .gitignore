@@ -2,9 +2,6 @@
 .envrc
 .env
 
-# Local MCP client configs with credentials
-claude_desktop_config.json
-
 # Python cache
 __pycache__/
 
