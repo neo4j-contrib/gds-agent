@@ -70,10 +70,9 @@ References:
     types.Tool(
         name="drop_graph",
         description="""Drop a projected graph from memory.
-
-This frees up memory and removes the graph projection. The graph must be dropped before a new graph with the same name can be created.
-This does not affect the underlying data in the Neo4j database - only the in-memory projection.
-""",
+        This frees up memory and removes the graph projection. The graph must be dropped before a new graph with the same name can be created.
+        This does not affect the underlying data in the Neo4j database - only the in-memory projection.
+        """,
         inputSchema={
             "type": "object",
             "properties": {
@@ -88,20 +87,18 @@ This does not affect the underlying data in the Neo4j database - only the in-mem
     types.Tool(
         name="list_graphs",
         description="""List all projected graphs currently in memory with their metadata.
-
-Returns information about each graph including node count, relationship count, memory usage, and schema.
-In Aura session mode, graphs from all active sessions are listed, each tagged with its sessionName.
-Use this to see what graphs are available for running algorithms on.
-""",
+        Returns information about each graph including node count, relationship count, memory usage, and schema.
+        In Aura session mode, graphs from all active sessions are listed, each tagged with its sessionName.
+        Use this to see what graphs are available for running algorithms on.
+        """,
         inputSchema={"type": "object", "properties": {}},
     ),
     types.Tool(
         name="get_graph_info",
         description="""Inspect one projected graph in the GDS graph catalog.
-
-Returns graph object metadata including counts, labels, relationship types, projected properties, degree distribution, density, memory usage, configuration, and timestamps.
-Use this before running mutate/stream algorithms to understand the graph schema and available in-memory properties.
-""",
+        Returns graph object metadata including counts, labels, relationship types, projected properties, degree distribution, density, memory usage, configuration, and timestamps.
+        Use this before running mutate/stream algorithms to understand the graph schema and available in-memory properties.
+        """,
         inputSchema={
             "type": "object",
             "properties": {
@@ -116,9 +113,8 @@ Use this before running mutate/stream algorithms to understand the graph schema 
     types.Tool(
         name="stream_node_properties",
         description="""Stream node properties from a projected GDS graph.
-
-Use this after running algorithms in mutate mode to inspect mutated node properties, or to inspect properties included during graph projection. This reads from the in-memory GDS graph, not directly from Neo4j, except for optional dbNodeProperties.
-""",
+        Use this after running algorithms in mutate mode to inspect mutated node properties, or to inspect properties included during graph projection. This reads from the in-memory GDS graph, not directly from Neo4j, except for optional dbNodeProperties.
+        """,
         inputSchema={
             "type": "object",
             "properties": {
@@ -148,9 +144,8 @@ Use this after running algorithms in mutate mode to inspect mutated node propert
     types.Tool(
         name="stream_relationship_properties",
         description="""Stream relationship properties from a projected GDS graph.
-
-Use this after mutate mode algorithms that write relationship properties, or to inspect relationship properties included during projection.
-""",
+        Use this after mutate mode algorithms that write relationship properties, or to inspect relationship properties included during projection.
+        """,
         inputSchema={
             "type": "object",
             "properties": {
@@ -175,9 +170,8 @@ Use this after mutate mode algorithms that write relationship properties, or to 
     types.Tool(
         name="stream_relationships",
         description="""Stream relationship topology from a projected GDS graph.
-
-Returns source node id, target node id, and relationship type rows from the in-memory graph. Use this to inspect projected topology by relationship type.
-""",
+        Returns source node id, target node id, and relationship type rows from the in-memory graph. Use this to inspect projected topology by relationship type.
+        """,
         inputSchema={
             "type": "object",
             "properties": {

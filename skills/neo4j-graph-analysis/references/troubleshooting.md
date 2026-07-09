@@ -26,12 +26,6 @@ means: do not retry the same call. Instead:
 | Node not found for `sourceNode`/`start_node` | Wrong `nodeIdentifierProperty` or value; verify with `get_node_properties_keys` and the database value. |
 | Triangle count / clustering coefficient returns 0 everywhere | Graph projected as directed. Re-project UNDIRECTED. |
 | Link prediction training rejects the graph | Target relationship type must be projected UNDIRECTED (session mode: `undirectedRelationshipTypes` parameter). |
-| Session out-of-memory | Delete and recreate the session with larger `memoryGB`; re-project graphs (see aura-sessions.md). |
+| Session out-of-memory | Delete and recreate the session with larger `memoryGB`; re-project graphs. |
 | Empty algorithm result | Check the projection isn't empty (`get_graph_info` node/relationship counts) and filters aren't too strict. |
 
-## Where results live
-
-- Stream mode: in the tool response only.
-- Mutate mode: in the in-memory projection only — never in the Neo4j database.
-  Nothing gds-agent does writes to the database.
-- Models: in the GDS model catalog (`list_models`), per session in session mode.
