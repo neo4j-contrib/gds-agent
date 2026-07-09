@@ -29,7 +29,7 @@ jobs:
         working-directory: mcp_server
 
       - name: Publish to PyPI (trusted publishing)
-        uses: pypa/gh-action-pypi-publish@release/v1
+      uses: pypa/gh-action-pypi-publish@fe82290e5d9a53a9f7f402d2ee2e0208f3f6f5d1 # release/v1
         with:
           packages-dir: mcp_server/dist
 
