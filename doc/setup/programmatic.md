@@ -58,4 +58,4 @@ async with MCPServerStdio(params={
 
 ## HTTP transport
 
-For frameworks preferring HTTP, run `gds-agent --transport http --port 8000 --path /mcp` and point a streamable-HTTP MCP client at `http://127.0.0.1:8000/mcp`. The server also sends its usage guide in the MCP `instructions` field at initialization — clients that surface it need no extra prompt text.
+For frameworks preferring HTTP, run `gds-agent --transport http --port 8000 --path /mcp` and point a streamable-HTTP MCP client at `http://127.0.0.1:8000/mcp`.

@@ -40,9 +40,7 @@ from .graph_projection_handlers import (
     StreamRelationshipsHandler,
 )
 from .ml_pipeline_handlers import ListModelsHandler, DropModelHandler
-from .instructions import SERVER_INSTRUCTIONS
 from .session_manager import SessionManager, GdsMode, ensure_mcp_session_name
-from .tool_annotations import apply_tool_annotations
 from .result_limits import (
     dataframe_limit_warning,
     limit_dataframe_rows,
@@ -158,9 +156,7 @@ def create_mcp_server(
     if database:
         logger.info(f"Connecting to database: {database}")
 
-    server = Server(
-        SERVER_NAME, version=SERVER_VERSION, instructions=SERVER_INSTRUCTIONS
-    )
+    server = Server(SERVER_NAME, version=SERVER_VERSION)
 
     # Create GraphDataScience object with optional database parameter
     base_gds = create_base_gds(db_url, username, password, database)
@@ -287,7 +283,6 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                 + embedding_tool_definitions
                 + ml_pipeline_tool_definitions
             )
-            apply_tool_annotations(tools)
             logger.info(f"Returning {len(tools)} tools")
             return tools
         except Exception as e:
@@ -492,7 +487,6 @@ def initialization_options(server: Server) -> InitializationOptions:
             notification_options=NotificationOptions(),
             experimental_capabilities={},
         ),
-        instructions=SERVER_INSTRUCTIONS,
     )
 
 

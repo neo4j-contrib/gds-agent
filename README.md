@@ -55,7 +55,7 @@ Sessions are managed explicitly by the agent: three extra tools become available
 
 # The skill
 
-[`skills/neo4j-graph-data-scientist`](skills/neo4j-graph-data-scientist/SKILL.md) follows the open [Agent Skills](https://agentskills.io) standard and is consumed from this one location by the Claude Code plugin, the Gemini extension, `npx skills`, and the release skill zip. It covers workflow best practices (inspect the schema first, projection and cleanup, mutate mode for large graphs) with a [troubleshooting](skills/neo4j-graph-data-scientist/references/troubleshooting.md) reference guide. MCP clients without skill support still get a condensed version through the MCP `instructions` field.
+[`skills/neo4j-graph-data-scientist`](skills/neo4j-graph-data-scientist/SKILL.md) follows the open [Agent Skills](https://agentskills.io) standard and is consumed from this one location by the Claude Code plugin, the Gemini extension, `npx skills`, and the release skill zip. It covers workflow best practices (inspect the schema first, projection and cleanup, mutate mode for large graphs) with a [troubleshooting](skills/neo4j-graph-data-scientist/references/troubleshooting.md) reference guide.
 
 # Example dataset
 To load the London underground example dataset:
