@@ -63,26 +63,45 @@ Sessions are managed explicitly by the agent: three extra tools become available
 
 `[skills/neo4j-graph-data-scientist](skills/neo4j-graph-data-scientist/SKILL.md)` is consumed from this one location by the Claude Code plugin, the Gemini extension, `npx skills`, and the release skill zip. It covers GDS-specific workflow best practices (inspect the schema first, projection and cleanup, mutate mode for large graphs) with a [troubleshooting](skills/neo4j-graph-data-scientist/references/troubleshooting.md) reference guide, as well as general data science best practices. It can only be used with the gds-agent MCP server.
 
+# Read-only Cypher alongside GDS
+
+The GDS server deliberately executes no arbitrary Cypher — its only Cypher entry point is graph projection. To let the agent also read the underlying data (inspect properties, aggregate, verify algorithm results), pair it with the first-party [`mcp-neo4j-cypher`](https://github.com/neo4j-contrib/mcp-neo4j) server in read-only mode.
+
+The **Claude Code plugin** and the **Gemini CLI extension** already bundle it: one install configures both servers with the same credentials, and `NEO4J_READ_ONLY=true` removes its write tool. On any other harness, register a second server alongside gds-agent:
+
+```json
+"neo4j-cypher": {
+  "command": "uvx",
+  "args": ["mcp-neo4j-cypher@0.6.0", "--transport", "stdio"],
+  "env": {
+    "NEO4J_URI": "neo4j://localhost:7687",
+    "NEO4J_USERNAME": "neo4j",
+    "NEO4J_PASSWORD": "<your-password>",
+    "NEO4J_READ_ONLY": "true"
+  }
+}
+```
+
 # Example dataset
 
 To load a London underground example dataset:
 
 1. Fork and clone the repository
-2. Install necessary packages in your python environment with `pip install -r requirements.txt`
-3. Install the Neo4j database with GDS plugin:
+2. Install the Neo4j database with GDS plugin:
   Download the Neo4j Desktop from [Neo4j Download Center](https://neo4j.com/download/)
    Install the GDS plugin from the Neo4j Desktop
    Create a new database and start it
-4. Populate .env file with necessary credentials:
+3. Populate .env file with necessary credentials:
   ```bash
    NEO4J_URI=bolt://localhost:7687  # or your database URI
    NEO4J_USERNAME=neo4j  # or your db username
    NEO4J_PASSWORD=your_password
   ```
-5. Load the London Underground dataset with the following command:
+4. Load the London Underground dataset with the following command ([uv](https://docs.astral.sh/uv/getting-started/installation/) resolves the script's dependencies automatically):
   ```bash
-   python import_data.py --undirected
+   uv run import_data.py --undirected
   ```
+   Alternatively, `pip install -r requirements.txt` and run `python import_data.py --undirected`.
 
 Connect to your DB and querying the graph from [Neo4j workspace](https://workspace-preview.neo4j.io/workspace/), 
 you should see:

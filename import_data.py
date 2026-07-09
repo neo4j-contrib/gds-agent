@@ -1,9 +1,12 @@
+# /// script
+# requires-python = ">=3.11"
+# dependencies = ["neo4j>=5", "python-dotenv>=1.0.0"]
+# ///
 import os
 from neo4j import GraphDatabase
 import json
 import argparse
 from dotenv import load_dotenv
-import os
 
 
 def import_tube_data(uri, username, password, data_file, undirected=False):

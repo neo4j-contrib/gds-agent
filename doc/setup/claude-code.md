@@ -1,6 +1,6 @@
 # Claude Code
 
-The plugin installs the MCP server and the `neo4j-graph-data-scientist` skill together — this is the recommended path.
+The plugin installs the GDS MCP server, the `neo4j-graph-data-scientist` skill, and the read-only [`mcp-neo4j-cypher`](https://github.com/neo4j-contrib/mcp-neo4j) server together — this is the recommended path.
 
 ## Plugin install (tools + skill)
 

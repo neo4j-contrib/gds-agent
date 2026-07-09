@@ -46,6 +46,13 @@
     "neo4j-gds": {
       "command": "uvx",
       "args": ["gds-agent"]
+    },
+    "neo4j-cypher": {
+      "command": "uvx",
+      "args": ["mcp-neo4j-cypher@0.6.0", "--transport", "stdio"],
+      "env": {
+        "NEO4J_READ_ONLY": "true"
+      }
     }
   }
 }

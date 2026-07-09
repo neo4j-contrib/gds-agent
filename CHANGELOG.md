@@ -19,6 +19,7 @@ This allows the LLMs to use Cypher project to manage a catalog of projected grap
 9. Support multiple explicitly managed GDS sessions per server: sessions are created with the create_session tool, project_graph_cypher requires a sessionName in session mode, and tool calls are routed to the right session by graphName.
 10. Add the neo4j-graph-data-scientist Agent Skill (skills/) teaching agents the projection, algorithm-selection, and session workflow, following the agentskills.io open standard.
 11. Distribute as a Claude Code plugin and marketplace (.claude-plugin/, mcp.json), a Claude Desktop MCPB bundle plus uploadable skill zip (mcp_server/manifest.json), a Gemini CLI extension (gemini-extension.json), and an MCP registry manifest (server.json), with per-harness setup guides in doc/setup/ and release scaffolding (RELEASING.md, scripts/bump_version.py, validate/release workflows).
+12. Bundle the read-only mcp-neo4j-cypher server in the Claude Code plugin and Gemini CLI extension so one install provides GDS algorithms plus Cypher reads with shared credentials.
 
 ### Bug Fixes
 1. Limit oversized tool outputs, post-process only returned rows, and batch node lookups to keep stream results from making the MCP server unresponsive.
@@ -28,4 +29,5 @@ This allows the LLMs to use Cypher project to manage a catalog of projected grap
 5. Correct the plugin-mode undirected projection guidance to the 5th (configuration) argument of gds.graph.project and show the placement in the tool description example.
 
 ### Other Changes
+1. Load the example dataset with uv (inline script dependencies in import_data.py) instead of requiring pip install -r requirements.txt.
 
