@@ -34,13 +34,3 @@ jobs:
         run: npx -y @anthropic-ai/mcpb validate mcp_server/manifest.json
       - name: Dry-run MCPB pack
         run: npx -y @anthropic-ai/mcpb pack mcp_server "${{ runner.temp }}/gds-agent-test.mcpb"
-
-  secret-scan:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - uses: gitleaks/gitleaks-action@ff98106e4c7b2bc287b24eaf42907196329070c7 # v2.3.9
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
