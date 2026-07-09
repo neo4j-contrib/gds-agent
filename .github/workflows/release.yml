@@ -22,14 +22,14 @@ jobs:
           test "v$(python3 -c "import re,pathlib;print(re.search(r'version = \"([^\"]+)\"', pathlib.Path('mcp_server/pyproject.toml').read_text())[1])")" = "${GITHUB_REF_NAME}"
 
       - name: Set up uv
-      uses: astral-sh/setup-uv@38b6fce5a1f0a0fed7f54c0c7c3f647d6f8c4f4a # v6
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
 
       - name: Build sdist and wheel
         run: uv build
         working-directory: mcp_server
 
       - name: Publish to PyPI (trusted publishing)
-      uses: pypa/gh-action-pypi-publish@fe82290e5d9a53a9f7f402d2ee2e0208f3f6f5d1 # release/v1
+        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
         with:
           packages-dir: mcp_server/dist
 
@@ -50,7 +50,7 @@ jobs:
           (cd skills && zip -r "../dist-release/neo4j-graph-data-scientist-skill-${GITHUB_REF_NAME#v}.zip" neo4j-graph-data-scientist)
 
       - name: Create GitHub release with artifacts
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
         with:
           files: |
             dist-release/*.mcpb
