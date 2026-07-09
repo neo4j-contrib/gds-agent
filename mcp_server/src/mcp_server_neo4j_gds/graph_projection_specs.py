@@ -37,7 +37,8 @@ RETURN gds.graph.project.remote(
     }
 )
 
-To project UNDIRECTED relationships in session mode (required by algorithms such as link prediction pipeline training), use the separate undirectedRelationshipTypes tool parameter, e.g. ["CONNECTED"]. Do NOT add undirectedRelationshipTypes or orientation to the gds.graph.project.remote() data config map — the remote projection rejects them there. In plugin (on-prem) mode, declare undirected relationships inside the query instead, as the projection config (4th argument of gds.graph.project): { undirectedRelationshipTypes: ['CONNECTED'] }.
+To project UNDIRECTED relationships in session mode, use the separate undirectedRelationshipTypes tool parameter, e.g. ["CONNECTED"]. Do NOT add undirectedRelationshipTypes or orientation to the gds.graph.project.remote() data config map. 
+In plugin (on-prem) mode, declare undirected relationships inside the query instead, as the projection config (4th argument of gds.graph.project): { undirectedRelationshipTypes: ['CONNECTED'] }.
 
 References:
 - Plugin: https://neo4j.com/docs/graph-data-science/current/management-ops/graph-creation/graph-project-cypher-projection/

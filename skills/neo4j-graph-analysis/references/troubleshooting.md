@@ -14,18 +14,6 @@ means: do not retry the same call. Instead:
 
 ## Common errors
 
-| Symptom | Cause → fix |
+| Error | Cause -> Fix |
 |---|---|
-| `Graph 'X' was not found in any active session` | Session mode without projection. `create_session`, then `project_graph_cypher` with `sessionName`. |
-| `sessionName is required in Aura session mode` | Create/name a session first; pass it to `project_graph_cypher`. |
-| `sessionName is only available in Aura session mode` | Plugin mode: omit `sessionName`. |
-| `Session 'X' is no longer available` | Expired/deleted (TTL). Recreate with `create_session` and re-project. |
-| Graph already exists | `drop_graph` first, or pick a new `graphName`. |
-| Property not found when running an algorithm | It wasn't projected. Check `get_graph_info`, re-project including the property (numeric only, `toFloat(...)`). |
-| Weighted algorithm ignores weights | `relationshipWeightProperty` not passed, or property missing from projection. |
-| Node not found for `sourceNode`/`start_node` | Wrong `nodeIdentifierProperty` or value; verify with `get_node_properties_keys` and the database value. |
-| Triangle count / clustering coefficient returns 0 everywhere | Graph projected as directed. Re-project UNDIRECTED. |
-| Link prediction training rejects the graph | Target relationship type must be projected UNDIRECTED (session mode: `undirectedRelationshipTypes` parameter). |
-| Session out-of-memory | Delete and recreate the session with larger `memoryGB`; re-project graphs. |
-| Empty algorithm result | Check the projection isn't empty (`get_graph_info` node/relationship counts) and filters aren't too strict. |
-
+|Algorithm requires UNDIRECTED graphs|The selected algorithm can only run on undirected graphs but you supplied a directed graph projection -> Project another graph that is undirected by setting undirectedRelationshipTypes. |
