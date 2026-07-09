@@ -25,7 +25,7 @@ Every step here is run by a maintainer. Nothing publishes automatically until yo
    Double-click `/tmp/gds-agent.mcpb` to install into Claude Desktop, fill in credentials, confirm tools list and one algorithm runs. If uv-type fails on a target platform, the fallback is `server.type: "python"` with dependencies vendored into `server/lib`.
 5. **Smoke-test the skill zip**: build it like CI does (folder at zip root):
    ```bash
-   (cd skills && zip -r /tmp/neo4j-graph-analysis-skill.zip neo4j-graph-analysis)
+   (cd skills && zip -r /tmp/neo4j-graph-data-scientist-skill.zip neo4j-graph-data-scientist)
    ```
    Upload via Claude Desktop → Settings → Customize → Skills (requires code execution enabled) and confirm it triggers on a graph question.
 6. Commit the version bump, then tag and push:

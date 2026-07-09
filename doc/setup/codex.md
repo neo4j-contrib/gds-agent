@@ -33,4 +33,4 @@ Codex reads Agent Skills from `.agents/skills/` (repo) and `~/.agents/skills/` (
 npx skills add neo4j-contrib/gds-agent -a codex
 ```
 
-Verify inside Codex with `/skills` — `neo4j-graph-analysis` should be listed.
+Verify inside Codex with `/skills` — `neo4j-graph-data-scientist` should be listed.

@@ -4,7 +4,7 @@ claude.ai supports the skill, but it cannot start local MCP servers — tool acc
 
 ## Skill upload
 
-Same flow as Claude Desktop: enable code execution (Settings → Capabilities), then Settings → **Customize** → **Skills** → upload `neo4j-graph-analysis-skill-<version>.zip` from the [releases page](https://github.com/neo4j-contrib/gds-agent/releases). Skills are per-user; Team/Enterprise admins can provision them org-wide.
+Same flow as Claude Desktop: enable code execution (Settings → Capabilities), then Settings → **Customize** → **Skills** → upload `neo4j-graph-data-scientist-skill-<version>.zip` from the [releases page](https://github.com/neo4j-contrib/gds-agent/releases). Skills are per-user; Team/Enterprise admins can provision them org-wide.
 
 ## Tools (remote MCP)
 

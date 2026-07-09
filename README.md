@@ -5,7 +5,7 @@ Neither LLMs nor any existing toolings (MCP Servers) are capable of complex reas
 The GDS Agent gives any LLM agent both pieces it needs to do real graph analysis on your Neo4j database:
 
 - **Tools** — an MCP server exposing ~70 Neo4j Graph Data Science (GDS) algorithms: centrality, community detection, path finding, similarity, node embeddings (FastRP, Node2Vec, HashGNN, GraphSAGE), and ML pipelines (node classification, link prediction, node regression).
-- **Skills** — an [Agent Skill](https://agentskills.io) (`neo4j-graph-analysis`) teaching the agent *how and when* to use those tools: inspecting schema, projecting graphs, selecting the right algorithm, managing Aura sessions, and interpreting results.
+- **Skills** — an [Agent Skill](https://agentskills.io) (`neo4j-graph-data-scientist`) teaching the agent *how and when* to use those tools: inspecting schema, projecting graphs, selecting the right algorithm, managing Aura sessions, and interpreting results.
 
 It works with any MCP-capable harness — Claude Code, Claude Desktop, claude.ai, OpenAI Codex, Cursor, VS Code/Copilot, Gemini CLI — and programmatically from agent frameworks. It uses the GDS plugin on self-managed Neo4j and GDS Aura Graph Analytics sessions on AuraDB, over STDIO or HTTP transport.
 
@@ -25,7 +25,7 @@ Once set up, you can **ask any graph question about your Neo4j graph** and get a
 | **Gemini CLI** | `gemini extensions install https://github.com/neo4j-contrib/gds-agent` | bundled with the extension | [setup](doc/setup/gemini-cli.md) |
 | **Your own agent** | any MCP client (stdio/HTTP) | inject SKILL.md as instructions | [setup](doc/setup/programmatic.md) |
 
-Most local setups need [uv](https://docs.astral.sh/uv/getting-started/installation/) installed (the server runs via `uvx gds-agent` from PyPI). Generic MCP clients can use the config in [`claude_desktop_config.example.json`](claude_desktop_config.example.json).
+Most local setups need [uv](https://docs.astral.sh/uv/getting-started/installation/) installed (the server runs via `uvx gds-agent` from PyPI). Generic MCP clients run `uvx gds-agent` over stdio with the environment variables below.
 
 ## Configuration reference
 
@@ -55,7 +55,7 @@ Sessions are managed explicitly by the agent: three extra tools become available
 
 # The skill
 
-[`skills/neo4j-graph-analysis`](skills/neo4j-graph-analysis/SKILL.md) follows the open [Agent Skills](https://agentskills.io) standard and is consumed from this one location by the Claude Code plugin, the Gemini extension, `npx skills`, and the release skill zip. It covers the core workflow (schema → projection → algorithm selection → stream/mutate → interpretation) with reference guides for [algorithm selection](skills/neo4j-graph-analysis/references/algorithm-selection.md), [projections](skills/neo4j-graph-analysis/references/projections.md), [Aura sessions](skills/neo4j-graph-analysis/references/aura-sessions.md), [ML pipelines](skills/neo4j-graph-analysis/references/ml-pipelines.md), and [troubleshooting](skills/neo4j-graph-analysis/references/troubleshooting.md). MCP clients without skill support still get a condensed version through the MCP `instructions` field.
+[`skills/neo4j-graph-data-scientist`](skills/neo4j-graph-data-scientist/SKILL.md) follows the open [Agent Skills](https://agentskills.io) standard and is consumed from this one location by the Claude Code plugin, the Gemini extension, `npx skills`, and the release skill zip. It covers workflow best practices (inspect the schema first, projection and cleanup, mutate mode for large graphs) with a [troubleshooting](skills/neo4j-graph-data-scientist/references/troubleshooting.md) reference guide. MCP clients without skill support still get a condensed version through the MCP `instructions` field.
 
 # Example dataset
 To load the London underground example dataset:

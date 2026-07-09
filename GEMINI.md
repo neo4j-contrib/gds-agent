@@ -9,7 +9,7 @@ Key points:
 
 - Algorithms run on named in-memory graph projections, never on the database
   directly, and nothing ever writes to the database.
-- Follow the `neo4j-graph-analysis` skill bundled with this extension for the
+- Follow the `neo4j-graph-data-scientist` skill bundled with this extension for the
   full workflow: inspect schema → project a graph → select the algorithm →
   run (stream or mutate mode) → interpret results → drop the projection.
 - Database credentials come from the extension settings (`NEO4J_URI`,

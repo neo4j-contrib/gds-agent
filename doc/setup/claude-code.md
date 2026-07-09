@@ -1,6 +1,6 @@
 # Claude Code
 
-The plugin installs the MCP server and the `neo4j-graph-analysis` skill together — this is the recommended path.
+The plugin installs the MCP server and the `neo4j-graph-data-scientist` skill together — this is the recommended path.
 
 ## Plugin install (tools + skill)
 
@@ -11,7 +11,7 @@ The plugin installs the MCP server and the `neo4j-graph-analysis` skill together
    /plugin install gds-agent@neo4j-gds
    ```
 3. When prompted by the plugin's configuration form, enter your Neo4j URI, username, and password (stored in the OS keychain), plus the optional database name and Aura API credentials (needed only for Aura Graph Analytics session mode on AuraDB).
-4. Verify: `/mcp` should list `neo4j-gds` as connected, and asking e.g. *"Which are the most central nodes in my graph?"* should trigger the `neo4j-graph-analysis` skill and call the schema tools first.
+4. Verify: `/mcp` should list `neo4j-gds` as connected, and asking e.g. *"Which are the most central nodes in my graph?"* should trigger the `neo4j-graph-data-scientist` skill and call the schema tools first.
 
 ## MCP server only (no skill)
 

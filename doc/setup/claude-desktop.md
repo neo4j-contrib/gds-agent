@@ -13,10 +13,26 @@ Two artifacts: the `.mcpb` bundle provides the tools, the skill zip provides the
 ## Knowledge: skill upload
 
 1. Prerequisite: Settings → Capabilities → enable **Code execution and file creation** (skills require it). On Team/Enterprise an admin must enable skills for the organization first.
-2. Download `neo4j-graph-analysis-skill-<version>.zip` from the same release.
+2. Download `neo4j-graph-data-scientist-skill-<version>.zip` from the same release.
 3. Settings → **Customize** → **Skills** → **+** → upload the zip.
 4. Toggle the skill on. Verify by asking a graph question — the response should follow the schema → project → algorithm workflow.
 
 ## Manual config alternative
 
-Instead of the `.mcpb`, you can add the server to `claude_desktop_config.json` by hand — see [`claude_desktop_config.example.json`](../../claude_desktop_config.example.json). Requires `uvx` on your PATH; use the absolute path from `which uvx` as the `command`.
+Instead of the `.mcpb`, you can add the server to `claude_desktop_config.json` by hand (use the absolute path from `which uvx` as the `command`):
+
+```json
+{
+  "mcpServers": {
+    "neo4j-gds": {
+      "command": "/opt/homebrew/bin/uvx",
+      "args": ["gds-agent"],
+      "env": {
+        "NEO4J_URI": "neo4j://localhost:7687",
+        "NEO4J_USERNAME": "neo4j",
+        "NEO4J_PASSWORD": "<your-password>"
+      }
+    }
+  }
+}
+```

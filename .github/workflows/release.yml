@@ -47,7 +47,7 @@ jobs:
       - name: Zip skill for Claude Desktop / claude.ai upload
         run: |
           mkdir -p dist-release
-          (cd skills && zip -r "../dist-release/neo4j-graph-analysis-skill-${GITHUB_REF_NAME#v}.zip" neo4j-graph-analysis)
+          (cd skills && zip -r "../dist-release/neo4j-graph-data-scientist-skill-${GITHUB_REF_NAME#v}.zip" neo4j-graph-data-scientist)
 
       - name: Create GitHub release with artifacts
         uses: softprops/action-gh-release@v2

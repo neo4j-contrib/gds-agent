@@ -1,6 +1,6 @@
 # Programmatic use (build your own agent)
 
-The server is a standard MCP stdio/HTTP server, consumable from any agent framework. The skill is a directory of markdown; frameworks without native skill support can inject `skills/neo4j-graph-analysis/SKILL.md` as system-prompt text.
+The server is a standard MCP stdio/HTTP server, consumable from any agent framework. The skill is a directory of markdown; frameworks without native skill support can inject `skills/neo4j-graph-data-scientist/SKILL.md` as system-prompt text.
 
 ## Claude Agent SDK (Python)
 
@@ -53,7 +53,7 @@ async with MCPServerStdio(params={
             "NEO4J_PASSWORD": "..."},
 }) as server:
     agent = Agent(name="graph-analyst", mcp_servers=[server],
-                  instructions=open("skills/neo4j-graph-analysis/SKILL.md").read())
+                  instructions=open("skills/neo4j-graph-data-scientist/SKILL.md").read())
 ```
 
 ## HTTP transport

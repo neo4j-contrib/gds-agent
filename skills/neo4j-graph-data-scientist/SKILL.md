@@ -10,7 +10,7 @@ compatibility: Requires the gds-agent MCP server (PyPI package gds-agent) connec
 1. **Inspect the database schema first.** Never guess labels, types, or property names.
 2. **Project a graph.** Plugin and session mode have different projection syntax and parameters. Check the graph projection tool description and parameters..
 3. **Clean up.** `drop_graph` when a projection is no longer needed. 
-`drop_graph` when a session is no longer needed, and this will automatically drop all graphs projected to this session.
+`delete_session` when a session is no longer needed, and this will automatically drop all graphs projected to this session.
 4. **Large graphs.** When the graph in the DB large, you might want to consider projecting subgraphs at the start for analysis.
 When the projected graph is large, consider `mode: "mutate"` to store the computed results in the projected graph and then use 
 `stream_node_properties` or `stream_relationship_properties` to inspect the data.
