@@ -2,7 +2,7 @@
   "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
   "name": "io.github.neo4j-contrib/gds-agent",
   "title": "Neo4j GDS Agent",
-  "description": "MCP server exposing Neo4j Graph Data Science algorithms: centrality, community detection, path finding, similarity, node embeddings, and ML pipelines",
+  "description": "Neo4j Graph Data Science MCP server",
   "repository": {
     "url": "https://github.com/neo4j-contrib/gds-agent",
     "source": "github"
