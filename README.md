@@ -10,7 +10,7 @@ The GDS Agent gives any LLM agent both pieces it needs to do real graph analysis
 It works with any MCP-capable harness — Claude Code, Claude Desktop, claude.ai, OpenAI Codex, Cursor, VS Code/Copilot, Gemini CLI — and programmatically from agent frameworks. It uses the GDS plugin on self-managed Neo4j and GDS Aura Graph Analytics sessions on AuraDB, over STDIO or HTTP transport.
 
 Once set up, you can **ask any graph question about your Neo4j graph** and get answers. You can collaborate with the agent as a graph data scientist to solve complex tasks. An example where an LLM with GDS Agent picks shortest path and Yen's algorithm to answer a travel-plan question:
-gds-agent-example
+![gds-agent-example](doc/gds-agent-london-underground-example.png)
 
 # Install
 
@@ -61,11 +61,11 @@ Sessions are managed explicitly by the agent: three extra tools become available
 
 # The skill
 
-`[skills/neo4j-graph-data-scientist](skills/neo4j-graph-data-scientist/SKILL.md)` is consumed from this one location by the Claude Code plugin, the Gemini extension, `npx skills`, and the release skill zip. It covers GDS-specific workflow best practices with a [troubleshooting](skills/neo4j-graph-data-scientist/references/troubleshooting.md) reference guide, as well as general data science best practices. It can only be used with the gds-agent MCP server.
+[`skills/neo4j-graph-data-scientist`](skills/neo4j-graph-data-scientist/SKILL.md) is consumed from this one location by the Claude Code plugin, the Gemini extension, `npx skills`, and the release skill zip. It covers GDS-specific workflow best practices with a [troubleshooting](skills/neo4j-graph-data-scientist/references/troubleshooting.md) reference guide, as well as general data science best practices. It is designed for the gds-agent and mcp-neo4j-cypher MCP servers.
 
 # Read-only Cypher alongside GDS
 
-The GDS server deliberately executes no arbitrary Cypher — its only Cypher entry point is graph projection. To let the agent also read the underlying data (inspect properties, aggregate, verify algorithm results), pair it with the `[mcp-neo4j-cypher](https://github.com/neo4j-contrib/mcp-neo4j)` server in read-only mode.
+The GDS server deliberately executes no arbitrary Cypher — its only Cypher entry point is graph projection. To let the agent also read the underlying data (inspect properties, aggregate, verify algorithm results), pair it with the [`mcp-neo4j-cypher`](https://github.com/neo4j-contrib/mcp-neo4j) server in read-only mode.
 
 The **Claude Code plugin** and the **Gemini CLI extension** already bundle it: one install configures both servers with the same credentials, and `NEO4J_READ_ONLY=true` removes its write tool. On any other harness, register a second server alongside gds-agent:
 
@@ -107,7 +107,7 @@ To load a London underground example dataset:
 
 Connect to your DB and querying the graph from [Neo4j workspace](https://workspace-preview.neo4j.io/workspace/), 
 you should see:
-London Underground Graph
+![London Underground Graph](dataset/london-underground-graph.png)
 
 # Start the server for dev
 

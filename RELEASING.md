@@ -18,24 +18,50 @@ Every step here is run by a maintainer. Nothing publishes automatically until yo
    ```
    This updates `mcp_server/pyproject.toml`, `.claude-plugin/plugin.json`, `server.json` (both fields), `mcp_server/manifest.json`, and `gemini-extension.json`. Claude Code only offers plugin updates when `plugin.json`'s version changes.
 3. Run the test suite and formatting checks (`uv run pytest tests -v`, `uv run ruff format --check`) inside `mcp_server/`.
-4. **Smoke-test the MCPB bundle locally** (uv-type bundles are still marked experimental by the MCPB spec):
-   ```bash
-   npx -y @anthropic-ai/mcpb pack mcp_server /tmp/gds-agent.mcpb
-   ```
-   Double-click `/tmp/gds-agent.mcpb` to install into Claude Desktop, fill in credentials, confirm tools list and one algorithm runs. If uv-type fails on a target platform, the fallback is `server.type: "python"` with dependencies vendored into `server/lib`.
-5. **Smoke-test the skill zip**: build it like CI does (folder at zip root):
-   ```bash
-   (cd skills && zip -r /tmp/neo4j-graph-data-scientist-skill.zip neo4j-graph-data-scientist)
-   ```
-   Upload via Claude Desktop → Settings → Customize → Skills (requires code execution enabled) and confirm it triggers on a graph question.
-6. Commit the version bump, then tag and push:
+4. Build and try every artifact locally — see **Local try-out** below.
+5. Commit the version bump, then tag and push:
    ```bash
    git tag v1.0.0 && git push origin main v1.0.0
    ```
    The tag triggers `release.yml`, which: verifies the tag matches the manifests → builds and publishes to PyPI → publishes `server.json` to the MCP registry → packs the `.mcpb` → zips the skill → attaches all artifacts to a GitHub release.
-7. After the workflow finishes: verify the PyPI page renders, `uvx gds-agent@latest` starts, the registry entry appears (`https://registry.modelcontextprotocol.io/v0/servers?search=gds-agent`), and the GitHub release carries the `.mcpb` + skill zip.
-8. In a Claude Code checkout: `/plugin marketplace update neo4j-gds` then `/plugin update gds-agent` to confirm the plugin update flows.
+6. After the workflow finishes: verify the PyPI page renders, `uvx gds-agent@latest` starts, the registry entry appears (`https://registry.modelcontextprotocol.io/v0/servers?search=gds-agent`), and the GitHub release carries the `.mcpb` + skill zip.
+7. In a Claude Code checkout: `/plugin marketplace update neo4j-gds` then `/plugin update gds-agent` to confirm the plugin update flows.
+
+## Local try-out
+
+All artifacts can be built and exercised before tagging. One caveat applies throughout: the plugin's `mcp.json` and the Gemini extension launch the server with `uvx gds-agent`, which resolves the **latest published PyPI version**, not your working tree. Those installs test the skill, credential wiring, and the bundled cypher server; to exercise *unreleased server code* in a harness, register the server from source as shown below.
+
+**Server (unreleased code) in any harness.** Run it from the working tree with `uv run`:
+```bash
+# standalone sanity check (reads NEO4J_* from the environment or .env)
+uv run --directory mcp_server gds-agent
+# Claude Code
+claude mcp add gds-local --env NEO4J_URI=neo4j://localhost:7687 --env NEO4J_USERNAME=neo4j \
+  --env NEO4J_PASSWORD=... -- uv run --directory <repo>/mcp_server gds-agent
+# Codex
+codex mcp add gds-local --env NEO4J_URI=... --env NEO4J_USERNAME=... --env NEO4J_PASSWORD=... \
+  -- uv run --directory <repo>/mcp_server gds-agent
+```
+For Cursor/VS Code, use the same `uv run --directory` command in their `mcp.json`. To test the exact wheel CI will publish instead: `uv build` inside `mcp_server/`, then use `uvx --from mcp_server/dist/gds_agent-<version>-py3-none-any.whl gds-agent` as the command.
+
+**Claude Code plugin + skill.** From the repo root run `claude --plugin-dir .` in a scratch project: confirm the credential prompts appear, `/mcp` lists `neo4j-gds` and `neo4j-cypher`, and a graph question triggers the `neo4j-graph-data-scientist` skill.
+
+**Claude Desktop (MCPB).** This one *does* bundle the working tree (uv-type bundles are still marked experimental by the MCPB spec):
+```bash
+npx -y @anthropic-ai/mcpb pack mcp_server /tmp/gds-agent.mcpb
+```
+Double-click `/tmp/gds-agent.mcpb`, fill in credentials, confirm the tools list and one algorithm runs. If uv-type fails on a target platform, the fallback is `server.type: "python"` with dependencies vendored into `server/lib`.
+
+**Skill zip (Claude Desktop / claude.ai).** Build it like CI does (folder at zip root):
+```bash
+(cd skills && zip -r /tmp/neo4j-graph-data-scientist-skill.zip neo4j-graph-data-scientist)
+```
+Upload via Settings → Customize → Skills (requires code execution enabled) and confirm it triggers on a graph question.
+
+**Gemini CLI extension.** `gemini extensions link .` symlinks the working tree as an installed extension (server still resolved from PyPI, see caveat); `gemini skills list --all` should show the skill.
+
+**Skill on Codex/Cursor/VS Code.** Copy it into the user-level neutral directory: `cp -r skills/neo4j-graph-data-scientist ~/.agents/skills/` (remove it after testing).
 
 ## Registry note
 
-The first `mcp-publisher publish` can only succeed after the PyPI release containing the `mcp-name:` marker is live (step 6 ordering inside the workflow handles this; if the registry step races PyPI's CDN, re-run the job).
+The first `mcp-publisher publish` can only succeed after the PyPI release containing the `mcp-name:` marker is live (the workflow's step ordering handles this; if the registry step races PyPI's CDN, re-run the job).
