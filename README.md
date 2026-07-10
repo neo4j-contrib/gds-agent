@@ -7,8 +7,9 @@ The GDS Agent let LLMs reason and do data science work on your graph data in Neo
 
 It works with any MCP-capable harness — Claude Code, Claude Desktop, claude.ai, OpenAI Codex, Cursor, VS Code/Copilot, Gemini CLI — and programmatically from agent frameworks. It uses the GDS plugin on self-managed Neo4j and GDS Aura Graph Analytics sessions on AuraDB, over STDIO or HTTP transport.
 
-Once set up, you can **ask any graph question about your Neo4j graph** and get answers. You can collaborate with the agent as a graph data scientist to solve complex tasks. An example where an LLM with GDS Agent picks shortest path and Yen's algorithm to answer a travel-plan question:
-gds-agent-example
+Once set up, you can **ask any graph question about your Neo4j graph** and get answers. You can collaborate with the agent as a graph data scientist to solve complex tasks. 
+
+[gds-agent-arch](doc/gds-agent-arch.png)
 
 # Install
 
