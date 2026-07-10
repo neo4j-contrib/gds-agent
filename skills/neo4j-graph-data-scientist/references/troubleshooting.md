@@ -17,3 +17,4 @@ means: do not retry the same call. Instead:
 | Error | Cause -> Fix |
 |---|---|
 |Algorithm requires UNDIRECTED graphs|The selected algorithm can only run on undirected graphs but you supplied a directed graph projection -> Project another graph that is undirected by setting undirectedRelationshipTypes. |
+|Node/relationship has wrong label/type or wrong properties|Some specified node label, relationship type or node/relationship properties do not exist. This could be due to schema inspection being incomplete. -> Use the schema inspection tools if it haven't been executed yet. If so, write custom Cypher queries by using the neo4j-cypher MCP server tool to inspect detailed schema information.|

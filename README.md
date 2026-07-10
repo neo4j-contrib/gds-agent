@@ -4,12 +4,12 @@ Neither LLMs nor any existing toolings (MCP Servers) are capable of complex reas
 
 The GDS Agent gives any LLM agent both pieces it needs to do real graph analysis on your Neo4j database:
 
-- **Tools** — an MCP server exposing ~70 Neo4j Graph Data Science (GDS) algorithms: centrality, community detection, path finding, similarity, node embeddings (FastRP, Node2Vec, HashGNN, GraphSAGE), and ML pipelines (node classification, link prediction, node regression).
-- **Skills** — an [Agent Skill](https://agentskills.io) (`neo4j-graph-data-scientist`) teaching the agent *how and when* to use those tools: inspecting schema, projecting graphs, selecting the right algorithm, managing Aura sessions, and interpreting results.
+- **Tools** — an MCP server exposing Neo4j Graph Data Science (GDS) algorithms: centrality, community detection, path finding, similarity, node embeddings, and ML pipelines.
+- **Skills** — an agent skill (`neo4j-graph-data-scientist`) teaching the agent how and when to use those tools and best practices for doing data science on graphs.
 
 It works with any MCP-capable harness — Claude Code, Claude Desktop, claude.ai, OpenAI Codex, Cursor, VS Code/Copilot, Gemini CLI — and programmatically from agent frameworks. It uses the GDS plugin on self-managed Neo4j and GDS Aura Graph Analytics sessions on AuraDB, over STDIO or HTTP transport.
 
-Once set up, you can **ask any graph question about your Neo4j graph** and get answers. An example where an LLM with GDS Agent picks shortest path and Yen's algorithm to answer a travel-plan question:
+Once set up, you can **ask any graph question about your Neo4j graph** and get answers. You can collaborate with the agent as a graph data scientist to solve complex tasks. An example where an LLM with GDS Agent picks shortest path and Yen's algorithm to answer a travel-plan question:
 gds-agent-example
 
 # Install
@@ -61,11 +61,11 @@ Sessions are managed explicitly by the agent: three extra tools become available
 
 # The skill
 
-`[skills/neo4j-graph-data-scientist](skills/neo4j-graph-data-scientist/SKILL.md)` is consumed from this one location by the Claude Code plugin, the Gemini extension, `npx skills`, and the release skill zip. It covers GDS-specific workflow best practices (inspect the schema first, projection and cleanup, mutate mode for large graphs) with a [troubleshooting](skills/neo4j-graph-data-scientist/references/troubleshooting.md) reference guide, as well as general data science best practices. It can only be used with the gds-agent MCP server.
+`[skills/neo4j-graph-data-scientist](skills/neo4j-graph-data-scientist/SKILL.md)` is consumed from this one location by the Claude Code plugin, the Gemini extension, `npx skills`, and the release skill zip. It covers GDS-specific workflow best practices with a [troubleshooting](skills/neo4j-graph-data-scientist/references/troubleshooting.md) reference guide, as well as general data science best practices. It can only be used with the gds-agent MCP server.
 
 # Read-only Cypher alongside GDS
 
-The GDS server deliberately executes no arbitrary Cypher — its only Cypher entry point is graph projection. To let the agent also read the underlying data (inspect properties, aggregate, verify algorithm results), pair it with the first-party [`mcp-neo4j-cypher`](https://github.com/neo4j-contrib/mcp-neo4j) server in read-only mode.
+The GDS server deliberately executes no arbitrary Cypher — its only Cypher entry point is graph projection. To let the agent also read the underlying data (inspect properties, aggregate, verify algorithm results), pair it with the `[mcp-neo4j-cypher](https://github.com/neo4j-contrib/mcp-neo4j)` server in read-only mode.
 
 The **Claude Code plugin** and the **Gemini CLI extension** already bundle it: one install configures both servers with the same credentials, and `NEO4J_READ_ONLY=true` removes its write tool. On any other harness, register a second server alongside gds-agent:
 
@@ -81,6 +81,8 @@ The **Claude Code plugin** and the **Gemini CLI extension** already bundle it: o
   }
 }
 ```
+
+
 
 # Example dataset
 
