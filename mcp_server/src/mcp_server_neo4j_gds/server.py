@@ -2,6 +2,7 @@
 import asyncio
 import contextlib
 import logging
+from importlib.metadata import PackageNotFoundError, version
 from anyio import BrokenResourceError
 from mcp.server import NotificationOptions, Server
 from mcp.server.models import InitializationOptions
@@ -49,7 +50,10 @@ from .result_limits import (
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
 SERVER_NAME = "neo4j_gds"
-SERVER_VERSION = "0.5.1"
+try:
+    SERVER_VERSION = version("gds-agent")
+except PackageNotFoundError:
+    SERVER_VERSION = "0.0.0"
 DEFAULT_HTTP_HOST = "127.0.0.1"
 DEFAULT_HTTP_PORT = 8000
 DEFAULT_HTTP_PATH = "/mcp"

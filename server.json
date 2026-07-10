@@ -1,0 +1,62 @@
+{
+  "$schema": "https://static.modelcontextprotocol.io/schemas/2025-12-11/server.schema.json",
+  "name": "io.github.neo4j-contrib/gds-agent",
+  "title": "Neo4j GDS Agent",
+  "description": "MCP server exposing Neo4j Graph Data Science algorithms: centrality, community detection, path finding, similarity, node embeddings, and ML pipelines",
+  "repository": {
+    "url": "https://github.com/neo4j-contrib/gds-agent",
+    "source": "github"
+  },
+  "version": "1.0.0",
+  "packages": [
+    {
+      "registryType": "pypi",
+      "registryBaseUrl": "https://pypi.org",
+      "identifier": "gds-agent",
+      "version": "1.0.0",
+      "runtimeHint": "uvx",
+      "transport": {
+        "type": "stdio"
+      },
+      "environmentVariables": [
+        {
+          "name": "NEO4J_URI",
+          "description": "Neo4j connection URI (neo4j:// or neo4j+s://)",
+          "isRequired": true
+        },
+        {
+          "name": "NEO4J_USERNAME",
+          "description": "Neo4j username",
+          "isRequired": true
+        },
+        {
+          "name": "NEO4J_PASSWORD",
+          "description": "Neo4j password",
+          "isRequired": true,
+          "isSecret": true
+        },
+        {
+          "name": "NEO4J_DATABASE",
+          "description": "Neo4j database name",
+          "isRequired": false
+        },
+        {
+          "name": "AURA_API_CLIENT_ID",
+          "description": "Aura API client ID (enables Aura Graph Analytics session mode)",
+          "isRequired": false
+        },
+        {
+          "name": "AURA_API_CLIENT_SECRET",
+          "description": "Aura API client secret",
+          "isRequired": false,
+          "isSecret": true
+        },
+        {
+          "name": "AURA_API_PROJECT_ID",
+          "description": "Aura project ID (only if the API client can access multiple projects)",
+          "isRequired": false
+        }
+      ]
+    }
+  ]
+}

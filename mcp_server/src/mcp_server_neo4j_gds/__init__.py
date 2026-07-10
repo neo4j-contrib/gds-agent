@@ -19,10 +19,12 @@ logger.setLevel(logging.INFO)
 logger.propagate = False
 
 
+# Harness config forms (plugin userConfig, .mcpb user_config, Gemini settings)
+# inject unset optional fields as empty strings; treat those as unset.
 def env_value(*names: str, default=None):
     for name in names:
         value = os.environ.get(name)
-        if value is not None:
+        if value:
             return value
     return default
 
@@ -48,7 +50,7 @@ def main():
     )
     parser.add_argument(
         "--database",
-        default=os.environ.get("NEO4J_DATABASE"),
+        default=env_value("NEO4J_DATABASE"),
         help="Database name to connect to (optional). By default, the server will connect to the 'neo4j' database.",
     )
     parser.add_argument(

@@ -50,9 +50,10 @@ class SessionManager:
     def _ensure_sessions_client(self):
         if self._sessions_client is not None:
             return
-        client_id = os.getenv("AURA_API_CLIENT_ID")
-        client_secret = os.getenv("AURA_API_CLIENT_SECRET")
-        project_id = os.getenv("AURA_API_PROJECT_ID")
+        # `or None` treats empty strings from harness config forms as unset
+        client_id = os.getenv("AURA_API_CLIENT_ID") or None
+        client_secret = os.getenv("AURA_API_CLIENT_SECRET") or None
+        project_id = os.getenv("AURA_API_PROJECT_ID") or None
 
         if not all([client_id, client_secret]):
             raise ValueError(
@@ -111,9 +112,9 @@ class SessionManager:
         self._ensure_sessions_client()
 
         if memory_gb is None:
-            memory_gb = int(os.getenv("SESSION_MEMORY_GB", "8"))
+            memory_gb = int(os.getenv("SESSION_MEMORY_GB") or "8")
         memory = getattr(SessionMemory, f"m_{memory_gb}GB")
-        ttl_hours = int(os.getenv("SESSION_TTL_HOURS", "24"))
+        ttl_hours = int(os.getenv("SESSION_TTL_HOURS") or "24")
 
         logger.info(
             f"Creating or getting session '{resolved_name}' with {memory_gb}GB memory and {ttl_hours}h TTL"

@@ -1,0 +1,28 @@
+{
+  "mcpServers": {
+    "neo4j-gds": {
+      "command": "uvx",
+      "args": ["gds-agent"],
+      "env": {
+        "NEO4J_URI": "${user_config.neo4j_uri}",
+        "NEO4J_USERNAME": "${user_config.neo4j_username}",
+        "NEO4J_PASSWORD": "${user_config.neo4j_password}",
+        "NEO4J_DATABASE": "${user_config.neo4j_database}",
+        "AURA_API_CLIENT_ID": "${user_config.aura_api_client_id}",
+        "AURA_API_CLIENT_SECRET": "${user_config.aura_api_client_secret}",
+        "AURA_API_PROJECT_ID": "${user_config.aura_api_project_id}"
+      }
+    },
+    "neo4j-cypher": {
+      "command": "uvx",
+      "args": ["mcp-neo4j-cypher@0.6.0", "--transport", "stdio"],
+      "env": {
+        "NEO4J_URI": "${user_config.neo4j_uri}",
+        "NEO4J_USERNAME": "${user_config.neo4j_username}",
+        "NEO4J_PASSWORD": "${user_config.neo4j_password}",
+        "NEO4J_DATABASE": "${user_config.neo4j_database}",
+        "NEO4J_READ_ONLY": "true"
+      }
+    }
+  }
+}

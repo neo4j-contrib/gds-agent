@@ -34,9 +34,9 @@ class ProjectGraphCypherHandler(AlgorithmHandler):
             if undirected_relationship_types:
                 raise ValueError(
                     "In plugin (on-prem) mode, undirected relationships are declared "
-                    "inside the Cypher query as the projection config (4th argument of "
-                    "gds.graph.project), e.g. "
-                    "{ undirectedRelationshipTypes: ['LINK'] }. The "
+                    "inside the Cypher query, in the optional configuration map "
+                    "(5th argument of gds.graph.project, after the data config map), "
+                    "e.g. { undirectedRelationshipTypes: ['LINK'] }. The "
                     "undirectedRelationshipTypes tool parameter only applies to Aura "
                     "session mode."
                 )

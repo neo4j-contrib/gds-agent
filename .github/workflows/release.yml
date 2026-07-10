@@ -1,0 +1,59 @@
+# Release pipeline. Inert until a maintainer pushes a v* tag.
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check tag matches manifest versions
+        run: |
+          python3 scripts/bump_version.py --check
+          test "v$(python3 -c "import re,pathlib;print(re.search(r'version = \"([^\"]+)\"', pathlib.Path('mcp_server/pyproject.toml').read_text())[1])")" = "${GITHUB_REF_NAME}"
+
+      - name: Set up uv
+        uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
+
+      - name: Build sdist and wheel
+        run: uv build
+        working-directory: mcp_server
+
+      - name: Publish to PyPI (trusted publishing)
+        uses: pypa/gh-action-pypi-publish@cef221092ed1bacb1cc03d23a2d87d1d172e277b # v1.14.0
+        with:
+          packages-dir: mcp_server/dist
+
+      - name: Publish to MCP Registry
+        run: |
+          curl -L "https://github.com/modelcontextprotocol/registry/releases/latest/download/mcp-publisher_$(uname -s | tr '[:upper:]' '[:lower:]')_$(uname -m | sed 's/x86_64/amd64/').tar.gz" | tar xz mcp-publisher
+          ./mcp-publisher login github-oidc
+          ./mcp-publisher publish
+
+      - name: Pack MCPB bundle
+        run: |
+          npm install -g @anthropic-ai/mcpb
+          mcpb pack mcp_server "dist-release/gds-agent-${GITHUB_REF_NAME#v}.mcpb"
+
+      - name: Zip skill for Claude Desktop / claude.ai upload
+        run: |
+          mkdir -p dist-release
+          (cd skills && zip -r "../dist-release/neo4j-graph-data-scientist-skill-${GITHUB_REF_NAME#v}.zip" neo4j-graph-data-scientist)
+
+      - name: Create GitHub release with artifacts
+        uses: softprops/action-gh-release@3bb12739c298aeb8a4eeaf626c5b8d85266b0e65 # v2.6.2
+        with:
+          files: |
+            dist-release/*.mcpb
+            dist-release/*.zip
+            mcp_server/dist/*
+          generate_release_notes: true

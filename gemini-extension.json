@@ -1,0 +1,64 @@
+{
+  "name": "gds-agent",
+  "version": "1.0.0",
+  "description": "Neo4j Graph Data Science MCP server + graph-analysis skill",
+  "contextFileName": "GEMINI.md",
+  "settings": [
+    {
+      "name": "Neo4j URI",
+      "description": "Connection URI, e.g. neo4j://localhost:7687",
+      "envVar": "NEO4J_URI"
+    },
+    {
+      "name": "Neo4j username",
+      "description": "Database user",
+      "envVar": "NEO4J_USERNAME"
+    },
+    {
+      "name": "Neo4j password",
+      "description": "Database password",
+      "envVar": "NEO4J_PASSWORD",
+      "sensitive": true
+    },
+    {
+      "name": "Neo4j database",
+      "description": "Optional database name",
+      "envVar": "NEO4J_DATABASE"
+    },
+    {
+      "name": "Aura API client ID",
+      "description": "Optional: enables Aura Graph Analytics session mode",
+      "envVar": "AURA_API_CLIENT_ID"
+    },
+    {
+      "name": "Aura API client secret",
+      "description": "Optional: Aura Graph Analytics session mode",
+      "envVar": "AURA_API_CLIENT_SECRET",
+      "sensitive": true
+    },
+    {
+      "name": "Aura project ID",
+      "description": "Optional: only needed if the Aura API client can access multiple projects",
+      "envVar": "AURA_API_PROJECT_ID"
+    }
+  ],
+  "mcpServers": {
+    "neo4j-gds": {
+      "command": "uvx",
+      "args": [
+        "gds-agent"
+      ]
+    },
+    "neo4j-cypher": {
+      "command": "uvx",
+      "args": [
+        "mcp-neo4j-cypher@0.6.0",
+        "--transport",
+        "stdio"
+      ],
+      "env": {
+        "NEO4J_READ_ONLY": "true"
+      }
+    }
+  }
+}
