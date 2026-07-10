@@ -1,7 +1,7 @@
 {
   "name": "gds-agent",
   "displayName": "Neo4j GDS Agent",
-  "version": "0.5.1",
+  "version": "1.0.0",
   "description": "Neo4j Graph Data Science MCP server + graph-analysis skill",
   "author": {
     "name": "Neo4j",
@@ -10,7 +10,13 @@
   "homepage": "https://github.com/neo4j-contrib/gds-agent",
   "repository": "https://github.com/neo4j-contrib/gds-agent",
   "license": "MIT",
-  "keywords": ["neo4j", "graph-data-science", "gds", "mcp", "graph-algorithms"],
+  "keywords": [
+    "neo4j",
+    "graph-data-science",
+    "gds",
+    "mcp",
+    "graph-algorithms"
+  ],
   "mcpServers": "./mcp.json",
   "userConfig": {
     "neo4j_uri": {

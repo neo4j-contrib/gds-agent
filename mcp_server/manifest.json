@@ -2,7 +2,7 @@
   "manifest_version": "0.4",
   "name": "gds-agent",
   "display_name": "Neo4j GDS Agent",
-  "version": "0.5.1",
+  "version": "1.0.0",
   "description": "Neo4j Graph Data Science MCP server: graph algorithms, embeddings, and ML pipelines",
   "long_description": "Run centrality, community detection, path finding, similarity, node embedding, and ML pipeline algorithms on your Neo4j database. Works with the GDS plugin on self-managed Neo4j and with Aura Graph Analytics sessions on AuraDB.",
   "author": {
@@ -14,13 +14,24 @@
   },
   "homepage": "https://github.com/neo4j-contrib/gds-agent",
   "license": "MIT",
-  "keywords": ["neo4j", "graph", "gds", "graph-data-science", "graph-algorithms"],
+  "keywords": [
+    "neo4j",
+    "graph",
+    "gds",
+    "graph-data-science",
+    "graph-algorithms"
+  ],
   "server": {
     "type": "uv",
     "entry_point": "src/mcp_server_neo4j_gds/__init__.py",
     "mcp_config": {
       "command": "uv",
-      "args": ["run", "--directory", "${__dirname}", "gds-agent"],
+      "args": [
+        "run",
+        "--directory",
+        "${__dirname}",
+        "gds-agent"
+      ],
       "env": {
         "NEO4J_URI": "${user_config.neo4j_uri}",
         "NEO4J_USERNAME": "${user_config.neo4j_username}",
@@ -85,7 +96,11 @@
     }
   },
   "compatibility": {
-    "platforms": ["darwin", "win32", "linux"],
+    "platforms": [
+      "darwin",
+      "win32",
+      "linux"
+    ],
     "runtimes": {
       "python": ">=3.11"
     }
