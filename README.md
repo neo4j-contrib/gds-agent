@@ -9,7 +9,7 @@ It works with any MCP-capable harness — Claude Code, Claude Desktop, claude.ai
 
 Once set up, you can **ask any graph question about your Neo4j graph** and get answers. You can collaborate with the agent as a graph data scientist to solve complex tasks. 
 
-[gds-agent-arch](doc/gds-agent-arch.png)
+![gds-agent-arch](doc/gds-agent-arch.png)
 
 # Install
 
