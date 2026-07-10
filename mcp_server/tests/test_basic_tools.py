@@ -3,16 +3,6 @@ import json
 
 
 @pytest.mark.asyncio
-async def test_count_nodes(mcp_client):
-    result = await mcp_client.call_tool("count_nodes")
-
-    assert len(result) == 1
-    result_text = result[0]["text"]
-    node_count = int(result_text.strip())
-    assert node_count == 302
-
-
-@pytest.mark.asyncio
 async def test_list_tools(mcp_client):
     """Test that all expected tools are listed."""
 
@@ -23,7 +13,6 @@ async def test_list_tools(mcp_client):
     # Expected tools (based on server.py imports)
     expected_tools = [
         # Basic tools
-        "count_nodes",
         "get_node_properties_keys",
         "get_relationship_properties_keys",
         "get_node_labels",

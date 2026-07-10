@@ -24,7 +24,6 @@ from .embedding_algorithm_specs import embedding_tool_definitions
 from .ml_pipeline_specs import ml_pipeline_tool_definitions
 from .registry import AlgorithmRegistry
 from .gds import (
-    count_nodes,
     get_node_properties_keys,
     get_relationship_properties_keys,
     get_node_labels,
@@ -239,13 +238,6 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
             tools = (
                 [
                     types.Tool(
-                        name="count_nodes",
-                        description="""Count the number of nodes in the graph""",
-                        inputSchema={
-                            "type": "object",
-                        },
-                    ),
-                    types.Tool(
                         name="get_node_properties_keys",
                         description="""Get all node properties keys in the database""",
                         inputSchema={
@@ -375,11 +367,7 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
 
             active_gds = get_gds_for_graph(graph_name)
 
-            if name == "count_nodes":
-                result = count_nodes(active_gds)
-                return [types.TextContent(type="text", text=serialize_result(result))]
-
-            elif name == "get_node_properties_keys":
+            if name == "get_node_properties_keys":
                 result = get_node_properties_keys(active_gds)
                 return [types.TextContent(type="text", text=serialize_result(result))]
 

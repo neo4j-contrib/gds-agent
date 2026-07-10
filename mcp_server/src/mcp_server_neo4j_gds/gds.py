@@ -184,13 +184,6 @@ def get_node_labels(gds: GraphDataScience):
     return df["labels"].iloc[0]
 
 
-def count_nodes(gds: GraphDataScience):
-    """Count nodes in the database directly without projection."""
-    query = "MATCH (n) RETURN count(n) as count"
-    df = gds.run_cypher(query)
-    return int(df["count"].iloc[0])
-
-
 def get_node_properties_keys(gds: GraphDataScience, node_labels=None):
     if node_labels is None:
         node_labels = []

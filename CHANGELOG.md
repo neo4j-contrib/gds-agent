@@ -6,6 +6,7 @@
 As a result, all graph projection related parameters (e.g nodeLabels, relTypes) in all algorithms are removed. 
 Instead, all algorithm tools now accepte a graphName required parameter.
 This allows the LLMs to use Cypher project to manage a catalog of projected graphs and use different algorithm tools on different graphs.
+2. Removed the count_nodes tool; counts are available via the bundled read-only cypher server or get_graph_info on a projection.
 
 ### New Features
 1. Add new maxflow path algorithm tool.
