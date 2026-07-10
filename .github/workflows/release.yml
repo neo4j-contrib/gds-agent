@@ -1,4 +1,4 @@
-# Release pipeline. Inert until a maintainer pushes a v* tag — see RELEASING.md.
+# Release pipeline. Inert until a maintainer pushes a v* tag.
 name: Release
 
 on:
