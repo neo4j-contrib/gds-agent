@@ -2,7 +2,7 @@
   "manifest_version": "0.4",
   "name": "gds-agent",
   "display_name": "Neo4j GDS Agent",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Neo4j Graph Data Science MCP server: graph algorithms, embeddings, and ML pipelines",
   "long_description": "Run centrality, community detection, path finding, similarity, node embedding, and ML pipeline algorithms on your Neo4j database. Works with the GDS plugin on self-managed Neo4j and with Aura Graph Analytics sessions on AuraDB.",
   "author": {

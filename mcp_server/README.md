@@ -1,4 +1,4 @@
-
+<!-- mcp-name: io.github.neo4j-contrib/gds-agent -->
 
 # GDS Agent
 

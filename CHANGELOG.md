@@ -1,3 +1,9 @@
+# Changelog - [1.0.1] - 2026-07-13
+
+### Bug Fixes
+1. Add the mcp-name ownership marker to the PyPI package README so MCP Registry publishing passes ownership validation.
+2. Shorten the server.json description to the MCP registry 100-character limit and skip already-published files when re-publishing to PyPI.
+
 # Changelog - [1.0.0] - 2026-07-10
 
 
