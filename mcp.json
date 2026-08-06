@@ -21,7 +21,8 @@
         "NEO4J_USERNAME": "${user_config.neo4j_username}",
         "NEO4J_PASSWORD": "${user_config.neo4j_password}",
         "NEO4J_DATABASE": "${user_config.neo4j_database}",
-        "NEO4J_READ_ONLY": "true"
+        "NEO4J_READ_ONLY": "true",
+        "NEO4J_RESPONSE_TOKEN_LIMIT": "20000"
       }
     }
   }

@@ -66,7 +66,7 @@ Sessions are managed explicitly by the agent: three extra tools become available
 
 The GDS server deliberately executes no arbitrary Cypher — its only Cypher entry point is graph projection. To let the agent also read the underlying data (inspect properties, aggregate, verify algorithm results), pair it with the `[mcp-neo4j-cypher](https://github.com/neo4j-contrib/mcp-neo4j)` server in read-only mode.
 
-The **Claude Code plugin** and the **Gemini CLI extension** already bundle it: one install configures both servers with the same credentials, and `NEO4J_READ_ONLY=true` removes its write tool. On any other harness, register a second server alongside gds-agent:
+The **Claude Code plugin** and the **Gemini CLI extension** already bundle it: one install configures both servers with the same credentials, and `NEO4J_READ_ONLY=true` removes its write tool. `NEO4J_RESPONSE_TOKEN_LIMIT` caps read-query responses (tokens) so large results don’t overwhelm the model; omit it for no Cypher-side limit. On any other harness, register a second server alongside gds-agent:
 
 ```json
 "neo4j-cypher": {
@@ -76,7 +76,8 @@ The **Claude Code plugin** and the **Gemini CLI extension** already bundle it: o
     "NEO4J_URI": "neo4j://localhost:7687",
     "NEO4J_USERNAME": "neo4j",
     "NEO4J_PASSWORD": "<your-password>",
-    "NEO4J_READ_ONLY": "true"
+    "NEO4J_READ_ONLY": "true",
+    "NEO4J_RESPONSE_TOKEN_LIMIT": "20000"
   }
 }
 ```
