@@ -57,7 +57,8 @@
         "stdio"
       ],
       "env": {
-        "NEO4J_READ_ONLY": "true"
+        "NEO4J_READ_ONLY": "true",
+        "NEO4J_RESPONSE_TOKEN_LIMIT": "20000"
       }
     }
   }
