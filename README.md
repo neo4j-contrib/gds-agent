@@ -103,7 +103,6 @@ To load a London underground example dataset:
   ```bash
    uv run import_data.py --undirected
   ```
-   Alternatively, `pip install -r requirements.txt` and run `python import_data.py --undirected`.
 
 Connect to your DB and querying the graph from [Neo4j workspace](https://workspace-preview.neo4j.io/workspace/), 
 you should see:

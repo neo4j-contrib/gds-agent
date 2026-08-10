@@ -294,7 +294,7 @@ dev = [
 [package.metadata]
 requires-dist = [
     { name = "graphdatascience", specifier = ">=1.16" },
-    { name = "mcp", extras = ["cli"], specifier = ">=1.11.0" },
+    { name = "mcp", extras = ["cli"], specifier = ">=1.23.0,<2.0.0" },
     { name = "python-dotenv", specifier = ">=1.0.0" },
 ]
 
