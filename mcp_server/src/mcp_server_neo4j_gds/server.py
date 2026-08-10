@@ -155,8 +155,6 @@ def create_mcp_server(
     if database:
         logger.info(f"Connecting to database: {database}")
 
-    server = Server(SERVER_NAME, version=SERVER_VERSION)
-
     # Create GraphDataScience object with optional database parameter
     base_gds = create_base_gds(db_url, username, password, database)
     logger.info("Successfully connected to Neo4j database")
@@ -182,9 +180,9 @@ def create_mcp_server(
             )
         return session_gds
 
-    @server.list_tools()
-    async def handle_list_tools() -> list[types.Tool]:
-        """List available tools"""
+    async def handle_list_tools(
+        _ctx: Any, _params: types.PaginatedRequestParams | None
+    ) -> types.ListToolsResult:
         try:
             session_tools = []
             if mode == GdsMode.SESSION:
@@ -276,7 +274,7 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                 + ml_pipeline_tool_definitions
             )
             logger.info(f"Returning {len(tools)} tools")
-            return tools
+            return types.ListToolsResult(tools=tools)
         except Exception as e:
             logger.error(f"Error in handle_list_tools: {e}")
             raise
@@ -456,25 +454,26 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
         except Exception as e:
             return [types.TextContent(type="text", text=f"Error: {str(e)}")]
 
-    @server.call_tool()
     async def handle_call_tool(
-        name: str, arguments: dict[str, Any] | None
-    ) -> list[types.TextContent | types.ImageContent | types.EmbeddedResource]:
-        """Handle tool execution requests"""
+        _ctx: Any, params: types.CallToolRequestParams
+    ) -> types.CallToolResult:
         # Run blocking GDS calls off the event loop so tool calls can execute in parallel
-        return await asyncio.to_thread(execute_tool, name, arguments)
+        content = await asyncio.to_thread(execute_tool, params.name, params.arguments)
+        return types.CallToolResult(content=content)
 
+    server = Server(
+        SERVER_NAME,
+        version=SERVER_VERSION,
+        on_list_tools=handle_list_tools,
+        on_call_tool=handle_call_tool,
+    )
     return server, session_manager, base_gds
 
 
 def initialization_options(server: Server) -> InitializationOptions:
-    return InitializationOptions(
-        server_name=SERVER_NAME,
-        server_version=SERVER_VERSION,
-        capabilities=server.get_capabilities(
-            notification_options=NotificationOptions(),
-            experimental_capabilities={},
-        ),
+    return server.create_initialization_options(
+        notification_options=NotificationOptions(),
+        experimental_capabilities={},
     )
 
 

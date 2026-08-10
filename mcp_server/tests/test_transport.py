@@ -1,6 +1,7 @@
 import pytest
 import pandas as pd
 from anyio import BrokenResourceError
+from mcp import Client
 from mcp.server import Server
 from starlette.testclient import TestClient
 
@@ -16,6 +17,35 @@ def test_normalize_transport_accepts_http_aliases():
 def test_normalize_transport_rejects_unsupported_transport():
     with pytest.raises(ValueError, match="Unsupported transport"):
         server_module.normalize_transport("sse")
+
+
+@pytest.mark.asyncio
+async def test_create_mcp_server_registers_mcp2_tool_handlers(monkeypatch):
+    class FakeGDS:
+        def run_cypher(self, query):
+            raise RuntimeError("no sessions")
+
+        def close(self):
+            pass
+
+    monkeypatch.setattr(server_module, "create_base_gds", lambda *args: FakeGDS())
+    monkeypatch.setattr(server_module, "get_node_labels", lambda gds: ["Station"])
+
+    mcp_server, session_manager, base_gds = server_module.create_mcp_server(
+        "bolt://example", "neo4j", "password"
+    )
+
+    try:
+        async with Client(mcp_server, raise_exceptions=True) as client:
+            tools_result = await client.list_tools()
+            tool_names = {tool.name for tool in tools_result.tools}
+            assert "get_node_labels" in tool_names
+
+            call_result = await client.call_tool("get_node_labels", {})
+            assert call_result.content[0].text == '[\n  "Station"\n]'
+    finally:
+        session_manager.close()
+        base_gds.close()
 
 
 def test_streamable_http_app_mounts_normalized_path():

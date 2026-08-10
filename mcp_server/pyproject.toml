@@ -15,7 +15,7 @@ classifiers = [
 ]
 dependencies = [
     "graphdatascience>=1.16",
-    "mcp[cli]>=1.23.0,<2.0.0",
+    "mcp[cli]>=2.0.0",
     "python-dotenv>=1.0.0",
 ]
 
@@ -41,6 +41,7 @@ dev = [
     "pytest>=8.4.1",
     "pytest-asyncio>=0.23.0",
     "pytest-docker>=3.2.3",
+    "httpx>=0.28.1",
     "neo4j>=5.0.0",
     "twine>=6.1.0",
 ]
