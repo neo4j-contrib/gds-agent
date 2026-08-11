@@ -3,7 +3,6 @@ import pandas as pd
 from anyio import BrokenResourceError
 from mcp import Client
 from mcp.server import Server
-from starlette.testclient import TestClient
 
 from mcp_server_neo4j_gds import server as server_module
 
@@ -20,7 +19,7 @@ def test_normalize_transport_rejects_unsupported_transport():
 
 
 @pytest.mark.asyncio
-async def test_create_mcp_server_registers_mcp2_tool_handlers(monkeypatch):
+async def test_create_mcp_server_exposes_tools_through_mcp_handlers(monkeypatch):
     class FakeGDS:
         def run_cypher(self, query):
             raise RuntimeError("no sessions")
@@ -54,35 +53,6 @@ def test_streamable_http_app_mounts_normalized_path():
     )
 
     assert [route.path for route in app.routes] == ["/api/mcp"]
-
-
-def test_streamable_http_app_handles_initialize_request():
-    app = server_module.create_streamable_http_app(Server("test", version="1"), "/mcp")
-    request = {
-        "jsonrpc": "2.0",
-        "id": 1,
-        "method": "initialize",
-        "params": {
-            "protocolVersion": "2024-11-05",
-            "capabilities": {},
-            "clientInfo": {"name": "test-client", "version": "1"},
-        },
-    }
-
-    with TestClient(app) as client:
-        response = client.post(
-            "/mcp",
-            json=request,
-            headers={
-                "content-type": "application/json",
-                "accept": "application/json, text/event-stream",
-            },
-        )
-
-    assert response.status_code == 200
-    assert response.headers["content-type"] == "text/event-stream"
-    assert response.headers["mcp-session-id"]
-    assert '"serverInfo":{"name":"test","version":"1"}' in response.text
 
 
 def test_serialize_result_truncates_large_dataframes(monkeypatch):

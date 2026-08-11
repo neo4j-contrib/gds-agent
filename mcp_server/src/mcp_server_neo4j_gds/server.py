@@ -6,7 +6,6 @@ from importlib.metadata import PackageNotFoundError, version
 from anyio import BrokenResourceError
 from mcp.server import NotificationOptions, Server
 from mcp.server.models import InitializationOptions
-from mcp.server.streamable_http_manager import StreamableHTTPSessionManager
 import mcp.types as types
 from typing import Any
 import mcp.server.stdio
@@ -489,38 +488,18 @@ def is_stdio_disconnect_error(error: BaseException) -> bool:
     return False
 
 
-class StreamableHTTPASGIApp:
-    def __init__(self, session_manager: StreamableHTTPSessionManager):
-        self.session_manager = session_manager
-
-    async def __call__(self, scope, receive, send):
-        await self.session_manager.handle_request(scope, receive, send)
-
-
 def create_streamable_http_app(
     server: Server,
     path: str = DEFAULT_HTTP_PATH,
+    host: str = DEFAULT_HTTP_HOST,
     stateless: bool = False,
     json_response: bool = False,
 ):
-    from starlette.applications import Starlette
-    from starlette.routing import Route
-
-    http_session_manager = StreamableHTTPSessionManager(
-        app=server,
+    return server.streamable_http_app(
+        streamable_http_path=normalize_http_path(path),
         json_response=json_response,
-        stateless=stateless,
-    )
-    http_app = StreamableHTTPASGIApp(http_session_manager)
-
-    @contextlib.asynccontextmanager
-    async def lifespan(app):
-        async with http_session_manager.run():
-            yield
-
-    return Starlette(
-        routes=[Route(normalize_http_path(path), endpoint=http_app)],
-        lifespan=lifespan,
+        stateless_http=stateless,
+        host=host,
     )
 
 
@@ -542,7 +521,7 @@ async def run_streamable_http_server(
 ):
     import uvicorn
 
-    app = create_streamable_http_app(server, path)
+    app = create_streamable_http_app(server, path, host=host)
     config = uvicorn.Config(app, host=host, port=port, log_level="info")
     uvicorn_server = uvicorn.Server(config)
     await uvicorn_server.serve()
