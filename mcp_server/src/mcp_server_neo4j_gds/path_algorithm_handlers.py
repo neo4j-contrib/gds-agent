@@ -4,6 +4,7 @@ from typing import Dict, Any
 
 
 from .algorithm_handler import AlgorithmHandler, clean_params
+from .node_translator import translate_identifiers_to_ids
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
 
@@ -32,6 +33,7 @@ def _validate_property_name(name):
     return name
 
 
+
 def _as_node_pairs(gds, node_id_pairs):
     node_ids = [node_id for pair in node_id_pairs for node_id in pair]
     if not node_ids:
@@ -44,25 +46,19 @@ class DijkstraShortestPathHandler(AlgorithmHandler):
     def find_shortest_path(
         self, start_node: str, end_node: str, node_identifier_property: str, **kwargs
     ):
-        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
-        query = f"""
-        MATCH (start)
-        WHERE toLower(start.{node_identifier_property}) CONTAINS toLower($start_name)
-        MATCH (end)
-        WHERE toLower(end.{node_identifier_property}) CONTAINS toLower($end_name)
-        RETURN id(start) as start_id, id(end) as end_id
-        """
-
-        df = self.gds.run_cypher(
-            query, params={"start_name": start_node, "end_name": end_node}
+        node_identifier_property = _validate_property_name(node_identifier_property)
+        resolved = {}
+        translate_identifiers_to_ids(
+            self.gds, start_node, "startNode", node_identifier_property, resolved
         )
-
-        if df.empty:
+        translate_identifiers_to_ids(
+            self.gds, end_node, "endNode", node_identifier_property, resolved
+        )
+        start_node_id = resolved.get("startNode")
+        end_node_id = resolved.get("endNode")
+        if start_node_id is None or end_node_id is None:
             return {"found": False, "message": "One or both node names not found"}
-
-        start_node_id = int(df["start_id"].iloc[0])
-        end_node_id = int(df["end_id"].iloc[0])
 
         G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName", "mode"])
@@ -122,20 +118,15 @@ class DeltaSteppingShortestPathHandler(AlgorithmHandler):
     def delta_stepping_shortest_path(
         self, source_node: str, node_identifier_property: str, **kwargs
     ):
-        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
-        query = f"""
-        MATCH (source)
-        WHERE toLower(source.{node_identifier_property}) CONTAINS toLower($source_name)
-        RETURN id(source) as source_id
-        """
-
-        df = self.gds.run_cypher(query, params={"source_name": source_node})
-
-        if df.empty:
+        node_identifier_property = _validate_property_name(node_identifier_property)
+        resolved = {}
+        translate_identifiers_to_ids(
+            self.gds, source_node, "sourceNode", node_identifier_property, resolved
+        )
+        source_node_id = resolved.get("sourceNode")
+        if source_node_id is None:
             return {"found": False, "message": "Source node name not found"}
-
-        source_node_id = int(df["source_id"].iloc[0])
 
         G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName", "mode"])
@@ -214,20 +205,15 @@ class DijkstraSingleSourceShortestPathHandler(AlgorithmHandler):
     def dijkstra_single_source_shortest_path(
         self, source_node: str, node_identifier_property: str, **kwargs
     ):
-        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
-        query = f"""
-        MATCH (source)
-        WHERE toLower(source.{node_identifier_property}) CONTAINS toLower($source_name)
-        RETURN id(source) as source_id
-        """
-
-        df = self.gds.run_cypher(query, params={"source_name": source_node})
-
-        if df.empty:
+        node_identifier_property = _validate_property_name(node_identifier_property)
+        resolved = {}
+        translate_identifiers_to_ids(
+            self.gds, source_node, "sourceNode", node_identifier_property, resolved
+        )
+        source_node_id = resolved.get("sourceNode")
+        if source_node_id is None:
             return {"found": False, "message": "Source node name not found"}
-
-        source_node_id = int(df["source_id"].iloc[0])
 
         G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName", "mode"])
@@ -309,25 +295,19 @@ class AStarShortestPathHandler(AlgorithmHandler):
         node_identifier_property: str,
         **kwargs,
     ):
-        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
-        query = f"""
-        MATCH (source)
-        WHERE toLower(source.{node_identifier_property}) CONTAINS toLower($source_name)
-        MATCH (target)
-        WHERE toLower(target.{node_identifier_property}) CONTAINS toLower($target_name)
-        RETURN id(source) as source_id, id(target) as target_id
-        """
-
-        df = self.gds.run_cypher(
-            query, params={"source_name": source_node, "target_name": target_node}
+        node_identifier_property = _validate_property_name(node_identifier_property)
+        resolved = {}
+        translate_identifiers_to_ids(
+            self.gds, source_node, "sourceNode", node_identifier_property, resolved
         )
-
-        if df.empty:
+        translate_identifiers_to_ids(
+            self.gds, target_node, "targetNode", node_identifier_property, resolved
+        )
+        source_node_id = resolved.get("sourceNode")
+        target_node_id = resolved.get("targetNode")
+        if source_node_id is None or target_node_id is None:
             return {"found": False, "message": "One or both node names not found"}
-
-        source_node_id = int(df["source_id"].iloc[0])
-        target_node_id = int(df["target_id"].iloc[0])
 
         G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName", "mode"])
@@ -393,25 +373,19 @@ class YensShortestPathsHandler(AlgorithmHandler):
         node_identifier_property: str,
         **kwargs,
     ):
-        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
-        query = f"""
-        MATCH (source)
-        WHERE toLower(source.{node_identifier_property}) CONTAINS toLower($source_name)
-        MATCH (target)
-        WHERE toLower(target.{node_identifier_property}) CONTAINS toLower($target_name)
-        RETURN id(source) as source_id, id(target) as target_id
-        """
-
-        df = self.gds.run_cypher(
-            query, params={"source_name": source_node, "target_name": target_node}
+        node_identifier_property = _validate_property_name(node_identifier_property)
+        resolved = {}
+        translate_identifiers_to_ids(
+            self.gds, source_node, "sourceNode", node_identifier_property, resolved
         )
-
-        if df.empty:
+        translate_identifiers_to_ids(
+            self.gds, target_node, "targetNode", node_identifier_property, resolved
+        )
+        source_node_id = resolved.get("sourceNode")
+        target_node_id = resolved.get("targetNode")
+        if source_node_id is None or target_node_id is None:
             return {"found": False, "message": "One or both node names not found"}
-
-        source_node_id = int(df["source_id"].iloc[0])
-        target_node_id = int(df["target_id"].iloc[0])
 
         G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName", "mode"])
@@ -488,20 +462,15 @@ class MinimumWeightSpanningTreeHandler(AlgorithmHandler):
     def minimum_weight_spanning_tree(
         self, source_node: str, node_identifier_property: str, **kwargs
     ):
-        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
-        query = f"""
-        MATCH (source)
-        WHERE toLower(source.{node_identifier_property}) CONTAINS toLower($source_name)
-        RETURN id(source) as source_id
-        """
-
-        df = self.gds.run_cypher(query, params={"source_name": source_node})
-
-        if df.empty:
+        node_identifier_property = _validate_property_name(node_identifier_property)
+        resolved = {}
+        translate_identifiers_to_ids(
+            self.gds, source_node, "sourceNode", node_identifier_property, resolved
+        )
+        source_node_id = resolved.get("sourceNode")
+        if source_node_id is None:
             return {"found": False, "message": "Source node name not found"}
-
-        source_node_id = int(df["source_id"].iloc[0])
 
         G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName", "mode"])
@@ -586,22 +555,15 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
         node_identifier_property: str,
         **kwargs,
     ):
-        node_identifier_property = _validate_property_name(node_identifier_property)
         # Find source node ID
-        source_query = f"""
-        MATCH (source)
-        WHERE toLower(source.{node_identifier_property}) CONTAINS toLower($source_name)
-        RETURN id(source) as source_id
-        """
-
-        source_df = self.gds.run_cypher(
-            source_query, params={"source_name": source_node}
+        node_identifier_property = _validate_property_name(node_identifier_property)
+        resolved = {}
+        translate_identifiers_to_ids(
+            self.gds, source_node, "sourceNode", node_identifier_property, resolved
         )
-
-        if source_df.empty:
+        source_node_id = resolved.get("sourceNode")
+        if source_node_id is None:
             return {"found": False, "message": "Source node name not found"}
-
-        source_node_id = int(source_df["source_id"].iloc[0])
 
         # Find target node IDs - ensure ALL target nodes are found
         target_node_ids = []
@@ -609,19 +571,20 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
         unmatched_targets = []
 
         for target_name in target_nodes:
-            target_query = f"""
-            MATCH (target)
-            WHERE toLower(target.{node_identifier_property}) CONTAINS toLower($target_name)
-            RETURN id(target) as target_id, target.{node_identifier_property} as target_name
-            """
-
-            target_df = self.gds.run_cypher(
-                target_query, params={"target_name": target_name}
+            resolved = {}
+            translate_identifiers_to_ids(
+                self.gds,
+                target_name,
+                "targetNode",
+                node_identifier_property,
+                resolved,
             )
-
-            if not target_df.empty:
-                target_node_ids.append(int(target_df["target_id"].iloc[0]))
-                target_node_names.append(target_df["target_name"].iloc[0])
+            target_node_id = resolved.get("targetNode")
+            if target_node_id is not None:
+                target_node_ids.append(target_node_id)
+                target_node_names.append(
+                    self.gds.util.asNode(target_node_id).get(node_identifier_property)
+                )
             else:
                 unmatched_targets.append(target_name)
 
@@ -824,19 +787,15 @@ class RandomWalkHandler(AlgorithmHandler):
                 }
             node_identifier_property = _validate_property_name(node_identifier_property)
 
-            for source_name in kwargs["sourceNodes"]:
-                source_query = f"""
-                MATCH (source)
-                WHERE toLower(source.{node_identifier_property}) CONTAINS toLower($source_name)
-                RETURN id(source) as source_id
-                """
-
-                source_df = self.gds.run_cypher(
-                    source_query, params={"source_name": source_name}
-                )
-
-                if not source_df.empty:
-                    source_node_ids.append(int(source_df["source_id"].iloc[0]))
+            resolved = {}
+            translate_identifiers_to_ids(
+                self.gds,
+                kwargs["sourceNodes"],
+                "sourceNodes",
+                node_identifier_property,
+                resolved,
+            )
+            source_node_ids = resolved.get("sourceNodes", [])
 
         G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty", "mode"])
@@ -904,40 +863,29 @@ class BreadthFirstSearchHandler(AlgorithmHandler):
     def breadth_first_search(
         self, source_node: str, node_identifier_property: str, **kwargs
     ):
-        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
         # Find source node ID
-        source_query = f"""
-        MATCH (source)
-        WHERE toLower(source.{node_identifier_property}) CONTAINS toLower($source_name)
-        RETURN id(source) as source_id
-        """
-
-        source_df = self.gds.run_cypher(
-            source_query, params={"source_name": source_node}
+        node_identifier_property = _validate_property_name(node_identifier_property)
+        resolved = {}
+        translate_identifiers_to_ids(
+            self.gds, source_node, "sourceNode", node_identifier_property, resolved
         )
-
-        if source_df.empty:
+        source_node_id = resolved.get("sourceNode")
+        if source_node_id is None:
             return {"found": False, "message": "Source node name not found"}
-
-        source_node_id = int(source_df["source_id"].iloc[0])
 
         # Process target nodes if provided
         target_node_ids = []
         if "targetNodes" in kwargs and kwargs["targetNodes"]:
-            for target_name in kwargs["targetNodes"]:
-                target_query = f"""
-                MATCH (target)
-                WHERE toLower(target.{node_identifier_property}) CONTAINS toLower($target_name)
-                RETURN id(target) as target_id
-                """
-
-                target_df = self.gds.run_cypher(
-                    target_query, params={"target_name": target_name}
-                )
-
-                if not target_df.empty:
-                    target_node_ids.append(int(target_df["target_id"].iloc[0]))
+            resolved = {}
+            translate_identifiers_to_ids(
+                self.gds,
+                kwargs["targetNodes"],
+                "targetNodes",
+                node_identifier_property,
+                resolved,
+            )
+            target_node_ids = resolved.get("targetNodes", [])
 
         G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty", "mode"])
@@ -1006,40 +954,29 @@ class DepthFirstSearchHandler(AlgorithmHandler):
     def depth_first_search(
         self, source_node: str, node_identifier_property: str, **kwargs
     ):
-        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
         # Find source node ID
-        source_query = f"""
-        MATCH (source)
-        WHERE toLower(source.{node_identifier_property}) CONTAINS toLower($source_name)
-        RETURN id(source) as source_id
-        """
-
-        source_df = self.gds.run_cypher(
-            source_query, params={"source_name": source_node}
+        node_identifier_property = _validate_property_name(node_identifier_property)
+        resolved = {}
+        translate_identifiers_to_ids(
+            self.gds, source_node, "sourceNode", node_identifier_property, resolved
         )
-
-        if source_df.empty:
+        source_node_id = resolved.get("sourceNode")
+        if source_node_id is None:
             return {"found": False, "message": "Source node name not found"}
-
-        source_node_id = int(source_df["source_id"].iloc[0])
 
         # Process target nodes if provided
         target_node_ids = []
         if "targetNodes" in kwargs and kwargs["targetNodes"]:
-            for target_name in kwargs["targetNodes"]:
-                target_query = f"""
-                MATCH (target)
-                WHERE toLower(target.{node_identifier_property}) CONTAINS toLower($target_name)
-                RETURN id(target) as target_id
-                """
-
-                target_df = self.gds.run_cypher(
-                    target_query, params={"target_name": target_name}
-                )
-
-                if not target_df.empty:
-                    target_node_ids.append(int(target_df["target_id"].iloc[0]))
+            resolved = {}
+            translate_identifiers_to_ids(
+                self.gds,
+                kwargs["targetNodes"],
+                "targetNodes",
+                node_identifier_property,
+                resolved,
+            )
+            target_node_ids = resolved.get("targetNodes", [])
 
         G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty", "mode"])
@@ -1107,23 +1044,16 @@ class BellmanFordSingleSourceShortestPathHandler(AlgorithmHandler):
     def bellman_ford_single_source_shortest_path(
         self, source_node: str, node_identifier_property: str, **kwargs
     ):
-        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
         # Find source node ID
-        source_query = f"""
-        MATCH (source)
-        WHERE toLower(source.{node_identifier_property}) CONTAINS toLower($source_name)
-        RETURN id(source) as source_id
-        """
-
-        source_df = self.gds.run_cypher(
-            source_query, params={"source_name": source_node}
+        node_identifier_property = _validate_property_name(node_identifier_property)
+        resolved = {}
+        translate_identifiers_to_ids(
+            self.gds, source_node, "sourceNode", node_identifier_property, resolved
         )
-
-        if source_df.empty:
+        source_node_id = resolved.get("sourceNode")
+        if source_node_id is None:
             return {"found": False, "message": "Source node name not found"}
-
-        source_node_id = int(source_df["source_id"].iloc[0])
 
         G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty", "mode"])
@@ -1208,17 +1138,15 @@ class LongestPathHandler(AlgorithmHandler):
                 }
             node_identifier_property = _validate_property_name(node_identifier_property)
 
-            for target_name in kwargs["targetNodes"]:
-                target_query = f"""
-                MATCH (target)
-                WHERE toLower(target.{node_identifier_property}) CONTAINS toLower($target_name)
-                RETURN id(target) as target_id
-                """
-                target_df = self.gds.run_cypher(
-                    target_query, params={"target_name": target_name}
-                )
-                if not target_df.empty:
-                    target_node_ids.append(int(target_df["target_id"].iloc[0]))
+            resolved = {}
+            translate_identifiers_to_ids(
+                self.gds,
+                kwargs["targetNodes"],
+                "targetNodes",
+                node_identifier_property,
+                resolved,
+            )
+            target_node_ids = resolved.get("targetNodes", [])
         G = self.gds.graph.get(kwargs.get("graphName"))
         params = clean_params(
             kwargs,
@@ -1293,26 +1221,27 @@ class MaxFlowHandler(AlgorithmHandler):
         node_identifier_property: str,
         **kwargs,
     ):
-        node_identifier_property = _validate_property_name(node_identifier_property)
         mode = kwargs.get("mode", "stream")
+        node_identifier_property = _validate_property_name(node_identifier_property)
         source_node_ids = []
         source_node_names = []
         unmatched_sources = []
 
         for source_name in source_nodes:
-            source_query = f"""
-            MATCH (source)
-            WHERE toLower(source.{node_identifier_property}) CONTAINS toLower($source_name)
-            RETURN id(source) as source_id, source.{node_identifier_property} as source_name
-            """
-
-            source_df = self.gds.run_cypher(
-                source_query, params={"source_name": source_name}
+            resolved = {}
+            translate_identifiers_to_ids(
+                self.gds,
+                source_name,
+                "sourceNode",
+                node_identifier_property,
+                resolved,
             )
-
-            if not source_df.empty:
-                source_node_ids.append(int(source_df["source_id"].iloc[0]))
-                source_node_names.append(source_df["source_name"].iloc[0])
+            source_node_id = resolved.get("sourceNode")
+            if source_node_id is not None:
+                source_node_ids.append(source_node_id)
+                source_node_names.append(
+                    self.gds.util.asNode(source_node_id).get(node_identifier_property)
+                )
             else:
                 unmatched_sources.append(source_name)
 
@@ -1332,19 +1261,20 @@ class MaxFlowHandler(AlgorithmHandler):
         unmatched_targets = []
 
         for target_name in target_nodes:
-            target_query = f"""
-            MATCH (target)
-            WHERE toLower(target.{node_identifier_property}) CONTAINS toLower($target_name)
-            RETURN id(target) as target_id, target.{node_identifier_property} as target_name
-            """
-
-            target_df = self.gds.run_cypher(
-                target_query, params={"target_name": target_name}
+            resolved = {}
+            translate_identifiers_to_ids(
+                self.gds,
+                target_name,
+                "targetNode",
+                node_identifier_property,
+                resolved,
             )
-
-            if not target_df.empty:
-                target_node_ids.append(int(target_df["target_id"].iloc[0]))
-                target_node_names.append(target_df["target_name"].iloc[0])
+            target_node_id = resolved.get("targetNode")
+            if target_node_id is not None:
+                target_node_ids.append(target_node_id)
+                target_node_names.append(
+                    self.gds.util.asNode(target_node_id).get(node_identifier_property)
+                )
             else:
                 unmatched_targets.append(target_name)
 

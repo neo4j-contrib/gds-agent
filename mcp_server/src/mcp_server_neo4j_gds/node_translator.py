@@ -16,6 +16,64 @@ def _replace_dataframe_contents(target, source):
     target.attrs.update(source.attrs)
 
 
+def _to_number(value):
+    """Return int/float if value is numeric; otherwise None."""
+    if isinstance(value, bool):
+        return None
+    if isinstance(value, (int, float)):
+        return value
+    if isinstance(value, str):
+        s = value.strip()
+        try:
+            return int(s)
+        except ValueError:
+            try:
+                return float(s)
+            except ValueError:
+                return None
+    return None
+
+
+def _lookup_node_ids(gds, values, property_name):
+    """Resolve identifier values to Neo4j ids.
+
+    Numerics use exact ``=`` (toLower fails on number properties).
+    Strings use case-insensitive CONTAINS.
+    """
+    if not isinstance(values, list):
+        values = [values]
+
+    numeric_values = []
+    string_values = []
+    for value in values:
+        numeric = _to_number(value)
+        if numeric is not None:
+            numeric_values.append(numeric)
+        else:
+            string_values.append(value)
+
+    node_ids = []
+    if numeric_values:
+        query = f"""
+                UNWIND $names AS name
+                MATCH (s)
+                WHERE s.{property_name} = name
+                RETURN id(s) as node_id
+                """
+        df = gds.run_cypher(query, params={"names": numeric_values})
+        node_ids.extend(df["node_id"].tolist())
+    if string_values:
+        query = f"""
+                UNWIND $names AS name
+                MATCH (s)
+                WHERE toLower(s.{property_name}) CONTAINS toLower(name)
+                RETURN id(s) as node_id
+                """
+        df = gds.run_cypher(query, params={"names": string_values})
+        node_ids.extend(df["node_id"].tolist())
+    return node_ids
+
+
 def translate_identifiers_to_ids(
     gds: GraphDataScience,
     input_nodes,
@@ -26,36 +84,13 @@ def translate_identifiers_to_ids(
     # Handle input nodes - convert names to IDs if nodeIdentifierProperty is provided
     if input_nodes is not None and node_identifier_property is not None:
         if isinstance(input_nodes, list):
-            # Handle list of node names
-            query = f"""
-                    UNWIND $names AS name
-                    MATCH (s)
-                    WHERE toLower(s.{node_identifier_property}) = toLower(name)
-                    RETURN id(s) as node_id
-                    """
-            df = gds.run_cypher(
-                query,
-                params={
-                    "names": input_nodes,
-                },
+            call_params[input_nodes_variable_name] = _lookup_node_ids(
+                gds, input_nodes, node_identifier_property
             )
-            input_node_ids = df["node_id"].tolist()
-            call_params[input_nodes_variable_name] = input_node_ids
         else:
-            # Handle single  node name
-            query = f"""
-                    MATCH (s)
-                    WHERE toLower(s.{node_identifier_property}) = toLower($name)
-                    RETURN id(s) as node_id
-                    """
-            df = gds.run_cypher(
-                query,
-                params={
-                    "name": input_nodes,
-                },
-            )
-            if not df.empty:
-                call_params[input_nodes_variable_name] = int(df["node_id"].iloc[0])
+            node_ids = _lookup_node_ids(gds, input_nodes, node_identifier_property)
+            if node_ids:
+                call_params[input_nodes_variable_name] = int(node_ids[0])
     elif input_nodes is not None:
         # If input_nodes provided but no nodeIdentifierProperty, pass through as-is
         call_params[input_nodes_variable_name] = input_nodes
@@ -90,18 +125,6 @@ def filter_identifiers(
         raise ValueError(
             "If 'nodes' is provided, 'nodeIdentifierProperty' must also be specified."
         )
-    query = f"""
-            UNWIND $names AS name
-            MATCH (s)
-            WHERE toLower(s.{node_identifier_property}) = toLower(name)
-            RETURN id(s) as node_id
-            """
-    df = gds.run_cypher(
-        query,
-        params={
-            "names": node_names,
-        },
-    )
-    node_ids = df["node_id"].tolist()
+    node_ids = _lookup_node_ids(gds, node_names, node_identifier_property)
     filtered_results = results[results[id_name].isin(node_ids)]
     return filtered_results

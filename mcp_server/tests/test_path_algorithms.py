@@ -932,3 +932,69 @@ async def test_find_shortest_path_rejects_injection_in_node_identifier_property(
     assert "Invalid nodeIdentifierProperty" in result_text
     # The injected marker must not have made it back through Neo4j.
     assert "pwned" not in result_text
+
+
+def test_lookup_node_ids_builds_numeric_and_string_queries():
+    from mcp_server_neo4j_gds import node_translator
+
+    captured = []
+
+    class FakeGds:
+        def run_cypher(self, query, params=None):
+            captured.append((query, params))
+
+            class DF:
+                def __getitem__(self, key):
+                    class Col:
+                        def tolist(self):
+                            return []
+
+                    return Col()
+
+            return DF()
+
+    node_translator._lookup_node_ids(FakeGds(), "42", "movieId")
+    assert "toLower" not in captured[0][0]
+    assert captured[0][1]["names"] == [42]
+
+    captured.clear()
+    node_translator._lookup_node_ids(FakeGds(), "Bayswater", "name")
+    assert "CONTAINS" in captured[0][0]
+
+
+@pytest.mark.asyncio
+async def test_find_shortest_path_with_integer_identifier(
+    mcp_client, projected_test_graph, neo4j_container
+):
+    from neo4j import GraphDatabase
+
+    driver = GraphDatabase.driver(neo4j_container, auth=("neo4j", "testpassword"))
+    try:
+        with driver.session() as session:
+            session.run(
+                """
+                MATCH (a:UndergroundStation {name: 'Bayswater'})
+                MATCH (b:UndergroundStation {name: 'Westbourne Park'})
+                SET a.testId = 1001, b.testId = 1002
+                """
+            )
+
+        result = await mcp_client.call_tool(
+            "find_shortest_path",
+            {
+                "start_node": "1001",
+                "end_node": "1002",
+                "nodeIdentifierProperty": "testId",
+                "relationship_property": "time",
+                "graphName": projected_test_graph,
+            },
+        )
+        result_data = json.loads(result[0]["text"])
+        assert result_data["totalCost"] == 5.0
+        assert "Bayswater" in result_data["nodeNames"][0]
+    finally:
+        with driver.session() as session:
+            session.run(
+                "MATCH (n:UndergroundStation) WHERE n.testId IS NOT NULL REMOVE n.testId"
+            )
+        driver.close()
