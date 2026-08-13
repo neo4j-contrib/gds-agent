@@ -33,7 +33,6 @@ def _validate_property_name(name):
     return name
 
 
-
 def _as_node_pairs(gds, node_id_pairs):
     node_ids = [node_id for pair in node_id_pairs for node_id in pair]
     if not node_ids:
