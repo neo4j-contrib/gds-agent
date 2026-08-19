@@ -8,9 +8,8 @@ compatibility: Requires the gds-agent MCP server (PyPI package gds-agent) and cy
 ## Workflow
 
 1. **Inspect the database schema first.** Never guess labels, types, or property names.
-2. **Project a graph.** Plugin and session mode have different projection syntax and parameters. Check the graph projection tool description and parameters. 
-3. **Clean up.** `drop_graph` when a projection is no longer needed. 
-`delete_session` when a session is no longer needed, and this will automatically drop all graphs projected to this session.
+2. **Project a graph.** Plugin and session mode have different projection syntax and parameters. Check the graph projection tool description and parameters. For session mode, you need to first create sessions to project graphs onto.
+3. **Clean up.** `drop_graph` when a projection is no longer needed. `delete_session` when a session is no longer needed, and this will automatically drop all graphs projected to this session.
 4. **When you see errors, inspect the message and make necessary corrections.** If you cannot fix it, consult the detailed [references/troubleshooting.md](references/troubleshooting.md) guide.
 
 
