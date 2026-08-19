@@ -950,9 +950,7 @@ class BreadthFirstSearchHandler(AlgorithmHandler):
 
 
 class DepthFirstSearchHandler(AlgorithmHandler):
-    def depth_first_search(
-        self, source_node, node_identifier_property: str, **kwargs
-    ):
+    def depth_first_search(self, source_node, node_identifier_property: str, **kwargs):
         mode = kwargs.get("mode", "stream")
         # Find source node ID
         node_identifier_property = _validate_property_name(node_identifier_property)

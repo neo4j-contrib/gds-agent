@@ -943,9 +943,7 @@ async def test_find_shortest_path_with_integer_identifier(
 ):
     from neo4j import GraphDatabase
 
-    driver = GraphDatabase.driver(
-        neo4j_container, auth=(NEO4J_USER, NEO4J_PASSWORD)
-    )
+    driver = GraphDatabase.driver(neo4j_container, auth=(NEO4J_USER, NEO4J_PASSWORD))
     try:
         with driver.session() as session:
             session.run(
