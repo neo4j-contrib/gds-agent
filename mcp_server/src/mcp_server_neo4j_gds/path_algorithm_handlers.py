@@ -43,7 +43,7 @@ def _as_node_pairs(gds, node_id_pairs):
 
 class DijkstraShortestPathHandler(AlgorithmHandler):
     def find_shortest_path(
-        self, start_node: str, end_node: str, node_identifier_property: str, **kwargs
+        self, start_node, end_node, node_identifier_property: str, **kwargs
     ):
         mode = kwargs.get("mode", "stream")
         node_identifier_property = _validate_property_name(node_identifier_property)
@@ -115,7 +115,7 @@ class DijkstraShortestPathHandler(AlgorithmHandler):
 
 class DeltaSteppingShortestPathHandler(AlgorithmHandler):
     def delta_stepping_shortest_path(
-        self, source_node: str, node_identifier_property: str, **kwargs
+        self, source_node, node_identifier_property: str, **kwargs
     ):
         mode = kwargs.get("mode", "stream")
         node_identifier_property = _validate_property_name(node_identifier_property)
@@ -202,7 +202,7 @@ class DeltaSteppingShortestPathHandler(AlgorithmHandler):
 
 class DijkstraSingleSourceShortestPathHandler(AlgorithmHandler):
     def dijkstra_single_source_shortest_path(
-        self, source_node: str, node_identifier_property: str, **kwargs
+        self, source_node, node_identifier_property: str, **kwargs
     ):
         mode = kwargs.get("mode", "stream")
         node_identifier_property = _validate_property_name(node_identifier_property)
@@ -289,8 +289,8 @@ class DijkstraSingleSourceShortestPathHandler(AlgorithmHandler):
 class AStarShortestPathHandler(AlgorithmHandler):
     def a_star_shortest_path(
         self,
-        source_node: str,
-        target_node: str,
+        source_node,
+        target_node,
         node_identifier_property: str,
         **kwargs,
     ):
@@ -367,8 +367,8 @@ class AStarShortestPathHandler(AlgorithmHandler):
 class YensShortestPathsHandler(AlgorithmHandler):
     def yens_shortest_paths(
         self,
-        source_node: str,
-        target_node: str,
+        source_node,
+        target_node,
         node_identifier_property: str,
         **kwargs,
     ):
@@ -459,7 +459,7 @@ class YensShortestPathsHandler(AlgorithmHandler):
 
 class MinimumWeightSpanningTreeHandler(AlgorithmHandler):
     def minimum_weight_spanning_tree(
-        self, source_node: str, node_identifier_property: str, **kwargs
+        self, source_node, node_identifier_property: str, **kwargs
     ):
         mode = kwargs.get("mode", "stream")
         node_identifier_property = _validate_property_name(node_identifier_property)
@@ -549,7 +549,7 @@ class MinimumWeightSpanningTreeHandler(AlgorithmHandler):
 class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
     def minimum_directed_steiner_tree(
         self,
-        source_node: str,
+        source_node,
         target_nodes: list,
         node_identifier_property: str,
         **kwargs,
@@ -591,7 +591,7 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
         if unmatched_targets:
             return {
                 "found": False,
-                "message": f"The following target nodes were not found: {', '.join(unmatched_targets)}",
+                "message": f"The following target nodes were not found: {', '.join(map(str, unmatched_targets))}",
             }
 
         if not target_node_ids:
@@ -860,7 +860,7 @@ class RandomWalkHandler(AlgorithmHandler):
 
 class BreadthFirstSearchHandler(AlgorithmHandler):
     def breadth_first_search(
-        self, source_node: str, node_identifier_property: str, **kwargs
+        self, source_node, node_identifier_property: str, **kwargs
     ):
         mode = kwargs.get("mode", "stream")
         # Find source node ID
@@ -951,7 +951,7 @@ class BreadthFirstSearchHandler(AlgorithmHandler):
 
 class DepthFirstSearchHandler(AlgorithmHandler):
     def depth_first_search(
-        self, source_node: str, node_identifier_property: str, **kwargs
+        self, source_node, node_identifier_property: str, **kwargs
     ):
         mode = kwargs.get("mode", "stream")
         # Find source node ID
@@ -1041,7 +1041,7 @@ class DepthFirstSearchHandler(AlgorithmHandler):
 
 class BellmanFordSingleSourceShortestPathHandler(AlgorithmHandler):
     def bellman_ford_single_source_shortest_path(
-        self, source_node: str, node_identifier_property: str, **kwargs
+        self, source_node, node_identifier_property: str, **kwargs
     ):
         mode = kwargs.get("mode", "stream")
         # Find source node ID
@@ -1248,7 +1248,7 @@ class MaxFlowHandler(AlgorithmHandler):
         if unmatched_sources:
             return {
                 "found": False,
-                "message": f"The following source nodes were not found: {', '.join(unmatched_sources)}",
+                "message": f"The following source nodes were not found: {', '.join(map(str, unmatched_sources))}",
             }
 
         if not source_node_ids:
@@ -1281,7 +1281,7 @@ class MaxFlowHandler(AlgorithmHandler):
         if unmatched_targets:
             return {
                 "found": False,
-                "message": f"The following target nodes were not found: {', '.join(unmatched_targets)}",
+                "message": f"The following target nodes were not found: {', '.join(map(str, unmatched_targets))}",
             }
 
         if not target_node_ids:

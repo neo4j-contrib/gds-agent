@@ -15,11 +15,12 @@ similarity_tool_definitions = [
                     "anyOf": [
                         {
                             "type": "array",
-                            "items": {"type": "string"},
+                            "items": {
+                                "anyOf": [{"type": "string"}, {"type": "number"}]
+                            },
                         },
-                        {
-                            "type": "string",
-                        },
+                        {"type": "string"},
+                        {"type": "number"},
                     ],
                     "description": "The source node filter to apply. Accepts a List of node names, or a single label.",
                 },
@@ -27,11 +28,12 @@ similarity_tool_definitions = [
                     "anyOf": [
                         {
                             "type": "array",
-                            "items": {"type": "string"},
+                            "items": {
+                                "anyOf": [{"type": "string"}, {"type": "number"}]
+                            },
                         },
-                        {
-                            "type": "string",
-                        },
+                        {"type": "string"},
+                        {"type": "number"},
                     ],
                     "description": "The target node filter to apply. Accepts a List of node names, or a single label.",
                 },
@@ -130,11 +132,12 @@ similarity_tool_definitions = [
                     "anyOf": [
                         {
                             "type": "array",
-                            "items": {"type": "string"},
+                            "items": {
+                                "anyOf": [{"type": "string"}, {"type": "number"}]
+                            },
                         },
-                        {
-                            "type": "string",
-                        },
+                        {"type": "string"},
+                        {"type": "number"},
                     ],
                     "description": "The source node filter to apply. Accepts a List of node names, or a single label.",
                 },
@@ -142,11 +145,12 @@ similarity_tool_definitions = [
                     "anyOf": [
                         {
                             "type": "array",
-                            "items": {"type": "string"},
+                            "items": {
+                                "anyOf": [{"type": "string"}, {"type": "number"}]
+                            },
                         },
-                        {
-                            "type": "string",
-                        },
+                        {"type": "string"},
+                        {"type": "number"},
                     ],
                     "description": "The target node filter to apply. Accepts a List of node names, or a single label.",
                 },

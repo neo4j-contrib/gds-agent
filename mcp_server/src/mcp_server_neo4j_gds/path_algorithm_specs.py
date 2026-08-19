@@ -21,12 +21,12 @@ path_tool_definitions = [
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
                 "start_node": {
-                    "type": "string",
-                    "description": "Name of the starting node",
+                    "anyOf": [{"type": "string"}, {"type": "number"}],
+                    "description": "Identifier of the starting node. Use a JSON number when the identifier property is numeric.",
                 },
                 "end_node": {
-                    "type": "string",
-                    "description": "Name of the ending node",
+                    "anyOf": [{"type": "string"}, {"type": "number"}],
+                    "description": "Identifier of the ending node. Use a JSON number when the identifier property is numeric.",
                 },
                 "nodeIdentifierProperty": {
                     "type": "string",
@@ -69,7 +69,7 @@ path_tool_definitions = [
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
                 "sourceNode": {
-                    "type": "string",
+                    "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the source node to find shortest paths from.",
                 },
                 "nodeIdentifierProperty": {
@@ -111,7 +111,7 @@ path_tool_definitions = [
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
                 "sourceNode": {
-                    "type": "string",
+                    "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the source node to find shortest paths from.",
                 },
                 "nodeIdentifierProperty": {
@@ -155,11 +155,11 @@ path_tool_definitions = [
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
                 "sourceNode": {
-                    "type": "string",
+                    "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the source node to find shortest path from.",
                 },
                 "targetNode": {
-                    "type": "string",
+                    "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the target node to find shortest path to.",
                 },
                 "nodeIdentifierProperty": {
@@ -218,11 +218,11 @@ path_tool_definitions = [
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
                 "sourceNode": {
-                    "type": "string",
+                    "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the source node to find shortest paths from.",
                 },
                 "targetNode": {
-                    "type": "string",
+                    "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the target node to find shortest paths to.",
                 },
                 "nodeIdentifierProperty": {
@@ -276,7 +276,7 @@ path_tool_definitions = [
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
                 "sourceNode": {
-                    "type": "string",
+                    "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the starting source node.",
                 },
                 "nodeIdentifierProperty": {
@@ -317,12 +317,12 @@ path_tool_definitions = [
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
                 "sourceNode": {
-                    "type": "string",
+                    "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the starting source node.",
                 },
                 "targetNodes": {
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of target node names to connect in the steiner tree.",
                 },
                 "nodeIdentifierProperty": {
@@ -435,7 +435,7 @@ path_tool_definitions = [
                 },
                 "sourceNodes": {
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "The list of nodes from which to do a random walk.",
                 },
                 "nodeIdentifierProperty": {
@@ -494,7 +494,7 @@ path_tool_definitions = [
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
                 "sourceNode": {
-                    "type": "string",
+                    "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the starting source node.",
                 },
                 "nodeIdentifierProperty": {
@@ -503,7 +503,7 @@ path_tool_definitions = [
                 },
                 "targetNodes": {
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "Names of target nodes. Traversal terminates when any target node is visited.",
                 },
                 "maxDepth": {
@@ -538,7 +538,7 @@ path_tool_definitions = [
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
                 "sourceNode": {
-                    "type": "string",
+                    "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the starting source node.",
                 },
                 "nodeIdentifierProperty": {
@@ -547,7 +547,7 @@ path_tool_definitions = [
                 },
                 "targetNodes": {
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "Names of target nodes. Traversal terminates when any target node is visited.",
                 },
                 "maxDepth": {
@@ -588,7 +588,7 @@ path_tool_definitions = [
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
                 "sourceNode": {
-                    "type": "string",
+                    "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the starting source node.",
                 },
                 "nodeIdentifierProperty": {
@@ -620,7 +620,7 @@ path_tool_definitions = [
                 },
                 "targetNodes": {
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of target node names to filter results. Only paths ending at these nodes will be returned.",
                 },
                 "nodeIdentifierProperty": {
@@ -661,12 +661,12 @@ path_tool_definitions = [
                 },
                 "sourceNodes": {
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of source node names from which flow originates.",
                 },
                 "targetNodes": {
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of target node names to which flow is sent.",
                 },
                 "nodeIdentifierProperty": {

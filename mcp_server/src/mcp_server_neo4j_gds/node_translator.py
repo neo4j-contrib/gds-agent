@@ -16,62 +16,19 @@ def _replace_dataframe_contents(target, source):
     target.attrs.update(source.attrs)
 
 
-def _to_number(value):
-    """Return int/float if value is numeric; otherwise None."""
-    if isinstance(value, bool):
-        return None
-    if isinstance(value, (int, float)):
-        return value
-    if isinstance(value, str):
-        s = value.strip()
-        try:
-            return int(s)
-        except ValueError:
-            try:
-                return float(s)
-            except ValueError:
-                return None
-    return None
-
-
 def _lookup_node_ids(gds, values, property_name):
-    """Resolve identifier values to Neo4j ids.
-
-    Numerics use exact ``=`` (toLower fails on number properties).
-    Strings use case-insensitive CONTAINS.
-    """
+    """Resolve identifier values to Neo4j ids using exact ``=``."""
     if not isinstance(values, list):
         values = [values]
 
-    numeric_values = []
-    string_values = []
-    for value in values:
-        numeric = _to_number(value)
-        if numeric is not None:
-            numeric_values.append(numeric)
-        else:
-            string_values.append(value)
-
-    node_ids = []
-    if numeric_values:
-        query = f"""
-                UNWIND $names AS name
-                MATCH (s)
-                WHERE s.{property_name} = name
-                RETURN id(s) as node_id
-                """
-        df = gds.run_cypher(query, params={"names": numeric_values})
-        node_ids.extend(df["node_id"].tolist())
-    if string_values:
-        query = f"""
-                UNWIND $names AS name
-                MATCH (s)
-                WHERE toLower(s.{property_name}) CONTAINS toLower(name)
-                RETURN id(s) as node_id
-                """
-        df = gds.run_cypher(query, params={"names": string_values})
-        node_ids.extend(df["node_id"].tolist())
-    return node_ids
+    query = f"""
+            UNWIND $names AS name
+            MATCH (s)
+            WHERE s.{property_name} = name
+            RETURN id(s) as node_id
+            """
+    df = gds.run_cypher(query, params={"names": values})
+    return df["node_id"].tolist()
 
 
 def translate_identifiers_to_ids(
