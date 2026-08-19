@@ -2,6 +2,9 @@ import pytest
 import json
 import re
 
+NEO4J_USER = "neo4j"
+NEO4J_PASSWORD = "testpassword"
+
 
 @pytest.mark.asyncio
 async def test_find_shortest_path(mcp_client, projected_test_graph):
@@ -932,3 +935,41 @@ async def test_find_shortest_path_rejects_injection_in_node_identifier_property(
     assert "Invalid nodeIdentifierProperty" in result_text
     # The injected marker must not have made it back through Neo4j.
     assert "pwned" not in result_text
+
+
+@pytest.mark.asyncio
+async def test_find_shortest_path_with_integer_identifier(
+    mcp_client, projected_test_graph, neo4j_container
+):
+    from neo4j import GraphDatabase
+
+    driver = GraphDatabase.driver(neo4j_container, auth=(NEO4J_USER, NEO4J_PASSWORD))
+    try:
+        with driver.session() as session:
+            session.run(
+                """
+                MATCH (a:UndergroundStation {name: 'Bayswater'})
+                MATCH (b:UndergroundStation {name: 'Westbourne Park'})
+                SET a.testId = 1001, b.testId = 10010
+                """
+            )
+
+        result = await mcp_client.call_tool(
+            "find_shortest_path",
+            {
+                "start_node": 1001,
+                "end_node": 10010,
+                "nodeIdentifierProperty": "testId",
+                "relationship_property": "time",
+                "graphName": projected_test_graph,
+            },
+        )
+        result_data = json.loads(result[0]["text"])
+        assert result_data["totalCost"] == 5.0
+        assert "Bayswater" in result_data["nodeNames"][0]
+    finally:
+        with driver.session() as session:
+            session.run(
+                "MATCH (n:UndergroundStation) WHERE n.testId IS NOT NULL REMOVE n.testId"
+            )
+        driver.close()

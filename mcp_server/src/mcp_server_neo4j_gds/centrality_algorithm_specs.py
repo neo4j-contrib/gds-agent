@@ -23,7 +23,7 @@ centrality_tool_definitions = [
                 },
                 "nodes": {
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of node to filter return the ArticleRank for.",
                 },
                 "nodeIdentifierProperty": {
@@ -49,7 +49,7 @@ centrality_tool_definitions = [
                 "sourceNodes": {
                     "description": "The nodes to use for computing Personalized Article Rank.",
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                 },
                 "scaler": {
                     "type": "string",
@@ -109,7 +109,7 @@ centrality_tool_definitions = [
                 },
                 "nodes": {
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of node names to filter betweenness centrality results for.",
                 },
                 "nodeIdentifierProperty": {
@@ -209,7 +209,7 @@ centrality_tool_definitions = [
                 },
                 "nodes": {
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of node names to filter closeness centrality results for.",
                 },
                 "nodeIdentifierProperty": {
@@ -245,7 +245,7 @@ centrality_tool_definitions = [
                 },
                 "nodes": {
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of node names to filter degree centrality results for.",
                 },
                 "nodeIdentifierProperty": {
@@ -293,7 +293,7 @@ centrality_tool_definitions = [
                 },
                 "nodes": {
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of node names to filter eigenvector centrality results for.",
                 },
                 "nodeIdentifierProperty": {
@@ -315,7 +315,7 @@ centrality_tool_definitions = [
                 "sourceNodes": {
                     "description": "The nodes to use for computing Personalized Eigenvector Centrality.",
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                 },
                 "scaler": {
                     "type": "string",
@@ -348,7 +348,7 @@ centrality_tool_definitions = [
                 },
                 "nodes": {
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of node names to filter PageRank results for.",
                 },
                 "nodeIdentifierProperty": {
@@ -370,7 +370,7 @@ centrality_tool_definitions = [
                 "sourceNodes": {
                     "description": "The nodes to use for computing Personalized PageRank.",
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                 },
             },
             "required": ["graphName"],
@@ -398,7 +398,7 @@ centrality_tool_definitions = [
                 },
                 "nodes": {
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of node names to filter harmonic centrality results for.",
                 },
                 "nodeIdentifierProperty": {
@@ -432,7 +432,7 @@ centrality_tool_definitions = [
                 },
                 "nodes": {
                     "type": "array",
-                    "items": {"type": "string"},
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of node names to filter HITS results for.",
                 },
                 "nodeIdentifierProperty": {

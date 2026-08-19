@@ -371,8 +371,8 @@ community_tool_definitions = [
                 },
                 "nodes": {
                     "type": "array",
-                    "items": {"type": "string"},
-                    "description": "Optional list of node names to filter results. Only nodes whose names (based on nodeIdentifierProperty) contain any of these values will be included in the results. Requires nodeIdentifierProperty to be specified.",
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
+                    "description": "Optional list of node identifiers to filter results. Matching is exact. Requires nodeIdentifierProperty to be specified.",
                 },
             },
             "required": ["graphName"],
@@ -586,8 +586,8 @@ community_tool_definitions = [
                 },
                 "nodes": {
                     "type": "array",
-                    "items": {"type": "string"},
-                    "description": "Optional list of node names to filter results. Only nodes whose names (based on nodeIdentifierProperty) contain any of these values will be included in the results. Requires nodeIdentifierProperty to be specified.",
+                    "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
+                    "description": "Optional list of node identifiers to filter results. Matching is exact. Requires nodeIdentifierProperty to be specified.",
                 },
             },
             "required": ["graphName"],
