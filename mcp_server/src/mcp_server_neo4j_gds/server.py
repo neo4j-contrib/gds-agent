@@ -66,12 +66,17 @@ TRANSPORT_ALIASES = {
 
 
 class Neo4jDriverConnection:
-    def __init__(self, db_url: str, username: str, password: str, database: str = None):
+    def __init__(
+        self, db_url: str, username: str, password: str, database: str | None = None
+    ):
         self._driver = GraphDatabase.driver(db_url, auth=(username, password))
         self._database = database
 
     def run_cypher(
-        self, query: str, params: dict[str, Any] = None, database: str = None
+        self,
+        query: str,
+        params: dict[str, Any] | None = None,
+        database: str | None = None,
     ) -> pd.DataFrame:
         with self._driver.session(database=database or self._database) as session:
             result = session.run(query, params or {})
@@ -86,7 +91,9 @@ def is_aura_graph_analytics_versionless_error(error: Exception) -> bool:
     return "Aura Graph Analytics is versionless" in str(error)
 
 
-def create_base_gds(db_url: str, username: str, password: str, database: str = None):
+def create_base_gds(
+    db_url: str, username: str, password: str, database: str | None = None
+):
     try:
         if database:
             return GraphDataScience(
@@ -149,7 +156,7 @@ def normalize_http_path(path: str) -> str:
 
 
 def create_mcp_server(
-    db_url: str, username: str, password: str, database: str = None
+    db_url: str, username: str, password: str, database: str | None = None
 ) -> tuple[Server, SessionManager, GraphDataScience | Neo4jDriverConnection]:
     logger.info(f"Starting MCP Server for {db_url} with username {username}")
     if database:
@@ -163,7 +170,7 @@ def create_mcp_server(
     mode = session_manager.detect_mode(base_gds)
     logger.info(f"Detected GDS mode: {mode}")
 
-    def get_gds_for_graph(graph_name: str = None) -> GraphDataScience:
+    def get_gds_for_graph(graph_name: str | None = None) -> GraphDataScience:
         # Tools without a graphName only query the database and run on the base connection
         if mode != GdsMode.SESSION or not graph_name:
             return base_gds
@@ -431,10 +438,11 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
             elif name == "drop_model" and mode == GdsMode.SESSION:
-                for _, s_gds in session_manager.active_sessions():
+                for s_name, s_gds in session_manager.active_sessions():
                     try:
                         result = DropModelHandler(s_gds).execute(arguments)
-                    except Exception:
+                    except Exception as e:
+                        logger.debug("drop_model failed in session '%s': %s", s_name, e)
                         continue
                     return [
                         types.TextContent(type="text", text=serialize_result(result))
@@ -532,7 +540,7 @@ async def main(
     db_url: str,
     username: str,
     password: str,
-    database: str = None,
+    database: str | None = None,
     transport: str = STDIO_TRANSPORT,
     host: str = DEFAULT_HTTP_HOST,
     port: int = DEFAULT_HTTP_PORT,

@@ -366,7 +366,7 @@ def create_node_projection_properties(projectable_properties, variable):
         elif property_type == "INTEGER_LIST" or property_type == "INTEGER":
             valid_node_properties[prop] = f"{variable}. {prop}"
         else:
-            raise "should never end up here"
+            raise RuntimeError(f"Unexpected node property type: {property_type}")
 
     node_prop_map = ", ".join(
         f"{prop}: {expr}" for prop, expr in valid_node_properties.items()

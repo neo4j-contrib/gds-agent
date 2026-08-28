@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 from graphdatascience import GraphDataScience
 
 from .algorithm_handler import AlgorithmHandler
@@ -73,7 +75,7 @@ from .similarity_algorithm_handlers import (
 
 
 class AlgorithmRegistry:
-    _handlers: dict[str, type[AlgorithmHandler]] = {
+    _handlers: ClassVar[dict[str, type[AlgorithmHandler]]] = {
         # Centrality algorithms
         "article_rank": ArticleRankHandler,
         "articulation_points": ArticulationPointsHandler,
