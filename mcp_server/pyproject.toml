@@ -34,6 +34,7 @@ packages = ["src/mcp_server_neo4j_gds"]
 
 [tool.ruff]
 target-version = "py311"
+ignore = ["BLE001", "S110", "S112", "RUF013", "RUF012", "TRY004", "B016"]
 
 [dependency-groups]
 dev = [
