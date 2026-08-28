@@ -114,10 +114,12 @@ class SessionManager:
         if memory_gb is None:
             memory_gb = int(os.getenv("SESSION_MEMORY_GB") or "8")
         memory = getattr(SessionMemory, f"m_{memory_gb}GB")
-        ttl_hours = int(os.getenv("SESSION_TTL_HOURS") or "24")
+        ttl_hours = int(os.getenv("SESSION_TTL_HOURS") or "12")
+        timeout = int(t) if (t := os.getenv("SESSION_TIMEOUT_SECONDS")) else None
 
         logger.info(
             f"Creating or getting session '{resolved_name}' with {memory_gb}GB memory and {ttl_hours}h TTL"
+            + (f" and {timeout}s timeout" if timeout is not None else "")
         )
 
         db_connection = DbmsConnectionInfo(
@@ -128,6 +130,7 @@ class SessionManager:
             session_name=resolved_name,
             memory=memory,
             ttl=timedelta(hours=ttl_hours),
+            timeout=timeout,
             db_connection=db_connection,
         )
         with self._lock:

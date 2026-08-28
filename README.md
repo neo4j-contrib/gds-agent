@@ -39,7 +39,8 @@ Set as environment variables (or the credential form of your harness's installer
 | `NEO4J_DATABASE`                                       | no           | database name (defaults to `neo4j`)                 |
 | `AURA_API_CLIENT_ID` / `AURA_API_CLIENT_SECRET`        | session mode | Aura API credentials for Aura Graph Analytics       |
 | `AURA_API_PROJECT_ID`                                  | no           | only if the API client can access multiple projects |
-| `SESSION_MEMORY_GB` / `SESSION_TTL_HOURS`              | no           | session defaults (8 GB / 24 h)                      |
+| `SESSION_MEMORY_GB` / `SESSION_TTL_HOURS`              | no           | session defaults (8 GB / 12 h)                      |
+| `SESSION_TIMEOUT_SECONDS`                              | no           | seconds to wait for a session to become Ready       |
 | `GDS_AGENT_MAX_RESULT_ROWS` / `_CHARS` / `_CELL_CHARS` | no           | tool output limits (500 / 100000 / 200)             |
 
 
