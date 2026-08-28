@@ -66,12 +66,17 @@ TRANSPORT_ALIASES = {
 
 
 class Neo4jDriverConnection:
-    def __init__(self, db_url: str, username: str, password: str, database: str | None = None):
+    def __init__(
+        self, db_url: str, username: str, password: str, database: str | None = None
+    ):
         self._driver = GraphDatabase.driver(db_url, auth=(username, password))
         self._database = database
 
     def run_cypher(
-        self, query: str, params: dict[str, Any] | None = None, database: str | None = None
+        self,
+        query: str,
+        params: dict[str, Any] | None = None,
+        database: str | None = None,
     ) -> pd.DataFrame:
         with self._driver.session(database=database or self._database) as session:
             result = session.run(query, params or {})
@@ -86,7 +91,9 @@ def is_aura_graph_analytics_versionless_error(error: Exception) -> bool:
     return "Aura Graph Analytics is versionless" in str(error)
 
 
-def create_base_gds(db_url: str, username: str, password: str, database: str | None = None):
+def create_base_gds(
+    db_url: str, username: str, password: str, database: str | None = None
+):
     try:
         if database:
             return GraphDataScience(
@@ -435,9 +442,7 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                     try:
                         result = DropModelHandler(s_gds).execute(arguments)
                     except Exception as e:
-                        logger.debug(
-                            "drop_model failed in session '%s': %s", s_name, e
-                        )
+                        logger.debug("drop_model failed in session '%s': %s", s_name, e)
                         continue
                     return [
                         types.TextContent(type="text", text=serialize_result(result))
