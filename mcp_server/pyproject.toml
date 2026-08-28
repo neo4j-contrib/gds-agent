@@ -14,7 +14,7 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
 ]
 dependencies = [
-    "graphdatascience>=1.16",
+    "graphdatascience==1.22",
     "mcp[cli]>=2.0.0",
     "python-dotenv>=1.0.0",
 ]
