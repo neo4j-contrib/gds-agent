@@ -316,6 +316,7 @@ def test_projection_with_labels_and_types(neo4j_container):
         )
         existing_count2 = res.single()["count"]
 
+    list_result = gds.graph.list()
     driver.close()
     # assertions at the end to ensure failures do not affect other tests
     assert existing_count2 == 0
@@ -328,7 +329,6 @@ def test_projection_with_labels_and_types(neo4j_container):
     assert rel_types == {"REL1", "REL2"}
     assert rel_props == [["relprop1"], ["relprop1"]]
 
-    list_result = gds.graph.list()
     assert len(list_result) == 0
 
 
