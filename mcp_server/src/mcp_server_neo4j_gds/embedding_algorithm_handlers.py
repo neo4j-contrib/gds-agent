@@ -157,7 +157,7 @@ class GraphSagePredictHandler(AlgorithmHandler):
         G = self.gds.graph.get(kwargs.get("graphName"))
         model = self.gds.model.get(model_name)
         if not isinstance(model, GraphSageModel):
-            raise ValueError(
+            raise TypeError(
                 f"Model '{model_name}' is not a GraphSAGE model (type: {model.type()}). "
                 "Use graph_sage_train to train one."
             )

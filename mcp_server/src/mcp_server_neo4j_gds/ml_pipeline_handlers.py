@@ -64,7 +64,7 @@ def train_pipeline(gds, pipeline, kwargs, default_metrics):
 def get_model(gds, model_name, expected_type, train_tool):
     model = gds.model.get(model_name)
     if not isinstance(model, expected_type):
-        raise ValueError(
+        raise TypeError(
             f"Model '{model_name}' is not a {expected_type.__name__} model "
             f"(type: {model.type()}). Use {train_tool} to train one."
         )
