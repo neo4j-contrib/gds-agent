@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
-from typing import Dict, Any
+from typing import Any
+
 from graphdatascience import GraphDataScience
 
 
-def clean_params(arguments: Dict[str, Any], forbidden):
+def clean_params(arguments: dict[str, Any], forbidden):
     if len(forbidden) == 0:
         return arguments
     params = {
@@ -17,5 +18,5 @@ class AlgorithmHandler(ABC):
         self.gds = gds
 
     @abstractmethod
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         pass

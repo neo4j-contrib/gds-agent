@@ -3,9 +3,9 @@ import os
 import threading
 from contextlib import suppress
 from datetime import timedelta
-from typing import Dict, List, Optional, Tuple
+
 from graphdatascience import GraphDataScience
-from graphdatascience.session import GdsSessions, AuraAPICredentials, SessionMemory
+from graphdatascience.session import AuraAPICredentials, GdsSessions, SessionMemory
 from graphdatascience.session.dbms_connection_info import DbmsConnectionInfo
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
@@ -27,11 +27,11 @@ class GdsMode:
 
 class SessionManager:
     def __init__(self):
-        self.mode: Optional[str] = None
-        self._sessions: Dict[str, GraphDataScience] = {}
-        self.graph_sessions: Dict[str, str] = {}
+        self.mode: str | None = None
+        self._sessions: dict[str, GraphDataScience] = {}
+        self.graph_sessions: dict[str, str] = {}
         self._lock = threading.Lock()
-        self._sessions_client: Optional[GdsSessions] = None
+        self._sessions_client: GdsSessions | None = None
 
     def detect_mode(self, gds: GraphDataScience) -> str:
         if self.mode is not None:
@@ -92,11 +92,11 @@ class SessionManager:
     def create_or_get_session(
         self,
         db_url: str,
-        auth: Tuple[str, str],
-        database: Optional[str] = None,
+        auth: tuple[str, str],
+        database: str | None = None,
         *,
         session_name: str,
-        memory_gb: Optional[int] = None,
+        memory_gb: int | None = None,
     ) -> GraphDataScience:
         resolved_name = ensure_mcp_session_name(session_name)
 
@@ -144,7 +144,7 @@ class SessionManager:
         logger.info(f"Session '{resolved_name}' created/retrieved successfully")
         return session_gds
 
-    def get_session(self, session_name: str) -> Optional[GraphDataScience]:
+    def get_session(self, session_name: str) -> GraphDataScience | None:
         resolved_name = ensure_mcp_session_name(session_name)
         with self._lock:
             cached = self._sessions.get(resolved_name)
@@ -156,7 +156,7 @@ class SessionManager:
             self._evict(resolved_name)
         return None
 
-    def active_sessions(self) -> List[Tuple[str, GraphDataScience]]:
+    def active_sessions(self) -> list[tuple[str, GraphDataScience]]:
         with self._lock:
             return list(self._sessions.items())
 
@@ -177,7 +177,7 @@ class SessionManager:
         with self._lock:
             self.graph_sessions.pop(graph_name, None)
 
-    def session_for_graph(self, graph_name: str) -> Optional[str]:
+    def session_for_graph(self, graph_name: str) -> str | None:
         with self._lock:
             mapped = self.graph_sessions.get(graph_name)
             if mapped and mapped in self._sessions:

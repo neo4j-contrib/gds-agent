@@ -2,7 +2,6 @@ import os
 
 import pytest
 from graphdatascience import GraphDataScience
-
 from neo4j import GraphDatabase
 
 NEO4J_IMAGE = "neo4j:2025.11.2"
@@ -351,9 +350,9 @@ def test_get_labels_and_types_and_properties(neo4j_container):
 
     from mcp_server_neo4j_gds.gds import (
         get_node_labels,
-        get_relationship_types,
-        get_relationship_properties_keys,
         get_node_properties_keys,
+        get_relationship_properties_keys,
+        get_relationship_types,
     )
 
     node_labels = get_node_labels(gds)

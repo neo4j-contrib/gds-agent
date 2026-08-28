@@ -1,10 +1,12 @@
-from unittest.mock import Mock, MagicMock
+from unittest.mock import MagicMock, Mock
+
 import pytest
+
 from src.mcp_server_neo4j_gds import server as server_module
 from src.mcp_server_neo4j_gds import session_manager as session_manager_module
 from src.mcp_server_neo4j_gds.session_manager import (
-    SessionManager,
     GdsMode,
+    SessionManager,
     ensure_mcp_session_name,
 )
 

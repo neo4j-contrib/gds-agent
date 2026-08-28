@@ -1,5 +1,5 @@
 import logging
-from typing import Any, Dict
+from typing import Any
 
 from graphdatascience.model.graphsage_model import GraphSageModel
 
@@ -26,7 +26,7 @@ class FastRPHandler(AlgorithmHandler):
             )
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.fast_rp(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -60,7 +60,7 @@ class Node2VecHandler(AlgorithmHandler):
             )
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.node2vec(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -101,7 +101,7 @@ class HashGNNHandler(AlgorithmHandler):
             )
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.hashgnn(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -127,7 +127,7 @@ class GraphSageTrainHandler(AlgorithmHandler):
         model, result = self.gds.beta.graphSage.train(G, **gds_params)
         return {"modelName": model.name(), "trainResult": result.to_dict()}
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.graph_sage_train(
             graphName=arguments.get("graphName"),
             modelName=arguments.get("modelName"),
@@ -174,7 +174,7 @@ class GraphSagePredictHandler(AlgorithmHandler):
             )
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.graph_sage_predict(
             graphName=arguments.get("graphName"),
             modelName=arguments.get("modelName"),

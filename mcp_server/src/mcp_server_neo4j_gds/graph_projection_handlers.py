@@ -1,4 +1,5 @@
-from typing import Dict, Any
+from typing import Any
+
 from .algorithm_handler import AlgorithmHandler
 from .gds import is_session_gds
 
@@ -51,7 +52,7 @@ class ProjectGraphCypherHandler(AlgorithmHandler):
             "projectMillis": result.get("projectMillis", 0),
         }
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.project_graph_cypher(
             graph_name=arguments.get("graphName"),
             cypher_query=arguments.get("cypherQuery"),
@@ -68,7 +69,7 @@ class DropGraphHandler(AlgorithmHandler):
             "database": result.get("database", "unknown"),
         }
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.drop_graph(graph_name=arguments.get("graphName"))
 
 
@@ -93,7 +94,7 @@ class ListGraphsHandler(AlgorithmHandler):
 
         return {"graphs": graphs, "count": len(graphs)}
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.list_graphs()
 
 
@@ -123,7 +124,7 @@ class GraphInfoHandler(AlgorithmHandler):
             "modificationTime": G.modification_time(),
         }
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.graph_info(graph_name=arguments.get("graphName"))
 
 
@@ -144,7 +145,7 @@ class StreamNodePropertiesHandler(AlgorithmHandler):
             separate_property_columns=True,
         )
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.stream_node_properties(
             graph_name=arguments.get("graphName"),
             node_properties=arguments.get("nodeProperties"),
@@ -168,7 +169,7 @@ class StreamRelationshipPropertiesHandler(AlgorithmHandler):
             separate_property_columns=True,
         )
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.stream_relationship_properties(
             graph_name=arguments.get("graphName"),
             relationship_properties=arguments.get("relationshipProperties"),
@@ -184,7 +185,7 @@ class StreamRelationshipsHandler(AlgorithmHandler):
             relationship_types=_as_list(relationship_types, ["*"]),
         )
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.stream_relationships(
             graph_name=arguments.get("graphName"),
             relationship_types=arguments.get("relationshipTypes"),

@@ -1,4 +1,4 @@
-from unittest.mock import Mock, MagicMock
+from unittest.mock import MagicMock, Mock
 
 import pytest
 from graphdatascience.session.aura_graph_data_science import AuraGraphDataScience

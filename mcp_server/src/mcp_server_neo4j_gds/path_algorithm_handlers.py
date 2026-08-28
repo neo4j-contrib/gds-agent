@@ -1,7 +1,6 @@
 import logging
 import re
-from typing import Dict, Any
-
+from typing import Any
 
 from .algorithm_handler import AlgorithmHandler, clean_params
 from .node_translator import translate_identifiers_to_ids
@@ -101,7 +100,7 @@ class DijkstraShortestPathHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.find_shortest_path(
             arguments.get("start_node"),
             arguments.get("end_node"),
@@ -188,7 +187,7 @@ class DeltaSteppingShortestPathHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.delta_stepping_shortest_path(
             arguments.get("sourceNode"),
             arguments.get("nodeIdentifierProperty"),
@@ -275,7 +274,7 @@ class DijkstraSingleSourceShortestPathHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.dijkstra_single_source_shortest_path(
             arguments.get("sourceNode"),
             arguments.get("nodeIdentifierProperty"),
@@ -350,7 +349,7 @@ class AStarShortestPathHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.a_star_shortest_path(
             arguments.get("sourceNode"),
             arguments.get("targetNode"),
@@ -444,7 +443,7 @@ class YensShortestPathsHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.yens_shortest_paths(
             arguments.get("sourceNode"),
             arguments.get("targetNode"),
@@ -533,7 +532,7 @@ class MinimumWeightSpanningTreeHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.minimum_weight_spanning_tree(
             arguments.get("sourceNode"),
             arguments.get("nodeIdentifierProperty"),
@@ -653,7 +652,7 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
             "edges": edges,
         }
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.minimum_directed_steiner_tree(
             arguments.get("sourceNode"),
             arguments.get("targetNodes"),
@@ -721,7 +720,7 @@ class PrizeCollectingSteinerTreeHandler(AlgorithmHandler):
             "edges": edges,
         }
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.prize_collecting_steiner_tree(
             graphName=arguments.get("graphName"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
@@ -765,7 +764,7 @@ class AllPairsShortestPathsHandler(AlgorithmHandler):
             "paths": paths,
         }
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.all_pairs_shortest_paths(
             graphName=arguments.get("graphName"),
             relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
@@ -777,7 +776,7 @@ class RandomWalkHandler(AlgorithmHandler):
         mode = kwargs.get("mode", "stream")
         # Process source nodes if provided
         source_node_ids = []
-        if "sourceNodes" in kwargs and kwargs["sourceNodes"]:
+        if kwargs.get("sourceNodes"):
             node_identifier_property = kwargs.get("nodeIdentifierProperty")
             if not node_identifier_property:
                 return {
@@ -842,7 +841,7 @@ class RandomWalkHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.random_walk(
             graphName=arguments.get("graphName"),
             sourceNodes=arguments.get("sourceNodes"),
@@ -875,7 +874,7 @@ class BreadthFirstSearchHandler(AlgorithmHandler):
 
         # Process target nodes if provided
         target_node_ids = []
-        if "targetNodes" in kwargs and kwargs["targetNodes"]:
+        if kwargs.get("targetNodes"):
             resolved = {}
             translate_identifiers_to_ids(
                 self.gds,
@@ -937,7 +936,7 @@ class BreadthFirstSearchHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.breadth_first_search(
             arguments.get("sourceNode"),
             arguments.get("nodeIdentifierProperty"),
@@ -964,7 +963,7 @@ class DepthFirstSearchHandler(AlgorithmHandler):
 
         # Process target nodes if provided
         target_node_ids = []
-        if "targetNodes" in kwargs and kwargs["targetNodes"]:
+        if kwargs.get("targetNodes"):
             resolved = {}
             translate_identifiers_to_ids(
                 self.gds,
@@ -1025,7 +1024,7 @@ class DepthFirstSearchHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.depth_first_search(
             arguments.get("sourceNode"),
             arguments.get("nodeIdentifierProperty"),
@@ -1111,7 +1110,7 @@ class BellmanFordSingleSourceShortestPathHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.bellman_ford_single_source_shortest_path(
             arguments.get("sourceNode"),
             arguments.get("nodeIdentifierProperty"),
@@ -1126,7 +1125,7 @@ class LongestPathHandler(AlgorithmHandler):
     def longest_path(self, **kwargs):
         # Process target nodes if provided
         target_node_ids = []
-        if "targetNodes" in kwargs and kwargs["targetNodes"]:
+        if kwargs.get("targetNodes"):
             node_identifier_property = kwargs.get("nodeIdentifierProperty")
             if not node_identifier_property:
                 return {
@@ -1201,7 +1200,7 @@ class LongestPathHandler(AlgorithmHandler):
             "paths": paths,
         }
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.longest_path(
             graphName=arguments.get("graphName"),
             targetNodes=arguments.get("targetNodes"),
@@ -1324,7 +1323,7 @@ class MaxFlowHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.max_flow(
             arguments.get("sourceNodes"),
             arguments.get("targetNodes"),
