@@ -48,10 +48,11 @@ Session mode requires Aura API credentials. Add them to the same `env` block (or
 "AURA_API_CLIENT_SECRET": "...",
 "AURA_API_PROJECT_ID": "...",
 "SESSION_MEMORY_GB": "8",
-"SESSION_TTL_HOURS": "24"
+"SESSION_TTL_HOURS": "12",
+"SESSION_TIMEOUT_SECONDS": "600"
 ```
 
-`AURA_API_PROJECT_ID` is optional (needed only if your Aura API client has access to multiple projects), as are `SESSION_MEMORY_GB` (default 8) and `SESSION_TTL_HOURS` (default 24). Sessions are managed explicitly by the agent: three extra tools become available in session mode (`list_sessions`, `create_session`, and `delete_session`). A session must first be created with `create_session`, `project_graph_cypher` then projects each graph into the session named by its required `sessionName` parameter, and algorithm calls are routed to the right session automatically by `graphName`. Most workflows need a single session holding all graphs; multiple sessions allow running analyses in parallel. To resize a session (e.g. after an OOM), delete it and create it again with a larger `memoryGB`. All sessions created by the server are named with an `mcp_` prefix.
+`AURA_API_PROJECT_ID` is optional (needed only if your Aura API client has access to multiple projects), as are `SESSION_MEMORY_GB` (default 8), `SESSION_TTL_HOURS` (default 12), and `SESSION_TIMEOUT_SECONDS` (unset waits until the session is Ready). Sessions are managed explicitly by the agent: three extra tools become available in session mode (`list_sessions`, `create_session`, and `delete_session`). A session must first be created with `create_session`, `project_graph_cypher` then projects each graph into the session named by its required `sessionName` parameter, and algorithm calls are routed to the right session automatically by `graphName`. Most workflows need a single session holding all graphs; multiple sessions allow running analyses in parallel. To resize a session (e.g. after an OOM), delete it and create it again with a larger `memoryGB`. All sessions created by the server are named with an `mcp_` prefix.
 
 # Other clients and the graph-analysis skill
 

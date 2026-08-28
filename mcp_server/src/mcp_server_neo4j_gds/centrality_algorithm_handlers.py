@@ -1,12 +1,11 @@
 import logging
-from typing import Any, Dict
+from typing import Any
 
 from .algorithm_handler import AlgorithmHandler, clean_params
-
 from .node_translator import (
     filter_identifiers,
-    translate_ids_to_identifiers,
     translate_identifiers_to_ids,
+    translate_ids_to_identifiers,
 )
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
@@ -51,7 +50,7 @@ class ArticleRankHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.article_rank(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -84,7 +83,7 @@ class ArticulationPointsHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.articulation_points(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -116,7 +115,7 @@ class BetweennessCentralityHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.betweenness_centrality(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -144,7 +143,7 @@ class BridgesHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.bridges(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -172,7 +171,7 @@ class CELFHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.celf(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -207,7 +206,7 @@ class ClosenessCentralityHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.closeness_centrality(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -241,7 +240,7 @@ class DegreeCentralityHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.degree_centrality(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -291,7 +290,7 @@ class EigenvectorCentralityHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.eigenvector_centrality(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -344,7 +343,7 @@ class PageRankHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.pagerank(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -380,7 +379,7 @@ class HarmonicCentralityHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.harmonic_centrality(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -415,7 +414,7 @@ class HITSHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.hits(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),

@@ -1,50 +1,51 @@
 # server.py
 import asyncio
 import contextlib
+import json
 import logging
 from importlib.metadata import PackageNotFoundError, version
-from anyio import BrokenResourceError
-from mcp.server import NotificationOptions, Server
-from mcp.server.models import InitializationOptions
-import mcp.types as types
 from typing import Any
+
 import mcp.server.stdio
 import pandas as pd
-import json
+from anyio import BrokenResourceError
 from graphdatascience import GraphDataScience
+from mcp import types
+from mcp.server import NotificationOptions, Server
+from mcp.server.models import InitializationOptions
 from neo4j import GraphDatabase
 
-from .similarity_algorithm_specs import similarity_tool_definitions
 from .centrality_algorithm_specs import centrality_tool_definitions
 from .community_algorithm_specs import community_tool_definitions
-from .path_algorithm_specs import path_tool_definitions
-from .graph_projection_specs import graph_projection_tool_definitions
 from .embedding_algorithm_specs import embedding_tool_definitions
-from .ml_pipeline_specs import ml_pipeline_tool_definitions
-from .registry import AlgorithmRegistry
 from .gds import (
+    get_node_labels,
     get_node_properties_keys,
     get_relationship_properties_keys,
-    get_node_labels,
     get_relationship_types,
 )
 from .graph_projection_handlers import (
-    ProjectGraphCypherHandler,
     DropGraphHandler,
-    ListGraphsHandler,
     GraphInfoHandler,
+    ListGraphsHandler,
+    ProjectGraphCypherHandler,
     StreamNodePropertiesHandler,
     StreamRelationshipPropertiesHandler,
     StreamRelationshipsHandler,
 )
-from .ml_pipeline_handlers import ListModelsHandler, DropModelHandler
-from .session_manager import SessionManager, GdsMode, ensure_mcp_session_name
+from .graph_projection_specs import graph_projection_tool_definitions
+from .ml_pipeline_handlers import DropModelHandler, ListModelsHandler
+from .ml_pipeline_specs import ml_pipeline_tool_definitions
+from .path_algorithm_specs import path_tool_definitions
+from .registry import AlgorithmRegistry
 from .result_limits import (
     dataframe_limit_warning,
     limit_dataframe_rows,
     limit_text,
     max_cell_chars,
 )
+from .session_manager import GdsMode, SessionManager, ensure_mcp_session_name
+from .similarity_algorithm_specs import similarity_tool_definitions
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
 SERVER_NAME = "neo4j_gds"
@@ -451,7 +452,7 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
         except Exception as e:
-            return [types.TextContent(type="text", text=f"Error: {str(e)}")]
+            return [types.TextContent(type="text", text=f"Error: {e!s}")]
 
     async def handle_call_tool(
         _ctx: Any, params: types.CallToolRequestParams
@@ -562,8 +563,8 @@ async def main(
 
 
 if __name__ == "__main__":
-    import asyncio
     import argparse
+    import asyncio
 
     parser = argparse.ArgumentParser(description="Neo4j GDS MCP Server")
     parser.add_argument("db_url", help="URL to Neo4j database")

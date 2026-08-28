@@ -1,8 +1,9 @@
-from graphdatascience import GraphDataScience
-from graphdatascience.session.aura_graph_data_science import AuraGraphDataScience
+import logging
 import uuid
 from contextlib import contextmanager
-import logging
+
+from graphdatascience import GraphDataScience
+from graphdatascience.session.aura_graph_data_science import AuraGraphDataScience
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
 

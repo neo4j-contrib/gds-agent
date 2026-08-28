@@ -1,14 +1,15 @@
+import asyncio
+import atexit
+import json
 import os
 import subprocess
+import sys
 import time
+from pathlib import Path
+
 import pytest
 import pytest_asyncio
-import asyncio
-import json
-import sys
-import atexit
 from neo4j import GraphDatabase
-from pathlib import Path
 
 NEO4J_IMAGE = "neo4j:2025.11.2"
 NEO4J_BOLT_PORT = 7687

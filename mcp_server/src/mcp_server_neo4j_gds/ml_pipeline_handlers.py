@@ -1,7 +1,7 @@
 import logging
 import uuid
 from contextlib import suppress
-from typing import Any, Dict
+from typing import Any
 
 from graphdatascience.model.link_prediction_model import LPModel
 from graphdatascience.model.node_classification_model import NCModel
@@ -91,7 +91,7 @@ class NodeClassificationTrainHandler(AlgorithmHandler):
             with suppress(Exception):
                 pipeline.drop(failIfMissing=False)
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.train_node_classification_model(
             graphName=arguments.get("graphName"),
             modelName=arguments.get("modelName"),
@@ -130,7 +130,7 @@ class NodeClassificationPredictHandler(AlgorithmHandler):
             )
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.predict_node_classification(
             graphName=arguments.get("graphName"),
             modelName=arguments.get("modelName"),
@@ -168,7 +168,7 @@ class LinkPredictionTrainHandler(AlgorithmHandler):
             with suppress(Exception):
                 pipeline.drop(failIfMissing=False)
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.train_link_prediction_model(
             graphName=arguments.get("graphName"),
             modelName=arguments.get("modelName"),
@@ -210,7 +210,7 @@ class LinkPredictionPredictHandler(AlgorithmHandler):
             )
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.predict_link_prediction(
             graphName=arguments.get("graphName"),
             modelName=arguments.get("modelName"),
@@ -247,7 +247,7 @@ class NodeRegressionTrainHandler(AlgorithmHandler):
             with suppress(Exception):
                 pipeline.drop(failIfMissing=False)
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.train_node_regression_model(
             graphName=arguments.get("graphName"),
             modelName=arguments.get("modelName"),
@@ -283,7 +283,7 @@ class NodeRegressionPredictHandler(AlgorithmHandler):
             )
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.predict_node_regression(
             graphName=arguments.get("graphName"),
             modelName=arguments.get("modelName"),
@@ -302,7 +302,7 @@ class ListModelsHandler(AlgorithmHandler):
         models = models_df.to_dict(orient="records")
         return {"models": models, "count": len(models)}
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.list_models()
 
 
@@ -312,5 +312,5 @@ class DropModelHandler(AlgorithmHandler):
         model.drop(failIfMissing=False)
         return {"modelName": model_name, "dropped": True}
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.drop_model(model_name=arguments.get("modelName"))

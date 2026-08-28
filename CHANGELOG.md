@@ -4,6 +4,7 @@
 ### Breaking Changes
 
 ### New Features
+1. Optional SESSION_TIMEOUT_SECONDS env var to cap how long session creation waits for Ready.
 
 
 ### Bug Fixes

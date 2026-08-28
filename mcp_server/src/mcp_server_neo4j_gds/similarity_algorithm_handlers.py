@@ -1,10 +1,10 @@
 import logging
-from typing import Dict, Any
+from typing import Any
 
 from .algorithm_handler import AlgorithmHandler, clean_params
 from .node_translator import (
-    translate_ids_to_identifiers,
     translate_identifiers_to_ids,
+    translate_ids_to_identifiers,
 )
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
@@ -64,7 +64,7 @@ class NodeSimilarityHandler(AlgorithmHandler):
             )
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.node_similarity(
             graphName=arguments.get("graphName"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
@@ -142,7 +142,7 @@ class KNearestNeighborsHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.k_nearest_neighbors(
             graphName=arguments.get("graphName"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),

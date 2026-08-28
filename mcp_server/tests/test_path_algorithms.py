@@ -1,6 +1,7 @@
-import pytest
 import json
 import re
+
+import pytest
 
 NEO4J_USER = "neo4j"
 NEO4J_PASSWORD = "testpassword"

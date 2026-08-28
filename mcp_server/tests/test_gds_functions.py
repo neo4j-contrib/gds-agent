@@ -2,7 +2,6 @@ import os
 
 import pytest
 from graphdatascience import GraphDataScience
-
 from neo4j import GraphDatabase
 
 NEO4J_IMAGE = "neo4j:2025.11.2"
@@ -317,6 +316,7 @@ def test_projection_with_labels_and_types(neo4j_container):
         )
         existing_count2 = res.single()["count"]
 
+    list_result = gds.graph.list()
     driver.close()
     # assertions at the end to ensure failures do not affect other tests
     assert existing_count2 == 0
@@ -329,7 +329,6 @@ def test_projection_with_labels_and_types(neo4j_container):
     assert rel_types == {"REL1", "REL2"}
     assert rel_props == [["relprop1"], ["relprop1"]]
 
-    list_result = gds.graph.list()
     assert len(list_result) == 0
 
 
@@ -351,9 +350,9 @@ def test_get_labels_and_types_and_properties(neo4j_container):
 
     from mcp_server_neo4j_gds.gds import (
         get_node_labels,
-        get_relationship_types,
-        get_relationship_properties_keys,
         get_node_properties_keys,
+        get_relationship_properties_keys,
+        get_relationship_types,
     )
 
     node_labels = get_node_labels(gds)

@@ -1,5 +1,6 @@
-import pytest
 import re
+
+import pytest
 
 
 @pytest.mark.asyncio
@@ -115,12 +116,12 @@ async def test_article_rank(mcp_client, projected_test_graph):
     print("DEBUG - Baseline first 3 lines:")
     baseline_lines_debug = baseline_text.strip().split("\n")[:3]
     for i, line in enumerate(baseline_lines_debug):
-        print(f"  {i}: {repr(line)}")
+        print(f"  {i}: {line!r}")
 
     print("DEBUG - Personalized first 3 lines:")
     personalized_lines_debug = personalized_text.strip().split("\n")[:3]
     for i, line in enumerate(personalized_lines_debug):
-        print(f"  {i}: {repr(line)}")
+        print(f"  {i}: {line!r}")
 
     baseline_pad_score = extract_score_for_station(baseline_text, "Paddington")
     personalized_pad_score = extract_score_for_station(personalized_text, "Paddington")

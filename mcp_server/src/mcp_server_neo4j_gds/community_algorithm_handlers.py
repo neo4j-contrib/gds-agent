@@ -1,11 +1,11 @@
 import logging
-from typing import Dict, Any
+from typing import Any
+
+from .algorithm_handler import AlgorithmHandler, clean_params
 from .node_translator import (
     filter_identifiers,
     translate_ids_to_identifiers,
 )
-
-from .algorithm_handler import AlgorithmHandler, clean_params
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
 
@@ -18,7 +18,7 @@ class ConductanceHandler(AlgorithmHandler):
         result = self.gds.conductance.stream(G, **gds_params)
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.conductance(
             graphName=arguments.get("graphName"),
             communityProperty=arguments.get("communityProperty"),
@@ -43,7 +43,7 @@ class HDBSCANHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.hdbscan(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -72,7 +72,7 @@ class KCoreDecompositionHandler(AlgorithmHandler):
             translate_ids_to_identifiers(self.gds, node_identifier_property, result)
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.k_core_decomposition(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -98,7 +98,7 @@ class K1ColoringHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.k_1_coloring(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -126,7 +126,7 @@ class KMeansClusteringHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.k_means_clustering(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -160,7 +160,7 @@ class LabelPropagationHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.label_propagation(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -192,7 +192,7 @@ class LeidenHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.leiden(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -234,7 +234,7 @@ class LocalClusteringCoefficientHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.local_clustering_coefficient(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -262,7 +262,7 @@ class LouvainHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.louvain(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -290,7 +290,7 @@ class ModularityMetricHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.modularity_metric(
             graphName=arguments.get("graphName"),
             communityProperty=arguments.get("communityProperty"),
@@ -315,7 +315,7 @@ class ModularityOptimizationHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.modularity_optimization(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -347,7 +347,7 @@ class StronglyConnectedComponentsHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.strongly_connected_components(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -378,7 +378,7 @@ class TriangleCountHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.triangle_count(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -406,7 +406,7 @@ class WeaklyConnectedComponentsHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.weakly_connected_components(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -437,7 +437,7 @@ class ApproximateMaximumKCutHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.approximate_maximum_k_cut(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
@@ -472,7 +472,7 @@ class SpeakerListenerLabelPropagationHandler(AlgorithmHandler):
 
         return result
 
-    def execute(self, arguments: Dict[str, Any]) -> Any:
+    def execute(self, arguments: dict[str, Any]) -> Any:
         return self.speaker_listener_label_propagation(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),

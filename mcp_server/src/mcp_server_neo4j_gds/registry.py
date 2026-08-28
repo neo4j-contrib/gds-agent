@@ -1,24 +1,25 @@
-from typing import Dict, Type
 from graphdatascience import GraphDataScience
+
 from .algorithm_handler import AlgorithmHandler
 from .centrality_algorithm_handlers import (
-    PageRankHandler,
     ArticleRankHandler,
-    DegreeCentralityHandler,
     ArticulationPointsHandler,
     BetweennessCentralityHandler,
     BridgesHandler,
     CELFHandler,
     ClosenessCentralityHandler,
+    DegreeCentralityHandler,
     EigenvectorCentralityHandler,
     HarmonicCentralityHandler,
     HITSHandler,
+    PageRankHandler,
 )
 from .community_algorithm_handlers import (
+    ApproximateMaximumKCutHandler,
     ConductanceHandler,
     HDBSCANHandler,
-    KCoreDecompositionHandler,
     K1ColoringHandler,
+    KCoreDecompositionHandler,
     KMeansClusteringHandler,
     LabelPropagationHandler,
     LeidenHandler,
@@ -26,54 +27,53 @@ from .community_algorithm_handlers import (
     LouvainHandler,
     ModularityMetricHandler,
     ModularityOptimizationHandler,
+    SpeakerListenerLabelPropagationHandler,
     StronglyConnectedComponentsHandler,
     TriangleCountHandler,
     WeaklyConnectedComponentsHandler,
-    ApproximateMaximumKCutHandler,
-    SpeakerListenerLabelPropagationHandler,
-)
-from .similarity_algorithm_handlers import (
-    NodeSimilarityHandler,
-    KNearestNeighborsHandler,
-)
-from .path_algorithm_handlers import (
-    DijkstraShortestPathHandler,
-    DeltaSteppingShortestPathHandler,
-    DijkstraSingleSourceShortestPathHandler,
-    AStarShortestPathHandler,
-    YensShortestPathsHandler,
-    MinimumWeightSpanningTreeHandler,
-    MinimumDirectedSteinerTreeHandler,
-    PrizeCollectingSteinerTreeHandler,
-    AllPairsShortestPathsHandler,
-    RandomWalkHandler,
-    BreadthFirstSearchHandler,
-    DepthFirstSearchHandler,
-    BellmanFordSingleSourceShortestPathHandler,
-    LongestPathHandler,
-    MaxFlowHandler,
 )
 from .embedding_algorithm_handlers import (
     FastRPHandler,
-    Node2VecHandler,
-    HashGNNHandler,
-    GraphSageTrainHandler,
     GraphSagePredictHandler,
+    GraphSageTrainHandler,
+    HashGNNHandler,
+    Node2VecHandler,
 )
 from .ml_pipeline_handlers import (
-    NodeClassificationTrainHandler,
-    NodeClassificationPredictHandler,
-    LinkPredictionTrainHandler,
-    LinkPredictionPredictHandler,
-    NodeRegressionTrainHandler,
-    NodeRegressionPredictHandler,
-    ListModelsHandler,
     DropModelHandler,
+    LinkPredictionPredictHandler,
+    LinkPredictionTrainHandler,
+    ListModelsHandler,
+    NodeClassificationPredictHandler,
+    NodeClassificationTrainHandler,
+    NodeRegressionPredictHandler,
+    NodeRegressionTrainHandler,
+)
+from .path_algorithm_handlers import (
+    AllPairsShortestPathsHandler,
+    AStarShortestPathHandler,
+    BellmanFordSingleSourceShortestPathHandler,
+    BreadthFirstSearchHandler,
+    DeltaSteppingShortestPathHandler,
+    DepthFirstSearchHandler,
+    DijkstraShortestPathHandler,
+    DijkstraSingleSourceShortestPathHandler,
+    LongestPathHandler,
+    MaxFlowHandler,
+    MinimumDirectedSteinerTreeHandler,
+    MinimumWeightSpanningTreeHandler,
+    PrizeCollectingSteinerTreeHandler,
+    RandomWalkHandler,
+    YensShortestPathsHandler,
+)
+from .similarity_algorithm_handlers import (
+    KNearestNeighborsHandler,
+    NodeSimilarityHandler,
 )
 
 
 class AlgorithmRegistry:
-    _handlers: Dict[str, Type[AlgorithmHandler]] = {
+    _handlers: dict[str, type[AlgorithmHandler]] = {
         # Centrality algorithms
         "article_rank": ArticleRankHandler,
         "articulation_points": ArticulationPointsHandler,

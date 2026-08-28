@@ -1,12 +1,12 @@
+import argparse
+import asyncio
 import logging
 import os
 import sys
+
 from dotenv import find_dotenv, load_dotenv
 
 from . import server
-import asyncio
-import argparse
-
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
 logger.handlers.clear()
