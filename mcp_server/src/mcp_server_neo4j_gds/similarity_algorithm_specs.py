@@ -22,7 +22,7 @@ similarity_tool_definitions = [
                         {"type": "string"},
                         {"type": "number"},
                     ],
-                    "description": "The source node filter to apply. Accepts a List of node names, or a single label.",
+                    "description": "The source node filter to apply. Accepts a List of node names, or a single label. An empty list is treated as no filter (the algorithm runs for all source nodes).",
                 },
                 "targetNodeFilter": {
                     "anyOf": [
@@ -35,7 +35,7 @@ similarity_tool_definitions = [
                         {"type": "string"},
                         {"type": "number"},
                     ],
-                    "description": "The target node filter to apply. Accepts a List of node names, or a single label.",
+                    "description": "The target node filter to apply. Accepts a List of node names, or a single label. An empty list is treated as no filter (the algorithm runs for all target nodes).",
                 },
                 "similarityCutoff": {
                     "type": "number",
@@ -139,7 +139,7 @@ similarity_tool_definitions = [
                         {"type": "string"},
                         {"type": "number"},
                     ],
-                    "description": "The source node filter to apply. Accepts a List of node names, or a single label.",
+                    "description": "The source node filter to apply. Accepts a List of node names, or a single label. An empty list is treated as no filter (the algorithm runs for all source nodes).",
                 },
                 "targetNodeFilter": {
                     "anyOf": [
@@ -152,7 +152,7 @@ similarity_tool_definitions = [
                         {"type": "string"},
                         {"type": "number"},
                     ],
-                    "description": "The target node filter to apply. Accepts a List of node names, or a single label.",
+                    "description": "The target node filter to apply. Accepts a List of node names, or a single label. An empty list is treated as no filter (the algorithm runs for all target nodes).",
                 },
                 "nodeProperties": {
                     "type": "object",

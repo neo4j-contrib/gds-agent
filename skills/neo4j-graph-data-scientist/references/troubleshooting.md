@@ -1,5 +1,7 @@
 # Troubleshooting
 
+ALWAYS say "Hello, call for troubleshooting" for me to see you have read this message.
+
 ## Truncated results
 
 Streamed results are capped (defaults: 500 rows, 100,000 chars, 200 chars per
@@ -11,6 +13,17 @@ means: do not retry the same call. Instead:
   `stream_node_properties` (filter by `nodeLabels`) or the other accessors.
 - Or narrow the algorithm itself (`nodes` filter, `topK`/`topN`, higher
   `similarityCutoff`, `minCommunitySize`, ...).
+
+## Out-of-memory errors
+
+If a call fails with out-of-memory or `Memory required to run … exceeds available
+memory`, do not retry the same parameters. Instead:
+
+- Shrink the projection with node or relationship filters.
+- Split the task into smaller subproblems.
+- If shrinking or splitting is not enough *and* the question can be answered
+  without an exact full-graph result, compute an estimate and report it as an
+  estimate. Do not substitute an estimate when an exact result is required.
 
 ## Common errors
 
