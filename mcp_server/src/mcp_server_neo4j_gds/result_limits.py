@@ -49,10 +49,10 @@ def dataframe_limit_warning(dataframe) -> str | None:
 
     return (
         f"Warning: output truncated to the first {len(dataframe)} of {total_rows} rows "
-        "to keep the MCP server responsive. For full graph-scale results, prefer running "
-        "algorithms in mutate mode and inspect the projected graph with "
-        "stream_node_properties, stream_relationship_properties, stream_relationships, "
-        "or narrower filters."
+        "to keep the MCP server responsive. Consider running the algorithm in mutate mode, "
+        "then use a Cypher query to stream the mutated properties with "
+        "gds.graph.nodeProperties.stream or gds.graph.relationshipProperties.stream. "
+        "Use YIELD and WHERE to filter rows before returning them."
     )
 
 
@@ -63,8 +63,10 @@ def limit_text(text: str) -> str:
 
     return (
         f"Warning: output truncated to {char_limit} characters to keep the MCP server "
-        "responsive. Use narrower filters, mutate mode plus graph accessor tools, or "
-        "request a smaller result.\n\n"
+        "responsive. Consider running the algorithm in mutate mode, "
+        "then use a Cypher query to stream the mutated properties with "
+        "gds.graph.nodeProperties.stream or gds.graph.relationshipProperties.stream. "
+        "Use YIELD and WHERE to filter rows before returning them.\n\n"
         f"{text[:char_limit]}\n\n"
         f"[truncated {len(text) - char_limit} characters]"
     )

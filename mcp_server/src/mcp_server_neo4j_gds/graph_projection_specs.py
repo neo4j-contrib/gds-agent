@@ -10,6 +10,8 @@ Use this to create a graph projection, then reference it by name when running al
 
 In Aura session mode, sessionName is required and must name a session previously created with create_session. All other tools locate a graph's session automatically from graphName, so multiple graphs in one session need no extra parameters.
 
+Only nodes in result rows are projected. MATCH (n)-[r]->(m) drops isolates. For a node set that must include degree-0 nodes, use MATCH (n) OPTIONAL MATCH (n)-[r]->(m) instead.
+
 Plugin (on-prem) mode — call gds.graph.project() with $graph_name as the first argument:
 MATCH (n:Station)-[r:CONNECTED]->(m:Station)
 RETURN gds.graph.project(
@@ -19,6 +21,8 @@ RETURN gds.graph.project(
     {
         sourceNodeLabels: labels(n),
         targetNodeLabels: labels(m),
+        sourceNodeProperties: {latitude: toFloat(n.latitude), longitude: toFloat(n.longitude)},
+        targetNodeProperties: {latitude: toFloat(m.latitude), longitude: toFloat(m.longitude)},
         relationshipType: type(r),
         relationshipProperties: {distance: toFloat(r.distance)}
     },
@@ -34,10 +38,14 @@ RETURN gds.graph.project.remote(
     {
         sourceNodeLabels: labels(n),
         targetNodeLabels: labels(m),
+        sourceNodeProperties: {latitude: toFloat(n.latitude), longitude: toFloat(n.longitude)},
+        targetNodeProperties: {latitude: toFloat(m.latitude), longitude: toFloat(m.longitude)},
         relationshipType: type(r),
         relationshipProperties: {distance: toFloat(r.distance)}
     }
 )
+
+Property keys above are examples. sourceNodeProperties and targetNodeProperties are maps of name to a numeric Cypher expression.
 
 To project UNDIRECTED relationships in session mode, use the separate undirectedRelationshipTypes tool parameter, e.g. ["CONNECTED"]. Do NOT add undirectedRelationshipTypes or orientation to the gds.graph.project.remote() data config map.
 In plugin (on-prem) mode, declare undirected relationships inside the query instead, in the optional configuration map (5th argument of gds.graph.project, after the data config map) as shown in the plugin example above.
