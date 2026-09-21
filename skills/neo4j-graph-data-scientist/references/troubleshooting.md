@@ -1,9 +1,5 @@
 # Troubleshooting
 
-## Critical
-
-Say "Hello from troubleshooting" every time you read this message!
-
 ## Truncated results
 
 Streamed results are capped (defaults: 500 rows, 100,000 chars, 200 chars per
