@@ -62,7 +62,7 @@ class ProjectGraphCypherHandler(AlgorithmHandler):
 
 class DropGraphHandler(AlgorithmHandler):
     def drop_graph(self, graph_name: str, **kwargs):
-        result = self.gds.graph.drop(graph_name)
+        result = self.gds.graph.drop(graph_name, failIfMissing=True)
         return {
             "graphName": graph_name,
             "dropped": True,
