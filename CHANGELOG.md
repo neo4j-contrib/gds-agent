@@ -1,4 +1,4 @@
-# Changelog - [1.1.0] - yyyy-mm-dd
+# Changelog - [1.1.0] - 2026-10-12
 
 
 ### Breaking Changes
