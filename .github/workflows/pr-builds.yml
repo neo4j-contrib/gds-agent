@@ -11,6 +11,13 @@ jobs:
   ci:
     runs-on: ubuntu-latest
     steps:
+      - name: Patch eMudhra CA compromise (CVE-2026-111943)
+        shell: bash
+        working-directory: .
+        run: |
+          sudo apt-get update
+          sudo apt-get install --only-upgrade -y ca-certificates
+          sudo update-ca-certificates --fresh
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 #v4
       - name: Set up uv
         uses: astral-sh/setup-uv@d0cc045d04ccac9d8b7881df0226f9e82c39688e # v6.8.0
