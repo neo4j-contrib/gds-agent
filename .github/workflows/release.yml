@@ -14,6 +14,13 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+      - name: Patch eMudhra CA compromise (CVE-2026-111943)
+        shell: bash
+        working-directory: .
+        run: |
+          sudo apt-get update
+          sudo apt-get install --only-upgrade -y ca-certificates
+          sudo update-ca-certificates --fresh
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 #v4
 
       - name: Check tag matches manifest versions
