@@ -1,7 +1,7 @@
 ---
 name: neo4j-graph-data-scientist
 description: Use for graph realted tasks on Neo4j via GDS Agent and Cypher tools. Covers the workflow and a troubleshooting guide for errors.
-compatibility: Requires the gds-agent MCP server (PyPI package gds-agent) and cypher MCP server (PyPI package mcp-neo4j-cypher) connected to a Neo4j database with the GDS plugin, or a Neo4j AuraDB with Aura Graph Analytics.
+compatibility: Requires the gds-agent MCP server (PyPI package gds-agent) connected to a Neo4j database with the GDS plugin, or a Neo4j AuraDB with Aura Graph Analytics.
 ---
 
 ## Workflow

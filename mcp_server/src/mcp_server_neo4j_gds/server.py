@@ -10,10 +10,11 @@ import mcp.server.stdio
 import pandas as pd
 from anyio import BrokenResourceError
 from graphdatascience import GraphDataScience
+from graphdatascience.query_runner.query_mode import QueryMode
 from mcp import types
 from mcp.server import NotificationOptions, Server
 from mcp.server.models import InitializationOptions
-from neo4j import GraphDatabase
+from neo4j import READ_ACCESS, WRITE_ACCESS, GraphDatabase
 
 from .centrality_algorithm_specs import centrality_tool_definitions
 from .community_algorithm_specs import community_tool_definitions
@@ -78,14 +79,52 @@ class Neo4jDriverConnection:
         query: str,
         params: dict[str, Any] | None = None,
         database: str | None = None,
+        mode: QueryMode | None = None,
     ) -> pd.DataFrame:
-        with self._driver.session(database=database or self._database) as session:
+        access_mode = READ_ACCESS if mode == QueryMode.READ else WRITE_ACCESS
+        with self._driver.session(
+            database=database or self._database, default_access_mode=access_mode
+        ) as session:
             result = session.run(query, params or {})
             keys = result.keys()
             return pd.DataFrame([record.data() for record in result], columns=keys)
 
     def close(self):
         self._driver.close()
+
+
+def write_cypher(connection, query: str, params: dict[str, Any] | None = None) -> dict:
+    params = params or {}
+    if isinstance(connection, Neo4jDriverConnection):
+        driver, database = connection._driver, connection._database
+    else:
+        runner = connection._query_runner
+        driver, database = runner._driver, runner._database
+
+    with driver.session(database=database, default_access_mode=WRITE_ACCESS) as session:
+        explained = session.run(f"EXPLAIN {query}", params)
+        if "w" not in (explained.consume().query_type or ""):
+            raise ValueError("Only write queries are allowed for write-query")
+        counters = session.run(query, params).consume().counters
+
+    return {
+        name: getattr(counters, name)
+        for name in (
+            "nodes_created",
+            "nodes_deleted",
+            "relationships_created",
+            "relationships_deleted",
+            "properties_set",
+            "labels_added",
+            "labels_removed",
+            "indexes_added",
+            "indexes_removed",
+            "constraints_added",
+            "constraints_removed",
+            "system_updates",
+            "contains_updates",
+        )
+    }
 
 
 def is_aura_graph_analytics_versionless_error(error: Exception) -> bool:
@@ -157,7 +196,11 @@ def normalize_http_path(path: str) -> str:
 
 
 def create_mcp_server(
-    db_url: str, username: str, password: str, database: str | None = None
+    db_url: str,
+    username: str,
+    password: str,
+    database: str | None = None,
+    allow_writes: bool = False,
 ) -> tuple[Server, SessionManager, GraphDataScience | Neo4jDriverConnection]:
     logger.info(f"Starting MCP Server for {db_url} with username {username}")
     if database:
@@ -271,6 +314,67 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                             "type": "object",
                         },
                     ),
+                    types.Tool(
+                        name="read_neo4j_cypher",
+                        description="""Execute a read Cypher query on the neo4j database.""",
+                        inputSchema={
+                            "type": "object",
+                            "properties": {
+                                "query": {
+                                    "type": "string",
+                                    "description": "The Cypher query to execute.",
+                                },
+                                "params": {
+                                    "type": "object",
+                                    "description": "The parameters to pass to the Cypher query.",
+                                },
+                            },
+                            "required": ["query"],
+                        },
+                    ),
+                ]
+                + (
+                    [
+                        types.Tool(
+                            name="write_neo4j_cypher",
+                            description="""Execute a write Cypher query on the neo4j database.""",
+                            inputSchema={
+                                "type": "object",
+                                "properties": {
+                                    "query": {
+                                        "type": "string",
+                                        "description": "The Cypher query to execute.",
+                                    },
+                                    "params": {
+                                        "type": "object",
+                                        "description": "The parameters to pass to the Cypher query.",
+                                    },
+                                },
+                                "required": ["query"],
+                            },
+                        )
+                    ]
+                    if allow_writes
+                    else []
+                )
+                + [
+                    types.Tool(
+                        name="get_neo4j_schema",
+                        description="""Returns nodes, their properties (with types and indexed flags), and relationships using APOC's schema inspection.
+
+You should only provide a sample_size value if requested by the user, or when tuning retrieval performance. If this times out, lower the sample size, for example sample_size=100. To sample the entire graph use sample_size=-1.
+""",
+                        inputSchema={
+                            "type": "object",
+                            "properties": {
+                                "sample_size": {
+                                    "type": "integer",
+                                    "description": "The sample size used to infer the graph schema. Larger samples are slower, but more accurate. Smaller samples are faster, but might miss information.",
+                                    "default": 1000,
+                                },
+                            },
+                        },
+                    ),
                 ]
                 + session_tools
                 + graph_projection_tool_definitions
@@ -332,6 +436,47 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
             arguments = arguments or {}
+
+            if name == "read_neo4j_cypher":
+                result = base_gds.run_cypher(
+                    arguments.get("query"),
+                    arguments.get("params") or {},
+                    mode=QueryMode.READ,
+                )
+                return [
+                    types.TextContent(
+                        type="text",
+                        text=serialize_result(result.to_dict(orient="records")),
+                    )
+                ]
+
+            if name == "write_neo4j_cypher":
+                if not allow_writes:
+                    return [
+                        types.TextContent(
+                            type="text",
+                            text="Error: write_neo4j_cypher is not available in read-only mode",
+                        )
+                    ]
+                result = write_cypher(
+                    base_gds,
+                    arguments.get("query"),
+                    arguments.get("params"),
+                )
+                return [types.TextContent(type="text", text=serialize_result(result))]
+
+            if name == "get_neo4j_schema":
+                sample_size = arguments.get("sample_size")
+                if sample_size is None:
+                    sample_size = 1000
+                result = base_gds.run_cypher(
+                    "CALL apoc.meta.schema({sample: $sample_size}) YIELD value RETURN value",
+                    {"sample_size": sample_size},
+                    mode=QueryMode.READ,
+                )
+                schema = {} if result.empty else result["value"].iloc[0]
+                return [types.TextContent(type="text", text=serialize_result(schema))]
+
             graph_name = arguments.get("graphName")
 
             if name == "project_graph_cypher":
@@ -546,10 +691,11 @@ async def main(
     host: str = DEFAULT_HTTP_HOST,
     port: int = DEFAULT_HTTP_PORT,
     path: str = DEFAULT_HTTP_PATH,
+    allow_writes: bool = False,
 ):
     transport_mode = normalize_transport(transport)
     server, session_manager, base_gds = create_mcp_server(
-        db_url, username, password, database
+        db_url, username, password, database, allow_writes=allow_writes
     )
     try:
         if transport_mode == HTTP_TRANSPORT:
@@ -574,6 +720,7 @@ async def main(
 if __name__ == "__main__":
     import argparse
     import asyncio
+    import os
 
     parser = argparse.ArgumentParser(description="Neo4j GDS MCP Server")
     parser.add_argument("db_url", help="URL to Neo4j database")
@@ -589,7 +736,16 @@ if __name__ == "__main__":
     parser.add_argument("--host", default=DEFAULT_HTTP_HOST, help="HTTP host")
     parser.add_argument("--port", type=int, default=DEFAULT_HTTP_PORT, help="HTTP port")
     parser.add_argument("--path", default=DEFAULT_HTTP_PATH, help="HTTP MCP path")
+    parser.add_argument(
+        "--read-only",
+        action="store_true",
+        help="Do not expose write_neo4j_cypher. This is the default; set NEO4J_READ_ONLY=false to expose it.",
+    )
     args = parser.parse_args()
+    allow_writes = (
+        not args.read_only
+        and os.environ.get("NEO4J_READ_ONLY", "true").strip().lower() == "false"
+    )
 
     asyncio.run(
         main(
@@ -601,5 +757,6 @@ if __name__ == "__main__":
             host=args.host,
             port=args.port,
             path=args.path,
+            allow_writes=allow_writes,
         )
     )

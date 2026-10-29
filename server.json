@@ -41,6 +41,11 @@
           "isRequired": false
         },
         {
+          "name": "NEO4J_READ_ONLY",
+          "description": "Set to false to expose write_neo4j_cypher. The write tool stays hidden otherwise.",
+          "isRequired": false
+        },
+        {
           "name": "AURA_API_CLIENT_ID",
           "description": "Aura API client ID (enables Aura Graph Analytics session mode)",
           "isRequired": false

@@ -1,6 +1,6 @@
 # Claude Code
 
-The plugin installs the GDS MCP server, the `neo4j-graph-data-scientist` skill, and the read-only [`mcp-neo4j-cypher`](https://github.com/neo4j-contrib/mcp-neo4j) server together — this is the recommended path.
+The plugin installs the GDS MCP server and the `neo4j-graph-data-scientist` skill together — this is the recommended path. Cypher read and schema tools are part of that server. `write_neo4j_cypher` stays hidden unless the server is started with `NEO4J_READ_ONLY=false`.
 
 ## Plugin install (tools + skill)
 
@@ -23,4 +23,4 @@ claude mcp add --scope user \
   --transport stdio neo4j-gds -- uvx gds-agent
 ```
 
-Add `--env AURA_API_CLIENT_ID=... --env AURA_API_CLIENT_SECRET=...` for Aura Graph Analytics session mode. To get the skill without the plugin: `npx skills add neo4j-contrib/gds-agent -a claude-code`.
+Add `--env AURA_API_CLIENT_ID=... --env AURA_API_CLIENT_SECRET=...` for Aura Graph Analytics session mode. Add `--env NEO4J_READ_ONLY=false` to expose `write_neo4j_cypher`. To get the skill without the plugin: `npx skills add neo4j-contrib/gds-agent -a claude-code`.
