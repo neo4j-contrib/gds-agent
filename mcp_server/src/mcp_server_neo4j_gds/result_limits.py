@@ -47,13 +47,27 @@ def dataframe_limit_warning(dataframe) -> str | None:
     if total_rows is None:
         return None
 
+    shown = len(dataframe)
+    hidden = total_rows - shown
+    rows = "row" if hidden == 1 else "rows"
     return (
-        f"Warning: output truncated to the first {len(dataframe)} of {total_rows} rows "
-        "to keep the MCP server responsive. Consider running the algorithm in mutate mode, "
-        "then use a Cypher query to stream the mutated properties with "
-        "gds.graph.nodeProperties.stream or gds.graph.relationshipProperties.stream. "
-        "Use YIELD and WHERE to filter rows before returning them."
+        f"Warning: only the first {shown:,} of {total_rows:,} rows are shown. "
+        "They are in internal node ID order: not sorted by score, not a random sample. "
+        f"The {hidden:,} {rows} not shown may contain the most important results. "
+        "Do not rank, estimate, generalise or pick examples from these rows. "
+        "For the full result, run the algorithm in mutate mode and query the property with Cypher "
+        "(gds.graph.nodeProperties.stream with WHERE, ORDER BY and LIMIT)."
     )
+
+
+def dataframe_limit_reminder(dataframe) -> str | None:
+    total_rows = dataframe.attrs.get(SOURCE_ROW_COUNT_ATTR)
+    if total_rows is None:
+        return None
+
+    hidden = total_rows - len(dataframe)
+    rows = "row" if hidden == 1 else "rows"
+    return f"[{hidden:,} more {rows} not shown. This list is incomplete.]"
 
 
 def limit_text(text: str) -> str:
@@ -61,12 +75,13 @@ def limit_text(text: str) -> str:
     if len(text) <= char_limit:
         return text
 
+    missing = len(text) - char_limit
+    percent = round(missing * 100 / len(text))
     return (
-        f"Warning: output truncated to {char_limit} characters to keep the MCP server "
-        "responsive. Consider running the algorithm in mutate mode, "
-        "then use a Cypher query to stream the mutated properties with "
-        "gds.graph.nodeProperties.stream or gds.graph.relationshipProperties.stream. "
-        "Use YIELD and WHERE to filter rows before returning them.\n\n"
+        f"Warning: this output was cut at {char_limit:,} characters. "
+        f"{missing:,} characters ({percent}%) are missing, so the text below is incomplete. "
+        "Do not count, list, summarise or pick examples from it as if it were the full result. "
+        "For the full result, run the algorithm in mutate mode and query the result with Cypher.\n\n"
         f"{text[:char_limit]}\n\n"
-        f"[truncated {len(text) - char_limit} characters]"
+        f"[truncated {missing} characters]"
     )

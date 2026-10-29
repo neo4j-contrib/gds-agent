@@ -39,6 +39,7 @@ from .ml_pipeline_specs import ml_pipeline_tool_definitions
 from .path_algorithm_specs import path_tool_definitions
 from .registry import AlgorithmRegistry
 from .result_limits import (
+    dataframe_limit_reminder,
     dataframe_limit_warning,
     limit_dataframe_rows,
     limit_text,
@@ -127,7 +128,7 @@ def serialize_result(result: Any) -> str:
         ):
             text = result.to_string(index=True)
         if warning:
-            text = f"{warning}\n\n{text}"
+            text = f"{warning}\n\n{text}\n\n{dataframe_limit_reminder(result)}"
         return limit_text(text)
     elif isinstance(result, (list, dict)):
         # Use JSON for better formatting of complex data structures

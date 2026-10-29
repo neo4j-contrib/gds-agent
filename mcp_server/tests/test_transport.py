@@ -59,17 +59,20 @@ def test_serialize_result_truncates_large_dataframes(monkeypatch):
     monkeypatch.setenv("GDS_AGENT_MAX_RESULT_ROWS", "2")
     result = server_module.serialize_result(pd.DataFrame({"nodeId": [1, 2, 3]}))
 
-    assert "Warning: output truncated to the first 2 of 3 rows" in result
+    assert "Warning: only the first 2 of 3 rows are shown" in result
+    assert "The 1 row not shown may contain the most important results" in result
     assert "0       1" in result
     assert "1       2" in result
     assert "2       3" not in result
+    assert result.endswith("[1 more row not shown. This list is incomplete.]")
 
 
 def test_serialize_result_truncates_large_text(monkeypatch):
     monkeypatch.setenv("GDS_AGENT_MAX_RESULT_CHARS", "10")
     result = server_module.serialize_result("x" * 20)
 
-    assert "Warning: output truncated to 10 characters" in result
+    assert "Warning: this output was cut at 10 characters" in result
+    assert "10 characters (50%) are missing" in result
     assert "[truncated 10 characters]" in result
 
 

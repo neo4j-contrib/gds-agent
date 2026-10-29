@@ -254,7 +254,7 @@ centrality_tool_definitions = [
                 },
                 "orientation": {
                     "type": "string",
-                    "description": "The orientation used to compute node degrees. Supported orientations are NATURAL (for out-degree), REVERSE (for in-degree) and UNDIRECTED (for both in-degree and out-degree) ",
+                    "description": "The orientation used to compute node degrees. Supported orientations are NATURAL (for out-degree), REVERSE (for in-degree) and UNDIRECTED (for both in-degree and out-degree). If the projection used undirectedRelationshipTypes, each relationship is already stored in both directions, so UNDIRECTED counts every neighbor twice. Use NATURAL on that projection, or divide the score by 2.",
                 },
                 "relationshipWeightProperty": {
                     "type": "string",
