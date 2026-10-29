@@ -1,6 +1,6 @@
 # Gemini CLI
 
-The extension bundles the GDS MCP server, the read-only [`mcp-neo4j-cypher`](https://github.com/neo4j-contrib/mcp-neo4j) server, the `neo4j-graph-data-scientist` skill, and a context file in one install.
+The extension bundles the GDS MCP server, the `neo4j-graph-data-scientist` skill, and a context file in one install. Cypher read and schema tools are part of that server. `write_neo4j_cypher` stays hidden unless `NEO4J_READ_ONLY=false`.
 
 1. Prerequisite: [uv](https://docs.astral.sh/uv/getting-started/installation/) installed.
 2. Install the extension:

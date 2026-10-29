@@ -6,7 +6,7 @@ services:
       - "7687"
     environment:
       NEO4J_AUTH: "neo4j/testpassword"
-      NEO4JLABS_PLUGINS: '["graph-data-science"]'
+      NEO4JLABS_PLUGINS: '["apoc", "graph-data-science"]'
     healthcheck:
       test: ["CMD-SHELL", "wget --no-verbose --tries=1 --spider http://localhost:7474/browser/ || exit 1"]
       interval: 30s

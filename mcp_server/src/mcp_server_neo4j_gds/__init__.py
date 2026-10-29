@@ -97,8 +97,17 @@ def main():
         ),
         help="HTTP path when using HTTP transport.",
     )
+    parser.add_argument(
+        "--read-only",
+        action="store_true",
+        help="Do not expose write_neo4j_cypher. This is the default; set NEO4J_READ_ONLY=false to expose it.",
+    )
 
     args = parser.parse_args()
+    allow_writes = (
+        not args.read_only
+        and env_value("NEO4J_READ_ONLY", default="true").lower() == "false"
+    )
 
     asyncio.run(
         server.main(
@@ -110,6 +119,7 @@ def main():
             host=args.host,
             port=args.port,
             path=args.path,
+            allow_writes=allow_writes,
         )
     )
 

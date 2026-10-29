@@ -18,6 +18,9 @@ async def test_list_tools(mcp_client):
         "get_relationship_properties_keys",
         "get_node_labels",
         "get_relationship_types",
+        "read_neo4j_cypher",
+        "write_neo4j_cypher",
+        "get_neo4j_schema",
         # Graph projection tools
         "project_graph_cypher",
         "drop_graph",
@@ -150,3 +153,75 @@ async def test_get_relationship_types(mcp_client):
     properties_keys = json.loads(result_text)
 
     assert properties_keys == ["LINK"]
+
+
+@pytest.mark.asyncio
+async def test_read_neo4j_cypher(mcp_client):
+    result = await mcp_client.call_tool(
+        "read_neo4j_cypher",
+        {
+            "query": "MATCH (n:UndergroundStation {name: $name}) RETURN n.name AS name",
+            "params": {"name": "Baker Street"},
+        },
+    )
+
+    assert len(result) == 1
+    assert json.loads(result[0]["text"]) == [{"name": "Baker Street"}]
+
+
+@pytest.mark.asyncio
+async def test_read_neo4j_cypher_rejects_writes(mcp_client):
+    result = await mcp_client.call_tool(
+        "read_neo4j_cypher",
+        {
+            "query": "CREATE (n:ReadCypherGuard) RETURN n",
+        },
+    )
+
+    assert len(result) == 1
+    check = await mcp_client.call_tool(
+        "read_neo4j_cypher",
+        {"query": "MATCH (n:ReadCypherGuard) RETURN count(n) AS count"},
+    )
+    assert json.loads(check[0]["text"]) == [{"count": 0}]
+
+
+@pytest.mark.asyncio
+async def test_write_neo4j_cypher(mcp_client):
+    created = await mcp_client.call_tool(
+        "write_neo4j_cypher",
+        {
+            "query": "CREATE (n:WriteCypherGuard {name: $name}) RETURN n.name AS name",
+            "params": {"name": "temp"},
+        },
+    )
+    try:
+        assert json.loads(created[0]["text"])["nodes_created"] == 1
+    finally:
+        await mcp_client.call_tool(
+            "write_neo4j_cypher",
+            {"query": "MATCH (n:WriteCypherGuard {name: 'temp'}) DELETE n"},
+        )
+
+
+@pytest.mark.asyncio
+async def test_write_neo4j_cypher_rejects_reads(mcp_client):
+    result = await mcp_client.call_tool(
+        "write_neo4j_cypher",
+        {"query": "MATCH (n:UndergroundStation) RETURN n.name AS name LIMIT 1"},
+    )
+
+    assert len(result) == 1
+    assert "Only write queries are allowed for write-query" in result[0]["text"]
+
+
+@pytest.mark.asyncio
+async def test_get_neo4j_schema(mcp_client):
+    result = await mcp_client.call_tool("get_neo4j_schema")
+
+    assert len(result) == 1
+    schema = json.loads(result[0]["text"])
+    station = schema["UndergroundStation"]
+    assert station["type"] == "node"
+    assert "name" in station["properties"]
+    assert "UndergroundStation" in station["relationships"]["LINK"]["labels"]
