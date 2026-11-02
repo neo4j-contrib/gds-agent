@@ -5,6 +5,8 @@
 
 ### New Features
 
+1. Upgraded `graphdatascience` client from 1.22 to 2.3.
+
 ### Bug Fixes
 1. Warn that truncated results are incomplete and must not drive decisions.
 2. Change `failIfMissing=True` in `drop_graph` as otherwise the function throws an uninformative 'NoneType' object has no attribute 'get' error instead.
