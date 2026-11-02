@@ -460,7 +460,9 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                 )
                 for _, row in node_props.iterrows():
                     for label in row["nodeLabels"]:
-                        entry = schema.setdefault(label, {"type": "node", "properties": {}})
+                        entry = schema.setdefault(
+                            label, {"type": "node", "properties": {}}
+                        )
                         if row["propertyName"]:
                             entry["properties"][row["propertyName"]] = {
                                 "type": row["propertyTypes"],
@@ -472,7 +474,10 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                 )
                 for _, row in rel_props.iterrows():
                     rel_type = row["relType"].lstrip(":")
-                    entry = schema.setdefault(rel_type, {"type": "relationship", "properties": {}, "connections": []})
+                    entry = schema.setdefault(
+                        rel_type,
+                        {"type": "relationship", "properties": {}, "connections": []},
+                    )
                     if row["propertyName"]:
                         entry["properties"][row["propertyName"]] = {
                             "type": row["propertyTypes"],
@@ -484,8 +489,8 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                 )
                 indexed_props = set()
                 for _, row in indexes.iterrows():
-                    for label in (row["labelsOrTypes"] or []):
-                        for prop in (row["properties"] or []):
+                    for label in row["labelsOrTypes"] or []:
+                        for prop in row["properties"] or []:
                             indexed_props.add((label, prop))
                 viz = base_gds.run_cypher(
                     "CALL db.schema.visualization() YIELD nodes, relationships",
@@ -498,10 +503,12 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                     for rel in viz_rels:
                         rel_type = rel.type
                         if rel_type in schema:
-                            schema[rel_type]["connections"].append({
-                                "from": id_to_label.get(rel.start_node.id),
-                                "to": id_to_label.get(rel.end_node.id),
-                            })
+                            schema[rel_type]["connections"].append(
+                                {
+                                    "from": id_to_label.get(rel.start_node.id),
+                                    "to": id_to_label.get(rel.end_node.id),
+                                }
+                            )
                 for key, entry in schema.items():
                     if entry["type"] == "node":
                         for prop_name, prop_info in entry["properties"].items():
