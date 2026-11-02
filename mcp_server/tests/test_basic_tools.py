@@ -225,4 +225,9 @@ async def test_get_neo4j_schema(mcp_client):
     station = schema["UndergroundStation"]
     assert station["type"] == "node"
     assert "name" in station["properties"]
-    assert "UndergroundStation" in station["relationships"]["LINK"]["labels"]
+    link = schema["LINK"]
+    assert link["type"] == "relationship"
+    assert any(
+        c["from"] == "UndergroundStation" and c["to"] == "UndergroundStation"
+        for c in link["connections"]
+    )

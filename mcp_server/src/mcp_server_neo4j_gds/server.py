@@ -473,7 +473,7 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                     mode=QueryMode.READ,
                 )
                 for _, row in rel_props.iterrows():
-                    rel_type = row["relType"].lstrip(":")
+                    rel_type = row["relType"].lstrip(":").strip("`")
                     entry = schema.setdefault(
                         rel_type,
                         {"type": "relationship", "properties": {}, "connections": []},
@@ -499,7 +499,7 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                 if not viz.empty:
                     viz_nodes = viz["nodes"].iloc[0]
                     viz_rels = viz["relationships"].iloc[0]
-                    id_to_label = {n.id: n.labels[0] for n in viz_nodes if n.labels}
+                    id_to_label = {n.id: next(iter(n.labels)) for n in viz_nodes if n.labels}
                     for rel in viz_rels:
                         rel_type = rel.type
                         if rel_type in schema:
@@ -520,7 +520,7 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                         entry["count"] = int(result["count"].iloc[0])
                     elif entry["type"] == "relationship":
                         result = base_gds.run_cypher(
-                            f"MATCH ()-[r:`{key}`]->() RETURN count(r) AS count",
+                            f"MATCH ()-[r:{key}]->() RETURN count(r) AS count",
                             mode=QueryMode.READ,
                         )
                         entry["count"] = int(result["count"].iloc[0])
