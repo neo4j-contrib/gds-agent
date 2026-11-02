@@ -42,7 +42,9 @@ class NodeSimilarityHandler(AlgorithmHandler):
             gds_params,
         )
         logger.info(f"Node Similarity parameters: {gds_params}")
-        use_filtered = "source_node_filter" in gds_params or "target_node_filter" in gds_params
+        use_filtered = (
+            "source_node_filter" in gds_params or "target_node_filter" in gds_params
+        )
         if use_filtered:
             # .filtered requires both args; default missing one to None so ConfigConverter skips it
             gds_params.setdefault("source_node_filter", None)
@@ -130,7 +132,9 @@ class KNearestNeighborsHandler(AlgorithmHandler):
         )
 
         logger.info(f"K-Nearest Neighbors parameters: {kwargs}")
-        use_filtered = "source_node_filter" in gds_params or "target_node_filter" in gds_params
+        use_filtered = (
+            "source_node_filter" in gds_params or "target_node_filter" in gds_params
+        )
         if use_filtered:
             # .filtered requires both args; default missing one to None so ConfigConverter skips it
             gds_params.setdefault("source_node_filter", None)
