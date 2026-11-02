@@ -284,39 +284,66 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                     ),
                 ]
 
-            tools = (
-                [
-                    types.Tool(
-                        name="get_node_properties_keys",
-                        description="""Get all node properties keys in the database""",
-                        inputSchema={
-                            "type": "object",
+            cypher_tools = [
+                types.Tool(
+                    name="get_node_properties_keys",
+                    description="""Get all node properties keys in the database""",
+                    inputSchema={
+                        "type": "object",
+                    },
+                ),
+                types.Tool(
+                    name="get_relationship_properties_keys",
+                    description="""Get all relationship properties keys in the database""",
+                    inputSchema={
+                        "type": "object",
+                    },
+                ),
+                types.Tool(
+                    name="get_node_labels",
+                    description="""Get all node labels in the database""",
+                    inputSchema={
+                        "type": "object",
+                    },
+                ),
+                types.Tool(
+                    name="get_relationship_types",
+                    description="""Get relationship types in the database.""",
+                    inputSchema={
+                        "type": "object",
+                    },
+                ),
+                types.Tool(
+                    name="read_neo4j_cypher",
+                    description="""Execute a read Cypher query on the neo4j database.""",
+                    inputSchema={
+                        "type": "object",
+                        "properties": {
+                            "query": {
+                                "type": "string",
+                                "description": "The Cypher query to execute.",
+                            },
+                            "params": {
+                                "type": "object",
+                                "description": "The parameters to pass to the Cypher query.",
+                            },
                         },
-                    ),
+                        "required": ["query"],
+                    },
+                ),
+                types.Tool(
+                    name="get_neo4j_schema",
+                    description="""Returns nodes, their properties (with types), and relationship types using native Neo4j schema introspection.""",
+                    inputSchema={
+                        "type": "object",
+                    },
+                ),
+            ]
+            if allow_writes:
+                cypher_tools = cypher_tools + [
                     types.Tool(
-                        name="get_relationship_properties_keys",
-                        description="""Get all relationship properties keys in the database""",
-                        inputSchema={
-                            "type": "object",
-                        },
-                    ),
-                    types.Tool(
-                        name="get_node_labels",
-                        description="""Get all node labels in the database""",
-                        inputSchema={
-                            "type": "object",
-                        },
-                    ),
-                    types.Tool(
-                        name="get_relationship_types",
-                        description="""Get relationship types in the database.""",
-                        inputSchema={
-                            "type": "object",
-                        },
-                    ),
-                    types.Tool(
-                        name="read_neo4j_cypher",
-                        description="""Execute a read Cypher query on the neo4j database.""",
+                        name="write_neo4j_cypher",
+                        description="""Execute a write Cypher query on the neo4j database.""",
                         inputSchema={
                             "type": "object",
                             "properties": {
@@ -331,51 +358,11 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                             },
                             "required": ["query"],
                         },
-                    ),
+                    )
                 ]
-                + (
-                    [
-                        types.Tool(
-                            name="write_neo4j_cypher",
-                            description="""Execute a write Cypher query on the neo4j database.""",
-                            inputSchema={
-                                "type": "object",
-                                "properties": {
-                                    "query": {
-                                        "type": "string",
-                                        "description": "The Cypher query to execute.",
-                                    },
-                                    "params": {
-                                        "type": "object",
-                                        "description": "The parameters to pass to the Cypher query.",
-                                    },
-                                },
-                                "required": ["query"],
-                            },
-                        )
-                    ]
-                    if allow_writes
-                    else []
-                )
-                + [
-                    types.Tool(
-                        name="get_neo4j_schema",
-                        description="""Returns nodes, their properties (with types and indexed flags), and relationships using APOC's schema inspection.
 
-You should only provide a sample_size value if requested by the user, or when tuning retrieval performance. If this times out, lower the sample size, for example sample_size=100. To sample the entire graph use sample_size=-1.
-""",
-                        inputSchema={
-                            "type": "object",
-                            "properties": {
-                                "sample_size": {
-                                    "type": "integer",
-                                    "description": "The sample size used to infer the graph schema. Larger samples are slower, but more accurate. Smaller samples are faster, but might miss information.",
-                                    "default": 1000,
-                                },
-                            },
-                        },
-                    ),
-                ]
+            tools = (
+                cypher_tools
                 + session_tools
                 + graph_projection_tool_definitions
                 + centrality_tool_definitions
@@ -466,15 +453,70 @@ You should only provide a sample_size value if requested by the user, or when tu
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
             if name == "get_neo4j_schema":
-                sample_size = arguments.get("sample_size")
-                if sample_size is None:
-                    sample_size = 1000
-                result = base_gds.run_cypher(
-                    "CALL apoc.meta.schema({sample: $sample_size}) YIELD value RETURN value",
-                    {"sample_size": sample_size},
+                schema = {}
+                node_props = base_gds.run_cypher(
+                    "CALL db.schema.nodeTypeProperties() YIELD nodeLabels, propertyName, propertyTypes, mandatory",
                     mode=QueryMode.READ,
                 )
-                schema = {} if result.empty else result["value"].iloc[0]
+                for _, row in node_props.iterrows():
+                    for label in row["nodeLabels"]:
+                        entry = schema.setdefault(label, {"type": "node", "properties": {}})
+                        if row["propertyName"]:
+                            entry["properties"][row["propertyName"]] = {
+                                "type": row["propertyTypes"],
+                                "mandatory": row["mandatory"],
+                            }
+                rel_props = base_gds.run_cypher(
+                    "CALL db.schema.relTypeProperties() YIELD relType, propertyName, propertyTypes, mandatory",
+                    mode=QueryMode.READ,
+                )
+                for _, row in rel_props.iterrows():
+                    rel_type = row["relType"].lstrip(":")
+                    entry = schema.setdefault(rel_type, {"type": "relationship", "properties": {}, "connections": []})
+                    if row["propertyName"]:
+                        entry["properties"][row["propertyName"]] = {
+                            "type": row["propertyTypes"],
+                            "mandatory": row["mandatory"],
+                        }
+                indexes = base_gds.run_cypher(
+                    "SHOW INDEXES YIELD labelsOrTypes, properties RETURN labelsOrTypes, properties",
+                    mode=QueryMode.READ,
+                )
+                indexed_props = set()
+                for _, row in indexes.iterrows():
+                    for label in (row["labelsOrTypes"] or []):
+                        for prop in (row["properties"] or []):
+                            indexed_props.add((label, prop))
+                viz = base_gds.run_cypher(
+                    "CALL db.schema.visualization() YIELD nodes, relationships",
+                    mode=QueryMode.READ,
+                )
+                if not viz.empty:
+                    viz_nodes = viz["nodes"].iloc[0]
+                    viz_rels = viz["relationships"].iloc[0]
+                    id_to_label = {n.id: n.labels[0] for n in viz_nodes if n.labels}
+                    for rel in viz_rels:
+                        rel_type = rel.type
+                        if rel_type in schema:
+                            schema[rel_type]["connections"].append({
+                                "from": id_to_label.get(rel.start_node.id),
+                                "to": id_to_label.get(rel.end_node.id),
+                            })
+                for key, entry in schema.items():
+                    if entry["type"] == "node":
+                        for prop_name, prop_info in entry["properties"].items():
+                            prop_info["indexed"] = (key, prop_name) in indexed_props
+                        result = base_gds.run_cypher(
+                            f"MATCH (n:`{key}`) RETURN count(n) AS count",
+                            mode=QueryMode.READ,
+                        )
+                        entry["count"] = int(result["count"].iloc[0])
+                    elif entry["type"] == "relationship":
+                        result = base_gds.run_cypher(
+                            f"MATCH ()-[r:`{key}`]->() RETURN count(r) AS count",
+                            mode=QueryMode.READ,
+                        )
+                        entry["count"] = int(result["count"].iloc[0])
                 return [types.TextContent(type="text", text=serialize_result(schema))]
 
             graph_name = arguments.get("graphName")

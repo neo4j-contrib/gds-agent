@@ -1,6 +1,6 @@
 # Claude Code
 
-The plugin installs the GDS MCP server and the `neo4j-graph-data-scientist` skill together — this is the recommended path. Cypher read and schema tools are part of that server. `write_neo4j_cypher` stays hidden unless the server is started with `NEO4J_READ_ONLY=false`.
+The plugin installs the GDS MCP server and the `neo4j-graph-data-scientist` skill together — this is the recommended path. `write_neo4j_cypher` tool stays hidden unless the server is started with `NEO4J_READ_ONLY=false`.
 
 ## Plugin install (tools + skill)
 

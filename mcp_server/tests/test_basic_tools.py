@@ -179,6 +179,7 @@ async def test_read_neo4j_cypher_rejects_writes(mcp_client):
     )
 
     assert len(result) == 1
+    assert "Error" in result[0]["text"]
     check = await mcp_client.call_tool(
         "read_neo4j_cypher",
         {"query": "MATCH (n:ReadCypherGuard) RETURN count(n) AS count"},
