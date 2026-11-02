@@ -10,7 +10,7 @@ class FakeUtil:
     def __init__(self):
         self.calls = []
 
-    def asNodes(self, node_ids):
+    def as_nodes(self, node_ids):
         self.calls.append(node_ids)
         return [{"name": f"node-{node_id}"} for node_id in node_ids]
 

@@ -22,7 +22,7 @@ def _mock_graph():
 
 def test_session_mode_forwards_undirected_relationship_types():
     gds = Mock(spec=AuraGraphDataScience)
-    gds.graph.project.return_value = (_mock_graph(), {})
+    gds.graph.project.cypher.return_value = (_mock_graph(), {})
 
     ProjectGraphCypherHandler(gds).execute(
         {
@@ -32,17 +32,17 @@ def test_session_mode_forwards_undirected_relationship_types():
         }
     )
 
-    _, kwargs = gds.graph.project.call_args
+    _, kwargs = gds.graph.project.cypher.call_args
     assert kwargs["undirected_relationship_types"] == ["LINK"]
 
 
 def test_session_mode_without_undirected_passes_none():
     gds = Mock(spec=AuraGraphDataScience)
-    gds.graph.project.return_value = (_mock_graph(), {})
+    gds.graph.project.cypher.return_value = (_mock_graph(), {})
 
     ProjectGraphCypherHandler(gds).execute({"graphName": "g", "cypherQuery": CYPHER})
 
-    _, kwargs = gds.graph.project.call_args
+    _, kwargs = gds.graph.project.cypher.call_args
     assert kwargs["undirected_relationship_types"] is None
 
 
@@ -57,4 +57,4 @@ def test_plugin_mode_rejects_undirected_relationship_types():
                 "undirectedRelationshipTypes": ["LINK"],
             }
         )
-    gds.graph.cypher.project.assert_not_called()
+    gds.graph.project.cypher.assert_not_called()

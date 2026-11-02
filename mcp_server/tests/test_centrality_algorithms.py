@@ -180,10 +180,10 @@ async def test_article_rank_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
-    assert "ranIterations" in result_text
+    assert "node_properties_written" in result_text
+    assert "ran_iterations" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written == 302
@@ -217,9 +217,9 @@ async def test_articulation_points_mutate(mcp_client, projected_undirected_graph
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written > 0
@@ -257,9 +257,9 @@ async def test_betweenness_centrality_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written == 302
@@ -314,9 +314,9 @@ async def test_celf_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written == 302
@@ -354,9 +354,9 @@ async def test_closeness_centrality_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written == 302
@@ -397,9 +397,9 @@ async def test_degree_centrality_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written == 302
@@ -452,9 +452,9 @@ async def test_eigenvector_centrality_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written == 302
@@ -507,9 +507,9 @@ async def test_pagerank_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written == 302
@@ -547,9 +547,9 @@ async def test_harmonic_centrality_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written == 302
@@ -587,9 +587,9 @@ async def test_hits_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written == 604

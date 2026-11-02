@@ -26,7 +26,7 @@ class ProjectGraphCypherHandler(AlgorithmHandler):
             # In session (remote) mode undirectedRelationshipTypes is a top-level
             # projection parameter, not a key inside the gds.graph.project.remote
             # data config map, which rejects it.
-            G, result = self.gds.graph.project(
+            G, result = self.gds.graph.project.cypher(
                 graph_name,
                 cypher_query,
                 undirected_relationship_types=undirected_relationship_types,
@@ -41,15 +41,15 @@ class ProjectGraphCypherHandler(AlgorithmHandler):
                     "undirectedRelationshipTypes tool parameter only applies to Aura "
                     "session mode."
                 )
-            G, result = self.gds.graph.cypher.project(
+            G, result = self.gds.graph.project.cypher(
                 cypher_query, graph_name=graph_name
             )
         return {
             "graphName": graph_name,
             "nodeCount": G.node_count(),
             "relationshipCount": G.relationship_count(),
-            "memoryUsage": result.get("memoryUsage", "unknown"),
-            "projectMillis": result.get("projectMillis", 0),
+            "memoryUsage": getattr(result, "memory_usage", "unknown"),
+            "projectMillis": getattr(result, "project_millis", 0),
         }
 
     def execute(self, arguments: dict[str, Any]) -> Any:
@@ -62,11 +62,12 @@ class ProjectGraphCypherHandler(AlgorithmHandler):
 
 class DropGraphHandler(AlgorithmHandler):
     def drop_graph(self, graph_name: str, **kwargs):
-        result = self.gds.graph.drop(graph_name, failIfMissing=True)
+        dropped = self.gds.graph.drop(graph_name, fail_if_missing=True)
+        info = dropped[0] if dropped else None
         return {
             "graphName": graph_name,
             "dropped": True,
-            "database": result.get("database", "unknown"),
+            "database": getattr(info, "database", "unknown"),
         }
 
     def execute(self, arguments: dict[str, Any]) -> Any:
@@ -75,20 +76,20 @@ class DropGraphHandler(AlgorithmHandler):
 
 class ListGraphsHandler(AlgorithmHandler):
     def list_graphs(self, **kwargs):
-        graphs_df = self.gds.graph.list()
-        if graphs_df.empty:
+        graph_infos = self.gds.graph.list()
+        if not graph_infos:
             return {"graphs": [], "count": 0}
 
         graphs = []
-        for _, row in graphs_df.iterrows():
+        for info in graph_infos:
             graphs.append(
                 {
-                    "graphName": row["graphName"],
-                    "nodeCount": int(row["nodeCount"]),
-                    "relationshipCount": int(row["relationshipCount"]),
-                    "schema": row.get("schema", {}),
-                    "creationTime": row.get("creationTime", "unknown"),
-                    "memoryUsage": row.get("memoryUsage", "unknown"),
+                    "graphName": info.graph_name,
+                    "nodeCount": int(info.node_count),
+                    "relationshipCount": int(info.relationship_count),
+                    "schema": getattr(info, "graph_schema", {}),
+                    "creationTime": getattr(info, "creation_time", "unknown"),
+                    "memoryUsage": getattr(info, "memory_usage", "unknown"),
                 }
             )
 
@@ -137,12 +138,11 @@ class StreamNodePropertiesHandler(AlgorithmHandler):
         db_node_properties=None,
     ):
         G = self.gds.graph.get(graph_name)
-        return self.gds.graph.nodeProperties.stream(
+        return self.gds.graph.node_properties.stream(
             G,
             node_properties=node_properties,
             node_labels=_as_list(node_labels, ["*"]),
             db_node_properties=_as_list(db_node_properties, []),
-            separate_property_columns=True,
         )
 
     def execute(self, arguments: dict[str, Any]) -> Any:
@@ -162,11 +162,10 @@ class StreamRelationshipPropertiesHandler(AlgorithmHandler):
         relationship_types=None,
     ):
         G = self.gds.graph.get(graph_name)
-        return self.gds.graph.relationshipProperties.stream(
+        return self.gds.graph.relationship_properties.stream(
             G,
             relationship_properties=_as_list(relationship_properties, []),
             relationship_types=_as_list(relationship_types, ["*"]),
-            separate_property_columns=True,
         )
 
     def execute(self, arguments: dict[str, Any]) -> Any:

@@ -30,22 +30,33 @@ class NodeSimilarityHandler(AlgorithmHandler):
         translate_identifiers_to_ids(
             self.gds,
             source_nodes,
-            "sourceNodeFilter",
+            "source_node_filter",
             node_identifier_property,
             gds_params,
         )
         translate_identifiers_to_ids(
             self.gds,
             target_nodes,
-            "targetNodeFilter",
+            "target_node_filter",
             node_identifier_property,
             gds_params,
         )
         logger.info(f"Node Similarity parameters: {gds_params}")
+        use_filtered = "source_node_filter" in gds_params or "target_node_filter" in gds_params
+        if use_filtered:
+            # .filtered requires both args; default missing one to None so ConfigConverter skips it
+            gds_params.setdefault("source_node_filter", None)
+            gds_params.setdefault("target_node_filter", None)
         if mode == "mutate":
-            result = self.gds.nodeSimilarity.filtered.mutate(G, **gds_params)
+            if use_filtered:
+                result = self.gds.node_similarity.filtered.mutate(G, **gds_params)
+            else:
+                result = self.gds.node_similarity.mutate(G, **gds_params)
         else:
-            result = self.gds.nodeSimilarity.filtered.stream(G, **gds_params)
+            if use_filtered:
+                result = self.gds.node_similarity.filtered.stream(G, **gds_params)
+            else:
+                result = self.gds.node_similarity.stream(G, **gds_params)
 
             node_identifier_property = kwargs.get("nodeIdentifierProperty")
             translate_ids_to_identifiers(
@@ -106,23 +117,34 @@ class KNearestNeighborsHandler(AlgorithmHandler):
         translate_identifiers_to_ids(
             self.gds,
             source_nodes,
-            "sourceNodeFilter",
+            "source_node_filter",
             node_identifier_property,
             gds_params,
         )
         translate_identifiers_to_ids(
             self.gds,
             target_nodes,
-            "targetNodeFilter",
+            "target_node_filter",
             node_identifier_property,
             gds_params,
         )
 
         logger.info(f"K-Nearest Neighbors parameters: {kwargs}")
+        use_filtered = "source_node_filter" in gds_params or "target_node_filter" in gds_params
+        if use_filtered:
+            # .filtered requires both args; default missing one to None so ConfigConverter skips it
+            gds_params.setdefault("source_node_filter", None)
+            gds_params.setdefault("target_node_filter", None)
         if mode == "mutate":
-            result = self.gds.knn.filtered.mutate(G, **gds_params)
+            if use_filtered:
+                result = self.gds.knn.filtered.mutate(G, **gds_params)
+            else:
+                result = self.gds.knn.mutate(G, **gds_params)
         else:
-            result = self.gds.knn.filtered.stream(G, **gds_params)
+            if use_filtered:
+                result = self.gds.knn.filtered.stream(G, **gds_params)
+            else:
+                result = self.gds.knn.stream(G, **gds_params)
 
             node_identifier_property = kwargs.get("nodeIdentifierProperty")
             translate_ids_to_identifiers(

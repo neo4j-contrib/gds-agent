@@ -247,7 +247,7 @@ def test_graph_routing_tracks_sessions_and_conflicts():
 def test_session_for_graph_scans_sessions_for_unmapped_graphs():
     manager = SessionManager()
     session_gds = Mock()
-    session_gds.graph.exists.return_value = {"exists": True}
+    session_gds.graph.exists.return_value = True
     manager._sessions["mcp_analytics"] = session_gds
 
     assert manager.session_for_graph("unmapped") == "mcp_analytics"
@@ -257,7 +257,7 @@ def test_session_for_graph_scans_sessions_for_unmapped_graphs():
 def test_session_for_graph_returns_none_when_graph_not_found():
     manager = SessionManager()
     session_gds = Mock()
-    session_gds.graph.exists.return_value = {"exists": False}
+    session_gds.graph.exists.return_value = False
     manager._sessions["mcp_analytics"] = session_gds
 
     assert manager.session_for_graph("missing") is None

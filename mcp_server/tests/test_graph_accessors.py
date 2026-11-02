@@ -83,9 +83,9 @@ class FakeGds:
         self.calls = []
         graph = FakeGraph()
         self.graph = FakeRunner(graph)
-        self.graph.nodeProperties = FakeStreamRunner(self.calls, "nodeProperties")
-        self.graph.relationshipProperties = FakeStreamRunner(
-            self.calls, "relationshipProperties"
+        self.graph.node_properties = FakeStreamRunner(self.calls, "node_properties")
+        self.graph.relationship_properties = FakeStreamRunner(
+            self.calls, "relationship_properties"
         )
         self.graph.relationships = FakeStreamRunner(self.calls, "relationships")
 
@@ -117,7 +117,6 @@ def test_stream_node_properties_handler_maps_arguments():
         "node_properties": ["score"],
         "node_labels": ["Person"],
         "db_node_properties": ["name"],
-        "separate_property_columns": True,
     }
 
 
@@ -136,7 +135,6 @@ def test_stream_relationship_properties_handler_maps_arguments():
     assert kwargs == {
         "relationship_properties": ["weight"],
         "relationship_types": ["KNOWS"],
-        "separate_property_columns": True,
     }
 
 

@@ -3,11 +3,7 @@ import uuid
 from contextlib import suppress
 from typing import Any
 
-from graphdatascience.model.link_prediction_model import LPModel
-from graphdatascience.model.node_classification_model import NCModel
-from graphdatascience.model.node_regression_model import NRModel
-
-from .algorithm_handler import AlgorithmHandler, clean_params
+from .algorithm_handler import AlgorithmHandler, clean_params, snake_case_keys
 from .node_translator import translate_ids_to_identifiers
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
@@ -25,7 +21,9 @@ PIPELINE_CONFIG_KEYS = [
 
 def add_node_property_steps(pipeline, steps):
     for step in steps or []:
-        pipeline.addNodeProperty(step["procedure"], **(step.get("config") or {}))
+        pipeline.add_node_property(
+            step["procedure"], **snake_case_keys(step.get("config") or {})
+        )
 
 
 def add_model_candidates(pipeline, candidates, default_method, methods):
@@ -38,18 +36,20 @@ def add_model_candidates(pipeline, candidates, default_method, methods):
                 f"Unsupported model candidate method '{method}'. "
                 f"Supported methods: {sorted(methods)}"
             )
-        getattr(pipeline, methods[method])(**(candidate.get("config") or {}))
+        getattr(pipeline, methods[method])(
+            **snake_case_keys(candidate.get("config") or {})
+        )
 
 
 def configure_pipeline(pipeline, kwargs, default_method, methods):
     add_node_property_steps(pipeline, kwargs.get("nodePropertySteps"))
     if kwargs.get("splitConfig"):
-        pipeline.configureSplit(**kwargs["splitConfig"])
+        pipeline.configure_split(**snake_case_keys(kwargs["splitConfig"]))
     add_model_candidates(
         pipeline, kwargs.get("modelCandidates"), default_method, methods
     )
     if kwargs.get("autoTuningConfig"):
-        pipeline.configureAutoTuning(**kwargs["autoTuningConfig"])
+        pipeline.configure_auto_tuning(**snake_case_keys(kwargs["autoTuningConfig"]))
 
 
 def train_pipeline(gds, pipeline, kwargs, default_metrics):
@@ -58,38 +58,34 @@ def train_pipeline(gds, pipeline, kwargs, default_metrics):
     train_params.setdefault("metrics", default_metrics)
     logger.info(f"Pipeline train parameters: {train_params}")
     model, result = pipeline.train(G, **train_params)
-    return {"modelName": model.name(), "trainResult": result.to_dict()}
+    return {"modelName": model.name(), "trainResult": result.model_dump()}
 
 
-def get_model(gds, model_name, expected_type, train_tool):
-    model = gds.model.get(model_name)
-    if not isinstance(model, expected_type):
-        raise TypeError(
-            f"Model '{model_name}' is not a {expected_type.__name__} model "
-            f"(type: {model.type()}). Use {train_tool} to train one."
-        )
-    return model
+def get_model(model_name, getter):
+    return getter(model_name)
 
 
 class NodeClassificationTrainHandler(AlgorithmHandler):
     def train_node_classification_model(self, **kwargs):
-        pipeline = self.gds.nc_pipe(f"nc_pipeline_{uuid.uuid4().hex[:8]}")
+        pipeline, _ = self.gds.pipeline.node_classification.create(
+            f"nc_pipeline_{uuid.uuid4().hex[:8]}"
+        )
         try:
-            pipeline.selectFeatures(kwargs.get("featureProperties"))
+            pipeline.select_features(kwargs.get("featureProperties"))
             configure_pipeline(
                 pipeline,
                 kwargs,
                 "logisticRegression",
                 {
-                    "logisticRegression": "addLogisticRegression",
-                    "randomForest": "addRandomForest",
-                    "mlp": "addMLP",
+                    "logisticRegression": "add_logistic_regression",
+                    "randomForest": "add_random_forest",
+                    "mlp": "add_mlp",
                 },
             )
             return train_pipeline(self.gds, pipeline, kwargs, ["ACCURACY"])
         finally:
             with suppress(Exception):
-                pipeline.drop(failIfMissing=False)
+                pipeline.drop(fail_if_missing=False)
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.train_node_classification_model(
@@ -112,10 +108,8 @@ class NodeClassificationPredictHandler(AlgorithmHandler):
         mode = kwargs.get("mode", "stream")
         G = self.gds.graph.get(kwargs.get("graphName"))
         model = get_model(
-            self.gds,
             kwargs.get("modelName"),
-            NCModel,
-            "train_node_classification_model",
+            self.gds.pipeline.node_classification.get_model,
         )
         gds_params = clean_params(
             kwargs, ["graphName", "modelName", "mode", "nodeIdentifierProperty"]
@@ -147,26 +141,29 @@ class NodeClassificationPredictHandler(AlgorithmHandler):
 
 class LinkPredictionTrainHandler(AlgorithmHandler):
     def train_link_prediction_model(self, **kwargs):
-        pipeline = self.gds.lp_pipe(f"lp_pipeline_{uuid.uuid4().hex[:8]}")
+        pipeline, _ = self.gds.pipeline.link_prediction.create(
+            f"lp_pipeline_{uuid.uuid4().hex[:8]}"
+        )
         try:
             for feature in kwargs.get("linkFeatures") or []:
-                pipeline.addFeature(
-                    feature["featureType"], nodeProperties=feature["nodeProperties"]
+                pipeline.add_feature(
+                    feature["featureType"],
+                    node_properties=feature["nodeProperties"],
                 )
             configure_pipeline(
                 pipeline,
                 kwargs,
                 "logisticRegression",
                 {
-                    "logisticRegression": "addLogisticRegression",
-                    "randomForest": "addRandomForest",
-                    "mlp": "addMLP",
+                    "logisticRegression": "add_logistic_regression",
+                    "randomForest": "add_random_forest",
+                    "mlp": "add_mlp",
                 },
             )
             return train_pipeline(self.gds, pipeline, kwargs, ["AUCPR"])
         finally:
             with suppress(Exception):
-                pipeline.drop(failIfMissing=False)
+                pipeline.drop(fail_if_missing=False)
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.train_link_prediction_model(
@@ -191,7 +188,8 @@ class LinkPredictionPredictHandler(AlgorithmHandler):
         mode = kwargs.get("mode", "stream")
         G = self.gds.graph.get(kwargs.get("graphName"))
         model = get_model(
-            self.gds, kwargs.get("modelName"), LPModel, "train_link_prediction_model"
+            kwargs.get("modelName"),
+            self.gds.pipeline.link_prediction.get_model,
         )
         gds_params = clean_params(
             kwargs, ["graphName", "modelName", "mode", "nodeIdentifierProperty"]
@@ -230,22 +228,24 @@ class LinkPredictionPredictHandler(AlgorithmHandler):
 
 class NodeRegressionTrainHandler(AlgorithmHandler):
     def train_node_regression_model(self, **kwargs):
-        pipeline = self.gds.nr_pipe(f"nr_pipeline_{uuid.uuid4().hex[:8]}")
+        pipeline, _ = self.gds.pipeline.node_regression.create(
+            f"nr_pipeline_{uuid.uuid4().hex[:8]}"
+        )
         try:
-            pipeline.selectFeatures(kwargs.get("featureProperties"))
+            pipeline.select_features(kwargs.get("featureProperties"))
             configure_pipeline(
                 pipeline,
                 kwargs,
                 "linearRegression",
                 {
-                    "linearRegression": "addLinearRegression",
-                    "randomForest": "addRandomForest",
+                    "linearRegression": "add_linear_regression",
+                    "randomForest": "add_random_forest",
                 },
             )
             return train_pipeline(self.gds, pipeline, kwargs, ["MEAN_SQUARED_ERROR"])
         finally:
             with suppress(Exception):
-                pipeline.drop(failIfMissing=False)
+                pipeline.drop(fail_if_missing=False)
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.train_node_regression_model(
@@ -268,7 +268,8 @@ class NodeRegressionPredictHandler(AlgorithmHandler):
         mode = kwargs.get("mode", "stream")
         G = self.gds.graph.get(kwargs.get("graphName"))
         model = get_model(
-            self.gds, kwargs.get("modelName"), NRModel, "train_node_regression_model"
+            kwargs.get("modelName"),
+            self.gds.pipeline.node_regression.get_model,
         )
         gds_params = clean_params(
             kwargs, ["graphName", "modelName", "mode", "nodeIdentifierProperty"]
@@ -296,10 +297,10 @@ class NodeRegressionPredictHandler(AlgorithmHandler):
 
 class ListModelsHandler(AlgorithmHandler):
     def list_models(self, **kwargs):
-        models_df = self.gds.model.list()
-        if models_df.empty:
+        model_details = self.gds.model.list()
+        if not model_details:
             return {"models": [], "count": 0}
-        models = models_df.to_dict(orient="records")
+        models = [model.model_dump(by_alias=True) for model in model_details]
         return {"models": models, "count": len(models)}
 
     def execute(self, arguments: dict[str, Any]) -> Any:
@@ -308,8 +309,7 @@ class ListModelsHandler(AlgorithmHandler):
 
 class DropModelHandler(AlgorithmHandler):
     def drop_model(self, model_name: str):
-        model = self.gds.model.get(model_name)
-        model.drop(failIfMissing=False)
+        self.gds.model.drop(model_name, fail_if_missing=False)
         return {"modelName": model_name, "dropped": True}
 
     def execute(self, arguments: dict[str, Any]) -> Any:

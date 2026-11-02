@@ -186,7 +186,7 @@ class SessionManager:
         # Unmapped graph (e.g. after a restart): look for it in the active sessions
         for name, gds in sessions.items():
             try:
-                if bool(gds.graph.exists(graph_name)["exists"]):
+                if gds.graph.exists(graph_name):
                     self.record_graph(graph_name, name)
                     return name
             except Exception as e:

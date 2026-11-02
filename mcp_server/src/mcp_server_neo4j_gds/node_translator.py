@@ -64,7 +64,7 @@ def translate_ids_to_identifiers(
         limited_results = limit_dataframe_rows(results)
         _replace_dataframe_contents(results, limited_results)
 
-        nodes = gds.util.asNodes(results[id_name].tolist())
+        nodes = gds.util.as_nodes(results[id_name].tolist())
         node_name_values = [node.get(node_identifier_property) for node in nodes]
         results[node_identifier_output_name] = node_name_values
 

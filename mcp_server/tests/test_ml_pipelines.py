@@ -50,8 +50,8 @@ async def test_node_classification_train_and_predict(mcp_client, projected_test_
             },
         )
         mutate_text = mutate_result[0]["text"]
-        assert "nodePropertiesWritten" in mutate_text
-        match = re.search(r"nodePropertiesWritten\s+(\d+)", mutate_text)
+        assert "node_properties_written" in mutate_text
+        match = re.search(r"node_properties_written=(\d+)", mutate_text)
         assert match is not None
         assert int(match.group(1)) == 302
     finally:
@@ -133,8 +133,8 @@ async def test_link_prediction_train_and_predict(
             },
         )
         mutate_text = mutate_result[0]["text"]
-        assert "relationshipsWritten" in mutate_text
-        match = re.search(r"relationshipsWritten\s+(\d+)", mutate_text)
+        assert "relationships_written" in mutate_text
+        match = re.search(r"relationships_written=(\d+)", mutate_text)
         assert match is not None
         assert int(match.group(1)) > 0
     finally:

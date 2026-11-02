@@ -91,9 +91,9 @@ class K1ColoringHandler(AlgorithmHandler):
         )
         logger.info(f"K-1 Coloring parameters: {gds_params}")
         if mode == "mutate":
-            result = self.gds.k1coloring.mutate(G, **gds_params)
+            result = self.gds.k1_coloring.mutate(G, **gds_params)
         else:
-            result = self.gds.k1coloring.stream(G, **gds_params)
+            result = self.gds.k1_coloring.stream(G, **gds_params)
             translate_ids_to_identifiers(self.gds, node_identifier_property, result)
 
         return result
@@ -153,9 +153,9 @@ class LabelPropagationHandler(AlgorithmHandler):
         )
         logger.info(f"Label Propagation parameters: {gds_params}")
         if mode == "mutate":
-            result = self.gds.labelPropagation.mutate(G, **gds_params)
+            result = self.gds.label_propagation.mutate(G, **gds_params)
         else:
-            result = self.gds.labelPropagation.stream(G, **gds_params)
+            result = self.gds.label_propagation.stream(G, **gds_params)
             translate_ids_to_identifiers(self.gds, node_identifier_property, result)
 
         return result
@@ -221,9 +221,9 @@ class LocalClusteringCoefficientHandler(AlgorithmHandler):
         )
         logger.info(f"Local Clustering Coefficient parameters: {gds_params}")
         if mode == "mutate":
-            result = self.gds.localClusteringCoefficient.mutate(G, **gds_params)
+            result = self.gds.local_clustering_coefficient.mutate(G, **gds_params)
         else:
-            result = self.gds.localClusteringCoefficient.stream(G, **gds_params)
+            result = self.gds.local_clustering_coefficient.stream(G, **gds_params)
             result = filter_identifiers(
                 self.gds,
                 node_identifier_property,
@@ -239,7 +239,7 @@ class LocalClusteringCoefficientHandler(AlgorithmHandler):
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
             mutateProperty=arguments.get("mutateProperty"),
-            triangleCountProperty=arguments.get("triangleCountProperty"),
+            triangle_countProperty=arguments.get("triangle_countProperty"),
             nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
             nodes=arguments.get("nodes"),
         )
@@ -308,9 +308,9 @@ class ModularityOptimizationHandler(AlgorithmHandler):
         )
         logger.info(f"Modularity Optimization parameters: {gds_params}")
         if mode == "mutate":
-            result = self.gds.modularityOptimization.mutate(G, **gds_params)
+            result = self.gds.modularity_optimization.mutate(G, **gds_params)
         else:
-            result = self.gds.modularityOptimization.stream(G, **gds_params)
+            result = self.gds.modularity_optimization.stream(G, **gds_params)
             translate_ids_to_identifiers(self.gds, node_identifier_property, result)
 
         return result
@@ -368,9 +368,9 @@ class TriangleCountHandler(AlgorithmHandler):
         )
         logger.info(f"Triangle Count parameters: {gds_params}")
         if mode == "mutate":
-            result = self.gds.triangleCount.mutate(G, **gds_params)
+            result = self.gds.triangle_count.mutate(G, **gds_params)
         else:
-            result = self.gds.triangleCount.stream(G, **gds_params)
+            result = self.gds.triangle_count.stream(G, **gds_params)
             result = filter_identifiers(
                 self.gds, node_identifier_property, node_names, result
             )
@@ -430,9 +430,9 @@ class ApproximateMaximumKCutHandler(AlgorithmHandler):
         )
         logger.info(f"Approximate Maximum K Cut parameters: {gds_params}")
         if mode == "mutate":
-            result = self.gds.maxkcut.mutate(G, **gds_params)
+            result = self.gds.max_k_cut.mutate(G, **gds_params)
         else:
-            result = self.gds.maxkcut.stream(G, **gds_params)
+            result = self.gds.max_k_cut.stream(G, **gds_params)
             translate_ids_to_identifiers(self.gds, node_identifier_property, result)
 
         return result

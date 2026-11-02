@@ -123,9 +123,9 @@ async def test_node_similarity_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "relationshipsWritten" in result_text
+    assert "relationships_written" in result_text
 
-    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    match = re.search(r"relationships_written=(\d+)", result_text)
     assert match is not None
     relationships_written = int(match.group(1))
     assert relationships_written > 0
@@ -256,9 +256,9 @@ async def test_knn_mutate(mcp_client, projected_undirected_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "relationshipsWritten" in result_text
+    assert "relationships_written" in result_text
 
-    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    match = re.search(r"relationships_written=(\d+)", result_text)
     assert match is not None
     relationships_written = int(match.group(1))
     assert relationships_written == 302 * 3

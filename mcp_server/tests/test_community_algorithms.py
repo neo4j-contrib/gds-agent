@@ -83,9 +83,9 @@ async def test_k_core_decomposition_mutate(mcp_client, projected_undirected_grap
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written > 0
@@ -106,10 +106,10 @@ async def test_k_1_coloring_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodeCount" in result_text
-    assert "colorCount" in result_text
+    assert "node_count" in result_text
+    assert "color_count" in result_text
 
-    match = re.search(r"nodeCount\s+(\d+)", result_text)
+    match = re.search(r"node_count=(\d+)", result_text)
     assert match is not None
     nodes_counted = int(match.group(1))
     assert nodes_counted == 302
@@ -198,9 +198,9 @@ async def test_label_propagation_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written == 302
@@ -221,9 +221,9 @@ async def test_leiden_mutate(mcp_client, projected_undirected_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written > 0
@@ -245,9 +245,9 @@ async def test_local_clustering_coefficient_mutate(
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written > 0
@@ -289,9 +289,9 @@ async def test_louvain_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written == 302
@@ -365,9 +365,9 @@ async def test_modularity_optimization_mutate(mcp_client, projected_test_graph):
     result_text = result[0]["text"]
 
     assert "nodes" in result_text
-    assert "communityCount" in result_text
+    assert "community_count" in result_text
 
-    match = re.search(r"nodes\s+(\d+)", result_text)
+    match = re.search(r"nodes=(\d+)", result_text)
     assert match is not None
     nodes_counted = int(match.group(1))
     assert nodes_counted == 302
@@ -424,9 +424,9 @@ async def test_strongly_connected_components_mutate(mcp_client, projected_test_g
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written == 302
@@ -446,9 +446,9 @@ async def test_triangle_count_mutate(mcp_client, projected_undirected_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written > 0
@@ -502,9 +502,9 @@ async def test_weakly_connected_components_mutate(mcp_client, projected_test_gra
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written == 302
@@ -525,9 +525,9 @@ async def test_approximate_maximum_k_cut_mutate(mcp_client, projected_test_graph
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written == 302
@@ -573,9 +573,9 @@ async def test_speaker_listener_label_propagation_mutate(
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     nodes_written = int(match.group(1))
     assert nodes_written == 302
