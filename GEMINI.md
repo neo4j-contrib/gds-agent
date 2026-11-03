@@ -8,7 +8,8 @@ configured in the extension settings.
 Key points:
 
 - Algorithms run on named in-memory graph projections, never on the database
-  directly, and nothing ever writes to the database.
+  directly. Cypher reads and schema inspection are tools on this server.
+  `write_neo4j_cypher` is not exposed unless `NEO4J_READ_ONLY=false`.
 - Follow the `neo4j-graph-data-scientist` skill bundled with this extension for the
   full workflow: inspect schema → project a graph → select the algorithm →
   run (stream or mutate mode) → interpret results → drop the projection.

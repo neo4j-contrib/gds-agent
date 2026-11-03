@@ -1,9 +1,14 @@
-# Changelog - [1.2.0] - yyyy-mm-dd
+# Changelog - [1.2.0] - 2026-10-29
 
 
 ### Breaking Changes
 
+- The Claude Code plugin and the Gemini extension no longer start a separate `mcp-neo4j-cypher` server. `read_neo4j_cypher`, `write_neo4j_cypher`, and `get_neo4j_schema` are tools on `gds-agent`.
+- `get_neo4j_schema` no longer uses APOC and has a slightly different output format.
+
 ### New Features
+
+- `read_neo4j_cypher` runs a read query, `write_neo4j_cypher` runs a write query and returns the update counts, and `get_neo4j_schema` returns node and relationship types with their properties, indexes, connections, and counts.
 
 ### Bug Fixes
 1. Warn that truncated results are incomplete and must not drive decisions.
