@@ -56,7 +56,9 @@ class ProjectGraphCypherHandler(AlgorithmHandler):
         return self.project_graph_cypher(
             graph_name=arguments.get("graph_name"),
             cypher_query=arguments.get("cypher_query"),
-            undirected_relationship_types=arguments.get("undirected_relationship_types"),
+            undirected_relationship_types=arguments.get(
+                "undirected_relationship_types"
+            ),
         )
 
 

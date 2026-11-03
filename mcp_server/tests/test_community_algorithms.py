@@ -475,7 +475,11 @@ async def test_weakly_connected_components(mcp_client, projected_test_graph):
 async def test_approximate_maximum_k_cut(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
         "approximate_maximum_k_cut",
-        {"node_identifier_property": "name", "k": 2, "graph_name": projected_test_graph},
+        {
+            "node_identifier_property": "name",
+            "k": 2,
+            "graph_name": projected_test_graph,
+        },
     )
 
     assert len(result_with_names) == 1

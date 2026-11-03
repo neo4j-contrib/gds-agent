@@ -36,7 +36,10 @@ def projected_graph_from_params(gds, node_labels=None, undirected=False, **kwarg
     rel_types = params.get("rel_types")
 
     with projected_graph(
-        gds, node_labels=node_labels, relationship_types=rel_types, undirected=undirected
+        gds,
+        node_labels=node_labels,
+        relationship_types=rel_types,
+        undirected=undirected,
     ) as G:
         yield G
 

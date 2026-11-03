@@ -789,7 +789,9 @@ class RandomWalkHandler(AlgorithmHandler):
             source_node_ids = resolved.get("source_nodes", [])
 
         G = self.gds.graph.get(kwargs.get("graph_name"))
-        params = clean_params(kwargs, ["graph_name", "node_identifier_property", "mode"])
+        params = clean_params(
+            kwargs, ["graph_name", "node_identifier_property", "mode"]
+        )
         logger.info(f"Random Walk parameters: {params}")
 
         # Add source nodes if found
@@ -879,7 +881,9 @@ class BreadthFirstSearchHandler(AlgorithmHandler):
             target_node_ids = resolved.get("target_nodes", [])
 
         G = self.gds.graph.get(kwargs.get("graph_name"))
-        params = clean_params(kwargs, ["graph_name", "node_identifier_property", "mode"])
+        params = clean_params(
+            kwargs, ["graph_name", "node_identifier_property", "mode"]
+        )
 
         # Add target nodes if found
         if target_node_ids:
@@ -968,7 +972,9 @@ class DepthFirstSearchHandler(AlgorithmHandler):
             target_node_ids = resolved.get("target_nodes", [])
 
         G = self.gds.graph.get(kwargs.get("graph_name"))
-        params = clean_params(kwargs, ["graph_name", "node_identifier_property", "mode"])
+        params = clean_params(
+            kwargs, ["graph_name", "node_identifier_property", "mode"]
+        )
         # Add target nodes if found
         if target_node_ids:
             params["target_nodes"] = target_node_ids
@@ -1045,7 +1051,9 @@ class BellmanFordSingleSourceShortestPathHandler(AlgorithmHandler):
             return {"found": False, "message": "Source node name not found"}
 
         G = self.gds.graph.get(kwargs.get("graph_name"))
-        params = clean_params(kwargs, ["graph_name", "node_identifier_property", "mode"])
+        params = clean_params(
+            kwargs, ["graph_name", "node_identifier_property", "mode"]
+        )
         logger.info(f"Bellman-Ford Single-Source Shortest Path parameters: {params}")
 
         if mode == "mutate":
