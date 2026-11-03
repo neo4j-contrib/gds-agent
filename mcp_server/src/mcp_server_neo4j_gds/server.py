@@ -492,23 +492,15 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                     for label in row["labelsOrTypes"] or []:
                         for prop in row["properties"] or []:
                             indexed_props.add((label, prop))
-                viz = base_gds.run_cypher(
-                    "CALL db.schema.visualization() YIELD nodes, relationships",
+                triplets = base_gds.run_cypher(
+                    "MATCH (a)-[r]->(b) RETURN DISTINCT type(r) AS rel_type, labels(a)[0] AS from_label, labels(b)[0] AS to_label",
                     mode=QueryMode.READ,
                 )
-                if not viz.empty:
-                    viz_nodes = viz["nodes"].iloc[0]
-                    viz_rels = viz["relationships"].iloc[0]
-                    id_to_label = {n.id: next(iter(n.labels)) for n in viz_nodes if n.labels}
-                    for rel in viz_rels:
-                        rel_type = rel.type
-                        if rel_type in schema:
-                            schema[rel_type]["connections"].append(
-                                {
-                                    "from": id_to_label.get(rel.start_node.id),
-                                    "to": id_to_label.get(rel.end_node.id),
-                                }
-                            )
+                for _, row in triplets.iterrows():
+                    if row["rel_type"] in schema:
+                        schema[row["rel_type"]]["connections"].append(
+                            {"from": row["from_label"], "to": row["to_label"]}
+                        )
                 for key, entry in schema.items():
                     if entry["type"] == "node":
                         for prop_name, prop_info in entry["properties"].items():
