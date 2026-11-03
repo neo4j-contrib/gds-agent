@@ -40,8 +40,8 @@ async def test_fast_rp_mutate(mcp_client, projected_test_graph):
 
     assert len(result) == 1
     result_text = result[0]["text"]
-    assert "nodePropertiesWritten" in result_text
-    match = re.search(r"nodePropertiesWritten\s+(\d+)", result_text)
+    assert "node_properties_written" in result_text
+    match = re.search(r"node_properties_written=(\d+)", result_text)
     assert match is not None
     assert int(match.group(1)) == 302
 
@@ -151,8 +151,8 @@ async def test_graph_sage_train_and_predict(mcp_client, projected_undirected_gra
             },
         )
         mutate_text = mutate_result[0]["text"]
-        assert "nodePropertiesWritten" in mutate_text
-        match = re.search(r"nodePropertiesWritten\s+(\d+)", mutate_text)
+        assert "node_properties_written" in mutate_text
+        match = re.search(r"node_properties_written=(\d+)", mutate_text)
         assert match is not None
         assert int(match.group(1)) == 302
     finally:

@@ -1,8 +1,6 @@
 import logging
 from typing import Any
 
-from graphdatascience.model.graphsage_model import GraphSageModel
-
 from .algorithm_handler import AlgorithmHandler, clean_params
 from .node_translator import translate_ids_to_identifiers
 
@@ -18,9 +16,9 @@ class FastRPHandler(AlgorithmHandler):
         )
         logger.info(f"FastRP parameters: {gds_params}")
         if mode == "mutate":
-            result = self.gds.fastRP.mutate(G, **gds_params)
+            result = self.gds.fast_rp.mutate(G, **gds_params)
         else:
-            result = self.gds.fastRP.stream(G, **gds_params)
+            result = self.gds.fast_rp.stream(G, **gds_params)
             translate_ids_to_identifiers(
                 self.gds, kwargs.get("nodeIdentifierProperty"), result
             )
@@ -85,7 +83,7 @@ class Node2VecHandler(AlgorithmHandler):
 
 
 class HashGNNHandler(AlgorithmHandler):
-    def hashgnn(self, **kwargs):
+    def hash_gnn(self, **kwargs):
         mode = kwargs.get("mode", "stream")
         G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(
@@ -93,16 +91,16 @@ class HashGNNHandler(AlgorithmHandler):
         )
         logger.info(f"HashGNN parameters: {gds_params}")
         if mode == "mutate":
-            result = self.gds.hashgnn.mutate(G, **gds_params)
+            result = self.gds.hash_gnn.mutate(G, **gds_params)
         else:
-            result = self.gds.hashgnn.stream(G, **gds_params)
+            result = self.gds.hash_gnn.stream(G, **gds_params)
             translate_ids_to_identifiers(
                 self.gds, kwargs.get("nodeIdentifierProperty"), result
             )
         return result
 
     def execute(self, arguments: dict[str, Any]) -> Any:
-        return self.hashgnn(
+        return self.hash_gnn(
             graphName=arguments.get("graphName"),
             mode=arguments.get("mode"),
             mutateProperty=arguments.get("mutateProperty"),
@@ -124,8 +122,8 @@ class GraphSageTrainHandler(AlgorithmHandler):
         G = self.gds.graph.get(kwargs.get("graphName"))
         gds_params = clean_params(kwargs, ["graphName"])
         logger.info(f"GraphSAGE train parameters: {gds_params}")
-        model, result = self.gds.beta.graphSage.train(G, **gds_params)
-        return {"modelName": model.name(), "trainResult": result.to_dict()}
+        model, result = self.gds.graph_sage.train(G, **gds_params)
+        return {"modelName": model.name(), "trainResult": result.model_dump()}
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.graph_sage_train(
@@ -155,12 +153,7 @@ class GraphSagePredictHandler(AlgorithmHandler):
         mode = kwargs.get("mode", "stream")
         model_name = kwargs.get("modelName")
         G = self.gds.graph.get(kwargs.get("graphName"))
-        model = self.gds.model.get(model_name)
-        if not isinstance(model, GraphSageModel):
-            raise TypeError(
-                f"Model '{model_name}' is not a GraphSAGE model (type: {model.type()}). "
-                "Use graph_sage_train to train one."
-            )
+        model = self.gds.graph_sage.get(model_name)
         gds_params = clean_params(
             kwargs, ["graphName", "modelName", "mode", "nodeIdentifierProperty"]
         )

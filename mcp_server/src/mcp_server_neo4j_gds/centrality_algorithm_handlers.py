@@ -32,16 +32,16 @@ class ArticleRankHandler(AlgorithmHandler):
         translate_identifiers_to_ids(
             self.gds,
             source_nodes,
-            "sourceNodes",
+            "source_nodes",
             node_identifier_property,
             gds_params,
         )
 
         logger.info(f"ArticleRank parameters: {gds_params}")
         if mode == "mutate":
-            result = self.gds.articleRank.mutate(G, **gds_params)
+            result = self.gds.article_rank.mutate(G, **gds_params)
         else:
-            result = self.gds.articleRank.stream(G, **gds_params)
+            result = self.gds.article_rank.stream(G, **gds_params)
             logger.info(f"Filtering ArticleRank results for nodes: {node_names}")
             result = filter_identifiers(
                 self.gds, node_identifier_property, node_names, result
@@ -76,9 +76,9 @@ class ArticulationPointsHandler(AlgorithmHandler):
         )
 
         if mode == "mutate":
-            result = self.gds.articulationPoints.mutate(G, **gds_params)
+            result = self.gds.articulation_points.mutate(G, **gds_params)
         else:
-            result = self.gds.articulationPoints.stream(G)
+            result = self.gds.articulation_points.stream(G)
             translate_ids_to_identifiers(self.gds, node_identifier_property, result)
 
         return result
@@ -164,9 +164,9 @@ class CELFHandler(AlgorithmHandler):
         logger.info(f"CELF parameters: {gds_params}")
 
         if mode == "mutate":
-            result = self.gds.influenceMaximization.celf.mutate(G, **gds_params)
+            result = self.gds.influence_maximization_celf.mutate(G, **gds_params)
         else:
-            result = self.gds.influenceMaximization.celf.stream(G, **gds_params)
+            result = self.gds.influence_maximization_celf.stream(G, **gds_params)
             translate_ids_to_identifiers(self.gds, node_identifier_property, result)
 
         return result
@@ -273,7 +273,7 @@ class EigenvectorCentralityHandler(AlgorithmHandler):
         translate_identifiers_to_ids(
             self.gds,
             source_nodes,
-            "sourceNodes",
+            "source_nodes",
             node_identifier_property,
             gds_params,
         )
@@ -326,16 +326,16 @@ class PageRankHandler(AlgorithmHandler):
         translate_identifiers_to_ids(
             self.gds,
             source_nodes,
-            "sourceNodes",
+            "source_nodes",
             node_identifier_property,
             gds_params,
         )
 
         logger.info(f"Pagerank parameters: {gds_params}")
         if mode == "mutate":
-            result = self.gds.pageRank.mutate(G, **gds_params)
+            result = self.gds.page_rank.mutate(G, **gds_params)
         else:
-            result = self.gds.pageRank.stream(G, **gds_params)
+            result = self.gds.page_rank.stream(G, **gds_params)
             result = filter_identifiers(
                 self.gds, node_identifier_property, node_names, result
             )
@@ -369,9 +369,9 @@ class HarmonicCentralityHandler(AlgorithmHandler):
         )
 
         if mode == "mutate":
-            result = self.gds.closeness.harmonic.mutate(G, **gds_params)
+            result = self.gds.harmonic.mutate(G, **gds_params)
         else:
-            result = self.gds.closeness.harmonic.stream(G)
+            result = self.gds.harmonic.stream(G)
             result = filter_identifiers(
                 self.gds, node_identifier_property, node_names, result
             )
@@ -399,8 +399,8 @@ class HITSHandler(AlgorithmHandler):
         gds_params = clean_params(
             kwargs, ["graphName", "mode", "nodes", "nodeIdentifierProperty"]
         )
-        gds_params["authProperty"] = "auth"
-        gds_params["hubProperty"] = "hub"
+        gds_params["auth_property"] = "auth"
+        gds_params["hub_property"] = "hub"
         logger.info(f"HITS parameters: {gds_params}")
 
         if mode == "mutate":

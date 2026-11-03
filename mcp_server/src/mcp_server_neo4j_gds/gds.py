@@ -128,7 +128,7 @@ def projected_graph(gds, node_labels=None, relationship_types=None, undirected=F
                        )
                        """
             logger.info(f"Remote projection query: '{project_query}'")
-            G, _ = gds.graph.project(
+            G, _ = gds.graph.project.cypher(
                 graph_name,
                 project_query,
                 undirected_relationship_types=["*"] if undirected else None,
@@ -146,7 +146,7 @@ def projected_graph(gds, node_labels=None, relationship_types=None, undirected=F
                        )
                        """
             logger.info(f"Project query: '{project_query}'")
-            G, _ = gds.graph.cypher.project(
+            G, _ = gds.graph.project.cypher(
                 project_query,
                 graph_name=graph_name,
             )
@@ -162,7 +162,7 @@ def projected_graph(gds, node_labels=None, relationship_types=None, undirected=F
                        )
                        """
             logger.info(f"Projection query: '{projection_query}'")
-            G, _ = gds.graph.cypher.project(
+            G, _ = gds.graph.project.cypher(
                 projection_query,
                 graph_name=graph_name,
             )

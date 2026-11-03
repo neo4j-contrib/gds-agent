@@ -8,7 +8,8 @@
 
 ### New Features
 
-- `read_neo4j_cypher` runs a read query, `write_neo4j_cypher` runs a write query and returns the update counts, and `get_neo4j_schema` returns node and relationship types with their properties, indexes, connections, and counts.
+1. `read_neo4j_cypher` runs a read query, `write_neo4j_cypher` runs a write query and returns the update counts, and `get_neo4j_schema` returns node and relationship types with their properties, indexes, connections, and counts.
+2. Upgraded `graphdatascience` client from 1.22 to 2.3.
 
 ### Bug Fixes
 1. Warn that truncated results are incomplete and must not drive decisions.

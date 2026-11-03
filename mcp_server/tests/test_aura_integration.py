@@ -102,10 +102,10 @@ def test_aura_session_full_cycle(base_gds, session_manager):
         )
     """
 
-    G, _ = session_gds.graph.project("integration_direct_graph", cypher)
+    G, _ = session_gds.graph.project.cypher("integration_direct_graph", cypher)
     try:
         assert G.node_count() > 0
-        result = session_gds.pageRank.stream(G)
+        result = session_gds.page_rank.stream(G)
         assert len(result) > 0
     finally:
         session_gds.graph.drop("integration_direct_graph")

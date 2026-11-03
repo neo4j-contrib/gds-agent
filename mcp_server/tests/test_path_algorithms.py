@@ -85,7 +85,6 @@ async def test_delta_stepping_shortest_path(mcp_client, projected_test_graph):
     assert "nodeIds" in results[6]
     assert "nodeNames" in results[6]
     assert "costs" in results[6]
-    assert "path" in results[6]
 
     result = await mcp_client.call_tool(
         "delta_stepping_shortest_path",
@@ -132,7 +131,6 @@ async def test_dijkstra_single_source_shortest_path(mcp_client, projected_test_g
     assert "nodeIds" in results[6]
     assert "nodeNames" in results[6]
     assert "costs" in results[6]
-    assert "path" in results[6]
 
     result = await mcp_client.call_tool(
         "dijkstra_single_source_shortest_path",
@@ -236,7 +234,6 @@ async def test_yens_shortest_paths(mcp_client, projected_test_graph):
     assert "nodeIds" in first_result
     assert "nodeNames" in first_result
     assert "costs" in first_result
-    assert "path" in first_result
 
     # First path should be the optimal path (same as basic shortest path)
     assert first_result["totalCost"] == 5.0
@@ -695,7 +692,7 @@ async def test_random_walk_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "nodePropertiesWritten" in result_text
+    assert "node_properties_written" in result_text
 
 
 @pytest.mark.asyncio
@@ -716,9 +713,9 @@ async def test_find_shortest_path_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "relationshipsWritten" in result_text
+    assert "relationships_written" in result_text
 
-    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    match = re.search(r"relationships_written=(\d+)", result_text)
     assert match is not None
     relationships_written = int(match.group(1))
     assert relationships_written == 1
@@ -742,9 +739,9 @@ async def test_delta_stepping_shortest_path_mutate(mcp_client, projected_test_gr
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "relationshipsWritten" in result_text
+    assert "relationships_written" in result_text
 
-    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    match = re.search(r"relationships_written=(\d+)", result_text)
     assert match is not None
     relationships_written = int(match.group(1))
     assert relationships_written == 7
@@ -769,9 +766,9 @@ async def test_dijkstra_single_source_shortest_path_mutate(
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "relationshipsWritten" in result_text
+    assert "relationships_written" in result_text
 
-    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    match = re.search(r"relationships_written=(\d+)", result_text)
     assert match is not None
     relationships_written = int(match.group(1))
     assert relationships_written == 7
@@ -794,9 +791,9 @@ async def test_breadth_first_search_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "relationshipsWritten" in result_text
+    assert "relationships_written" in result_text
 
-    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    match = re.search(r"relationships_written=(\d+)", result_text)
     assert match is not None
     relationships_written = int(match.group(1))
     assert relationships_written > 0
@@ -819,9 +816,9 @@ async def test_depth_first_search_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "relationshipsWritten" in result_text
+    assert "relationships_written" in result_text
 
-    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    match = re.search(r"relationships_written=(\d+)", result_text)
     assert match is not None
     relationships_written = int(match.group(1))
     assert relationships_written > 0
@@ -846,9 +843,9 @@ async def test_bellman_ford_single_source_shortest_path_mutate(
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "relationshipsWritten" in result_text
+    assert "relationships_written" in result_text
 
-    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    match = re.search(r"relationships_written=(\d+)", result_text)
     assert match is not None
     relationships_written = int(match.group(1))
     assert relationships_written == 7
@@ -874,9 +871,9 @@ async def test_minimum_weight_spanning_tree_mutate(
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "relationshipsWritten" in result_text
+    assert "relationships_written" in result_text
 
-    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    match = re.search(r"relationships_written=(\d+)", result_text)
     assert match is not None
     relationships_written = int(match.group(1))
     assert relationships_written == 301
@@ -901,9 +898,9 @@ async def test_max_flow_mutate(mcp_client, projected_test_graph):
     assert len(result) == 1
     result_text = result[0]["text"]
 
-    assert "relationshipsWritten" in result_text
+    assert "relationships_written" in result_text
 
-    match = re.search(r"relationshipsWritten\s+(\d+)", result_text)
+    match = re.search(r"relationships_written=(\d+)", result_text)
     assert match is not None
     relationships_written = int(match.group(1))
     assert relationships_written > 0

@@ -418,7 +418,7 @@ dev = [
 
 [package.metadata]
 requires-dist = [
-    { name = "graphdatascience", specifier = "==1.22" },
+    { name = "graphdatascience", specifier = "==2.3" },
     { name = "mcp", extras = ["cli"], specifier = ">=2.0.0" },
     { name = "python-dotenv", specifier = ">=1.0.0" },
 ]
@@ -435,7 +435,7 @@ dev = [
 
 [[package]]
 name = "graphdatascience"
-version = "1.22"
+version = "2.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "multimethod" },
@@ -448,11 +448,10 @@ dependencies = [
     { name = "tenacity" },
     { name = "textdistance" },
     { name = "tqdm" },
-    { name = "typing-extensions" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/0a/9f/290f299f770ef9aad73b0c49e5683a6f7455cbc16b1b0a5546109a6f0fd9/graphdatascience-1.22.tar.gz", hash = "sha256:00bfad65dcaccd3d40f1f4e23661125dc7400ecffdb5a04c34512fc9a287f5a9", size = 1781480, upload-time = "2026-06-04T11:57:24.877Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/68/f1/cab151ddcc7a721d9bb8e193681ef1c719b5d9696318cedb2810109dfb7f/graphdatascience-2.3.tar.gz", hash = "sha256:b63471304648e3d5827cb5f87857e8824d74e0a4a356066efba621e33c7a1712", size = 1787187, upload-time = "2026-10-29T09:40:54.144Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/2f/4c/a55ff1ad641414456be2b2bc3d57a4d2bb86c5dadca378c0c83503bddbb4/graphdatascience-1.22-py3-none-any.whl", hash = "sha256:e2dfbd206daa61c39d00653d420edc63f409674d1449d6d0253794e1807b7604", size = 2101782, upload-time = "2026-06-04T11:57:23.036Z" },
+    { url = "https://files.pythonhosted.org/packages/ea/89/4b998e9e227f51fcfdffea0cfff880265bbfa514d51567b61f50248a4b9a/graphdatascience-2.3-py3-none-any.whl", hash = "sha256:03512b42930ffe10e935c24083ca897bbc131d6ca751a021f493e4c738a86492", size = 2107007, upload-time = "2026-10-29T09:40:52.514Z" },
 ]
 
 [[package]]
@@ -529,7 +528,7 @@ name = "importlib-metadata"
 version = "9.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "zipp", marker = "python_full_version < '3.12'" },
+    { name = "zipp" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a9/01/15bb152d77b21318514a96f43af312635eb2500c96b55398d020c93d86ea/importlib_metadata-9.0.0.tar.gz", hash = "sha256:a4f57ab599e6a2e3016d7595cfd72eb4661a5106e787a95bcc90c7105b831efc", size = 56405, upload-time = "2026-03-20T06:42:56.999Z" }
 wheels = [

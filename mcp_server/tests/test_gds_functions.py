@@ -303,8 +303,8 @@ def test_projection_with_labels_and_types(neo4j_container):
         node_labels = set(G.node_labels())
         rel_count = G.relationship_count()
         rel_types = set(G.relationship_types())
-        node_props = list(G.node_properties())
-        rel_props = list(G.relationship_properties())
+        node_props = list(G.node_properties().values())
+        rel_props = list(G.relationship_properties().values())
 
     with driver.session() as session:
         session.run("MATCH (n:Foo)  DETACH DELETE n")
