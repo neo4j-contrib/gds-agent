@@ -10,9 +10,9 @@ logger = logging.getLogger("mcp_server_neo4j_gds")
 class FastRPHandler(AlgorithmHandler):
     def fast_rp(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "mode", "node_identifier_property"]
         )
         logger.info(f"FastRP parameters: {gds_params}")
         if mode == "mutate":
@@ -20,33 +20,33 @@ class FastRPHandler(AlgorithmHandler):
         else:
             result = self.gds.fast_rp.stream(G, **gds_params)
             translate_ids_to_identifiers(
-                self.gds, kwargs.get("nodeIdentifierProperty"), result
+                self.gds, kwargs.get("node_identifier_property"), result
             )
         return result
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.fast_rp(
-            graphName=arguments.get("graphName"),
+            graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
-            embeddingDimension=arguments.get("embeddingDimension"),
-            iterationWeights=arguments.get("iterationWeights"),
-            normalizationStrength=arguments.get("normalizationStrength"),
-            nodeSelfInfluence=arguments.get("nodeSelfInfluence"),
-            propertyRatio=arguments.get("propertyRatio"),
-            featureProperties=arguments.get("featureProperties"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
-            randomSeed=arguments.get("randomSeed"),
+            mutate_property=arguments.get("mutate_property"),
+            node_identifier_property=arguments.get("node_identifier_property"),
+            embedding_dimension=arguments.get("embedding_dimension"),
+            iteration_weights=arguments.get("iteration_weights"),
+            normalization_strength=arguments.get("normalization_strength"),
+            node_self_influence=arguments.get("node_self_influence"),
+            property_ratio=arguments.get("property_ratio"),
+            feature_properties=arguments.get("feature_properties"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
+            random_seed=arguments.get("random_seed"),
         )
 
 
 class Node2VecHandler(AlgorithmHandler):
     def node2vec(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "mode", "node_identifier_property"]
         )
         logger.info(f"Node2Vec parameters: {gds_params}")
         if mode == "mutate":
@@ -54,40 +54,40 @@ class Node2VecHandler(AlgorithmHandler):
         else:
             result = self.gds.node2vec.stream(G, **gds_params)
             translate_ids_to_identifiers(
-                self.gds, kwargs.get("nodeIdentifierProperty"), result
+                self.gds, kwargs.get("node_identifier_property"), result
             )
         return result
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.node2vec(
-            graphName=arguments.get("graphName"),
+            graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
-            embeddingDimension=arguments.get("embeddingDimension"),
-            walkLength=arguments.get("walkLength"),
-            walksPerNode=arguments.get("walksPerNode"),
-            inOutFactor=arguments.get("inOutFactor"),
-            returnFactor=arguments.get("returnFactor"),
-            windowSize=arguments.get("windowSize"),
-            negativeSamplingRate=arguments.get("negativeSamplingRate"),
-            positiveSamplingFactor=arguments.get("positiveSamplingFactor"),
-            embeddingInitializer=arguments.get("embeddingInitializer"),
+            mutate_property=arguments.get("mutate_property"),
+            node_identifier_property=arguments.get("node_identifier_property"),
+            embedding_dimension=arguments.get("embedding_dimension"),
+            walk_length=arguments.get("walk_length"),
+            walks_per_node=arguments.get("walks_per_node"),
+            in_out_factor=arguments.get("in_out_factor"),
+            return_factor=arguments.get("return_factor"),
+            window_size=arguments.get("window_size"),
+            negative_sampling_rate=arguments.get("negative_sampling_rate"),
+            positive_sampling_factor=arguments.get("positive_sampling_factor"),
+            embedding_initializer=arguments.get("embedding_initializer"),
             iterations=arguments.get("iterations"),
-            initialLearningRate=arguments.get("initialLearningRate"),
-            minLearningRate=arguments.get("minLearningRate"),
-            walkBufferSize=arguments.get("walkBufferSize"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
-            randomSeed=arguments.get("randomSeed"),
+            initial_learning_rate=arguments.get("initial_learning_rate"),
+            min_learning_rate=arguments.get("min_learning_rate"),
+            walk_buffer_size=arguments.get("walk_buffer_size"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
+            random_seed=arguments.get("random_seed"),
         )
 
 
 class HashGNNHandler(AlgorithmHandler):
     def hash_gnn(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "mode", "node_identifier_property"]
         )
         logger.info(f"HashGNN parameters: {gds_params}")
         if mode == "mutate":
@@ -95,67 +95,67 @@ class HashGNNHandler(AlgorithmHandler):
         else:
             result = self.gds.hash_gnn.stream(G, **gds_params)
             translate_ids_to_identifiers(
-                self.gds, kwargs.get("nodeIdentifierProperty"), result
+                self.gds, kwargs.get("node_identifier_property"), result
             )
         return result
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.hash_gnn(
-            graphName=arguments.get("graphName"),
+            graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            mutate_property=arguments.get("mutate_property"),
+            node_identifier_property=arguments.get("node_identifier_property"),
             iterations=arguments.get("iterations"),
-            embeddingDensity=arguments.get("embeddingDensity"),
-            featureProperties=arguments.get("featureProperties"),
-            generateFeatures=arguments.get("generateFeatures"),
-            binarizeFeatures=arguments.get("binarizeFeatures"),
+            embedding_density=arguments.get("embedding_density"),
+            feature_properties=arguments.get("feature_properties"),
+            generate_features=arguments.get("generate_features"),
+            binarize_features=arguments.get("binarize_features"),
             heterogeneous=arguments.get("heterogeneous"),
-            neighborInfluence=arguments.get("neighborInfluence"),
-            outputDimension=arguments.get("outputDimension"),
-            randomSeed=arguments.get("randomSeed"),
+            neighbor_influence=arguments.get("neighbor_influence"),
+            output_dimension=arguments.get("output_dimension"),
+            random_seed=arguments.get("random_seed"),
         )
 
 
 class GraphSageTrainHandler(AlgorithmHandler):
     def graph_sage_train(self, **kwargs):
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        gds_params = clean_params(kwargs, ["graphName"])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
+        gds_params = clean_params(kwargs, ["graph_name"])
         logger.info(f"GraphSAGE train parameters: {gds_params}")
         model, result = self.gds.graph_sage.train(G, **gds_params)
         return {"modelName": model.name(), "trainResult": result.model_dump()}
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.graph_sage_train(
-            graphName=arguments.get("graphName"),
-            modelName=arguments.get("modelName"),
-            featureProperties=arguments.get("featureProperties"),
-            embeddingDimension=arguments.get("embeddingDimension"),
+            graph_name=arguments.get("graph_name"),
+            model_name=arguments.get("model_name"),
+            feature_properties=arguments.get("feature_properties"),
+            embedding_dimension=arguments.get("embedding_dimension"),
             aggregator=arguments.get("aggregator"),
-            activationFunction=arguments.get("activationFunction"),
-            sampleSizes=arguments.get("sampleSizes"),
+            activation_function=arguments.get("activation_function"),
+            sample_sizes=arguments.get("sample_sizes"),
             epochs=arguments.get("epochs"),
-            maxIterations=arguments.get("maxIterations"),
-            searchDepth=arguments.get("searchDepth"),
-            batchSize=arguments.get("batchSize"),
-            learningRate=arguments.get("learningRate"),
+            max_iterations=arguments.get("max_iterations"),
+            search_depth=arguments.get("search_depth"),
+            batch_size=arguments.get("batch_size"),
+            learning_rate=arguments.get("learning_rate"),
             tolerance=arguments.get("tolerance"),
-            negativeSampleWeight=arguments.get("negativeSampleWeight"),
-            penaltyL2=arguments.get("penaltyL2"),
-            projectedFeatureDimension=arguments.get("projectedFeatureDimension"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
-            randomSeed=arguments.get("randomSeed"),
+            negative_sample_weight=arguments.get("negative_sample_weight"),
+            penaltyL2=arguments.get("penalty_l2"),
+            projected_feature_dimension=arguments.get("projected_feature_dimension"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
+            random_seed=arguments.get("random_seed"),
         )
 
 
 class GraphSagePredictHandler(AlgorithmHandler):
     def graph_sage_predict(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        model_name = kwargs.get("modelName")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        model_name = kwargs.get("model_name")
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         model = self.gds.graph_sage.get(model_name)
         gds_params = clean_params(
-            kwargs, ["graphName", "modelName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "model_name", "mode", "node_identifier_property"]
         )
         logger.info(f"GraphSAGE predict parameters: {gds_params}")
         if mode == "mutate":
@@ -163,16 +163,16 @@ class GraphSagePredictHandler(AlgorithmHandler):
         else:
             result = model.predict_stream(G, **gds_params)
             translate_ids_to_identifiers(
-                self.gds, kwargs.get("nodeIdentifierProperty"), result
+                self.gds, kwargs.get("node_identifier_property"), result
             )
         return result
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.graph_sage_predict(
-            graphName=arguments.get("graphName"),
-            modelName=arguments.get("modelName"),
+            graph_name=arguments.get("graph_name"),
+            model_name=arguments.get("model_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
-            batchSize=arguments.get("batchSize"),
+            mutate_property=arguments.get("mutate_property"),
+            node_identifier_property=arguments.get("node_identifier_property"),
+            batch_size=arguments.get("batch_size"),
         )

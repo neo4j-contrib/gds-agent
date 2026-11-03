@@ -8,10 +8,10 @@ async def test_fast_rp_stream(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "fast_rp",
         {
-            "graphName": projected_test_graph,
-            "embeddingDimension": 32,
-            "randomSeed": 42,
-            "nodeIdentifierProperty": "name",
+            "graph_name": projected_test_graph,
+            "embedding_dimension": 32,
+            "random_seed": 42,
+            "node_identifier_property": "name",
         },
     )
 
@@ -30,11 +30,11 @@ async def test_fast_rp_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "fast_rp",
         {
-            "graphName": projected_test_graph,
-            "embeddingDimension": 32,
-            "randomSeed": 42,
+            "graph_name": projected_test_graph,
+            "embedding_dimension": 32,
+            "random_seed": 42,
             "mode": "mutate",
-            "mutateProperty": "fastrp_embedding",
+            "mutate_property": "fastrp_embedding",
         },
     )
 
@@ -48,8 +48,8 @@ async def test_fast_rp_mutate(mcp_client, projected_test_graph):
     stream_result = await mcp_client.call_tool(
         "stream_node_properties",
         {
-            "graphName": projected_test_graph,
-            "nodeProperties": "fastrp_embedding",
+            "graph_name": projected_test_graph,
+            "node_properties": "fastrp_embedding",
         },
     )
     assert "fastrp_embedding" in stream_result[0]["text"]
@@ -60,13 +60,13 @@ async def test_node2vec_stream(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "node2vec",
         {
-            "graphName": projected_test_graph,
-            "embeddingDimension": 16,
-            "walkLength": 10,
-            "walksPerNode": 2,
+            "graph_name": projected_test_graph,
+            "embedding_dimension": 16,
+            "walk_length": 10,
+            "walks_per_node": 2,
             "iterations": 1,
-            "randomSeed": 42,
-            "nodeIdentifierProperty": "name",
+            "random_seed": 42,
+            "node_identifier_property": "name",
         },
     )
 
@@ -84,12 +84,12 @@ async def test_hashgnn_stream(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "hashgnn",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "iterations": 2,
-            "embeddingDensity": 4,
-            "generateFeatures": {"dimension": 16, "densityLevel": 2},
-            "randomSeed": 42,
-            "nodeIdentifierProperty": "name",
+            "embedding_density": 4,
+            "generate_features": {"dimension": 16, "density_level": 2},
+            "random_seed": 42,
+            "node_identifier_property": "name",
         },
     )
 
@@ -109,15 +109,15 @@ async def test_graph_sage_train_and_predict(mcp_client, projected_undirected_gra
         result = await mcp_client.call_tool(
             "graph_sage_train",
             {
-                "graphName": projected_undirected_graph,
-                "modelName": model_name,
-                "featureProperties": ["zone", "latitude", "longitude"],
-                "embeddingDimension": 16,
-                "sampleSizes": [5, 3],
+                "graph_name": projected_undirected_graph,
+                "model_name": model_name,
+                "feature_properties": ["zone", "latitude", "longitude"],
+                "embedding_dimension": 16,
+                "sample_sizes": [5, 3],
                 "epochs": 1,
-                "maxIterations": 2,
-                "batchSize": 100,
-                "randomSeed": 42,
+                "max_iterations": 2,
+                "batch_size": 100,
+                "random_seed": 42,
             },
         )
 
@@ -132,9 +132,9 @@ async def test_graph_sage_train_and_predict(mcp_client, projected_undirected_gra
         stream_result = await mcp_client.call_tool(
             "graph_sage_predict",
             {
-                "graphName": projected_undirected_graph,
-                "modelName": model_name,
-                "nodeIdentifierProperty": "name",
+                "graph_name": projected_undirected_graph,
+                "model_name": model_name,
+                "node_identifier_property": "name",
             },
         )
         stream_text = stream_result[0]["text"]
@@ -144,10 +144,10 @@ async def test_graph_sage_train_and_predict(mcp_client, projected_undirected_gra
         mutate_result = await mcp_client.call_tool(
             "graph_sage_predict",
             {
-                "graphName": projected_undirected_graph,
-                "modelName": model_name,
+                "graph_name": projected_undirected_graph,
+                "model_name": model_name,
                 "mode": "mutate",
-                "mutateProperty": "sage_embedding",
+                "mutate_property": "sage_embedding",
             },
         )
         mutate_text = mutate_result[0]["text"]
@@ -157,6 +157,6 @@ async def test_graph_sage_train_and_predict(mcp_client, projected_undirected_gra
         assert int(match.group(1)) == 302
     finally:
         drop_result = await mcp_client.call_tool(
-            "drop_model", {"modelName": model_name}
+            "drop_model", {"model_name": model_name}
         )
         assert "dropped" in drop_result[0]["text"]

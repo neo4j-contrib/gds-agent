@@ -57,25 +57,25 @@ References:
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Unique name for the projected graph (e.g., 'my_graph', 'station_network'). This name will be used to reference the graph in algorithm tools.",
                 },
-                "cypherQuery": {
+                "cypher_query": {
                     "type": "string",
                     "description": "Cypher query that matches nodes and relationships, then returns the graph projection call. In plugin mode, call gds.graph.project() with $graph_name as the first argument. In Aura session mode, call gds.graph.project.remote() with exactly three arguments: source node, target node, and data config; do not pass graph name or a fourth config argument.",
                 },
-                "undirectedRelationshipTypes": {
+                "undirected_relationship_types": {
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "Optional. Relationship types to project as UNDIRECTED, e.g. ['LINK']. Required by algorithms that need undirected input, such as link prediction pipeline training. Only applies to Aura session mode, where it is a top-level projection parameter and must NOT appear in the gds.graph.project.remote() data config map. In plugin (on-prem) mode, omit this parameter and declare undirected relationships inside the Cypher query instead.",
                 },
-                "sessionName": {
+                "session_name": {
                     "type": "string",
                     "description": "Required in Aura session mode, not allowed in plugin mode. GDS session to project the graph into; must already exist (use create_session). 'mcp_' is prepended if missing. Most workflows project all graphs into one session; use separate sessions only to isolate graphs on separate compute, e.g. for parallel analyses.",
                 },
             },
-            "required": ["graphName", "cypherQuery"],
+            "required": ["graph_name", "cypher_query"],
         },
     ),
     types.Tool(
@@ -87,12 +87,12 @@ References:
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the graph to drop. This should be the name used when projecting the graph with project_graph_cypher.",
                 }
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -113,12 +113,12 @@ References:
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to inspect.",
                 }
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -129,27 +129,27 @@ References:
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph.",
                 },
-                "nodeProperties": {
+                "node_properties": {
                     "type": ["string", "array"],
                     "items": {"type": "string"},
                     "description": "Projected node property or properties to stream, such as a mutateProperty written by an algorithm.",
                 },
-                "nodeLabels": {
+                "node_labels": {
                     "type": ["string", "array"],
                     "items": {"type": "string"},
                     "description": "Optional node label or labels to stream from. Defaults to all labels.",
                 },
-                "dbNodeProperties": {
+                "db_node_properties": {
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "Optional Neo4j database node properties to include alongside projected properties, such as name or identifier fields.",
                 },
             },
-            "required": ["graphName", "nodeProperties"],
+            "required": ["graph_name", "node_properties"],
         },
     ),
     types.Tool(
@@ -160,22 +160,22 @@ References:
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph.",
                 },
-                "relationshipProperties": {
+                "relationship_properties": {
                     "type": ["string", "array"],
                     "items": {"type": "string"},
                     "description": "Projected relationship property or properties to stream.",
                 },
-                "relationshipTypes": {
+                "relationship_types": {
                     "type": ["string", "array"],
                     "items": {"type": "string"},
                     "description": "Optional relationship type or types to stream from. Defaults to all types.",
                 },
             },
-            "required": ["graphName", "relationshipProperties"],
+            "required": ["graph_name", "relationship_properties"],
         },
     ),
     types.Tool(
@@ -186,17 +186,17 @@ References:
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph.",
                 },
-                "relationshipTypes": {
+                "relationship_types": {
                     "type": ["string", "array"],
                     "items": {"type": "string"},
                     "description": "Optional relationship type or types to stream. Defaults to all types.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
 ]

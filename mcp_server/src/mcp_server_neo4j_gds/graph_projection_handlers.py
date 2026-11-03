@@ -54,9 +54,9 @@ class ProjectGraphCypherHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.project_graph_cypher(
-            graph_name=arguments.get("graphName"),
-            cypher_query=arguments.get("cypherQuery"),
-            undirected_relationship_types=arguments.get("undirectedRelationshipTypes"),
+            graph_name=arguments.get("graph_name"),
+            cypher_query=arguments.get("cypher_query"),
+            undirected_relationship_types=arguments.get("undirected_relationship_types"),
         )
 
 
@@ -71,7 +71,7 @@ class DropGraphHandler(AlgorithmHandler):
         }
 
     def execute(self, arguments: dict[str, Any]) -> Any:
-        return self.drop_graph(graph_name=arguments.get("graphName"))
+        return self.drop_graph(graph_name=arguments.get("graph_name"))
 
 
 class ListGraphsHandler(AlgorithmHandler):
@@ -126,7 +126,7 @@ class GraphInfoHandler(AlgorithmHandler):
         }
 
     def execute(self, arguments: dict[str, Any]) -> Any:
-        return self.graph_info(graph_name=arguments.get("graphName"))
+        return self.graph_info(graph_name=arguments.get("graph_name"))
 
 
 class StreamNodePropertiesHandler(AlgorithmHandler):
@@ -147,10 +147,10 @@ class StreamNodePropertiesHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.stream_node_properties(
-            graph_name=arguments.get("graphName"),
-            node_properties=arguments.get("nodeProperties"),
-            node_labels=arguments.get("nodeLabels"),
-            db_node_properties=arguments.get("dbNodeProperties"),
+            graph_name=arguments.get("graph_name"),
+            node_properties=arguments.get("node_properties"),
+            node_labels=arguments.get("node_labels"),
+            db_node_properties=arguments.get("db_node_properties"),
         )
 
 
@@ -170,9 +170,9 @@ class StreamRelationshipPropertiesHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.stream_relationship_properties(
-            graph_name=arguments.get("graphName"),
-            relationship_properties=arguments.get("relationshipProperties"),
-            relationship_types=arguments.get("relationshipTypes"),
+            graph_name=arguments.get("graph_name"),
+            relationship_properties=arguments.get("relationship_properties"),
+            relationship_types=arguments.get("relationship_types"),
         )
 
 
@@ -186,6 +186,6 @@ class StreamRelationshipsHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.stream_relationships(
-            graph_name=arguments.get("graphName"),
-            relationship_types=arguments.get("relationshipTypes"),
+            graph_name=arguments.get("graph_name"),
+            relationship_types=arguments.get("relationship_types"),
         )

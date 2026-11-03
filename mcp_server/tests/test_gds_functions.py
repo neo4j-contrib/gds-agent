@@ -294,10 +294,9 @@ def test_projection_with_labels_and_types(neo4j_container):
 
     with projected_graph_from_params(
         gds,
-        ["Foo"],
         undirected=False,
-        relTypes=["REL1", "REL2"],
-        nodeLabels=["Foo", "Bar"],
+        rel_types=["REL1", "REL2"],
+        node_labels=["Foo", "Bar"],
     ) as G:
         node_count = G.node_count()
         node_labels = set(G.node_labels())

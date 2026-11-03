@@ -10,12 +10,12 @@ async def test_node_classification_train_and_predict(mcp_client, projected_test_
         result = await mcp_client.call_tool(
             "train_node_classification_model",
             {
-                "graphName": projected_test_graph,
-                "modelName": model_name,
-                "targetProperty": "rail",
-                "featureProperties": ["zone", "total_lines"],
-                "splitConfig": {"testFraction": 0.3, "validationFolds": 2},
-                "randomSeed": 42,
+                "graph_name": projected_test_graph,
+                "model_name": model_name,
+                "target_property": "rail",
+                "feature_properties": ["zone", "total_lines"],
+                "split_config": {"test_fraction": 0.3, "validation_folds": 2},
+                "random_seed": 42,
             },
         )
 
@@ -28,9 +28,9 @@ async def test_node_classification_train_and_predict(mcp_client, projected_test_
         stream_result = await mcp_client.call_tool(
             "predict_node_classification",
             {
-                "graphName": projected_test_graph,
-                "modelName": model_name,
-                "nodeIdentifierProperty": "name",
+                "graph_name": projected_test_graph,
+                "model_name": model_name,
+                "node_identifier_property": "name",
             },
         )
         stream_text = stream_result[0]["text"]
@@ -43,10 +43,10 @@ async def test_node_classification_train_and_predict(mcp_client, projected_test_
         mutate_result = await mcp_client.call_tool(
             "predict_node_classification",
             {
-                "graphName": projected_test_graph,
-                "modelName": model_name,
+                "graph_name": projected_test_graph,
+                "model_name": model_name,
                 "mode": "mutate",
-                "mutateProperty": "predicted_rail",
+                "mutate_property": "predicted_rail",
             },
         )
         mutate_text = mutate_result[0]["text"]
@@ -55,7 +55,7 @@ async def test_node_classification_train_and_predict(mcp_client, projected_test_
         assert match is not None
         assert int(match.group(1)) == 302
     finally:
-        await mcp_client.call_tool("drop_model", {"modelName": model_name})
+        await mcp_client.call_tool("drop_model", {"model_name": model_name})
 
 
 @pytest.mark.asyncio
@@ -65,8 +65,8 @@ async def test_node_classification_predict_wrong_model_type(
     result = await mcp_client.call_tool(
         "predict_node_classification",
         {
-            "graphName": projected_test_graph,
-            "modelName": "nonexistent_model",
+            "graph_name": projected_test_graph,
+            "model_name": "nonexistent_model",
         },
     )
     assert "Error" in result[0]["text"]
@@ -81,21 +81,21 @@ async def test_link_prediction_train_and_predict(
         result = await mcp_client.call_tool(
             "train_link_prediction_model",
             {
-                "graphName": projected_undirected_graph,
-                "modelName": model_name,
-                "targetRelationshipType": "LINK",
-                "linkFeatures": [
+                "graph_name": projected_undirected_graph,
+                "model_name": model_name,
+                "target_relationship_type": "LINK",
+                "link_features": [
                     {
-                        "featureType": "hadamard",
-                        "nodeProperties": ["latitude", "longitude"],
+                        "feature_type": "hadamard",
+                        "node_properties": ["latitude", "longitude"],
                     }
                 ],
-                "splitConfig": {
-                    "trainFraction": 0.4,
-                    "testFraction": 0.3,
-                    "validationFolds": 2,
+                "split_config": {
+                    "train_fraction": 0.4,
+                    "test_fraction": 0.3,
+                    "validation_folds": 2,
                 },
-                "randomSeed": 42,
+                "random_seed": 42,
             },
         )
 
@@ -108,10 +108,10 @@ async def test_link_prediction_train_and_predict(
         stream_result = await mcp_client.call_tool(
             "predict_link_prediction",
             {
-                "graphName": projected_undirected_graph,
-                "modelName": model_name,
-                "topN": 5,
-                "nodeIdentifierProperty": "name",
+                "graph_name": projected_undirected_graph,
+                "model_name": model_name,
+                "top_n": 5,
+                "node_identifier_property": "name",
             },
         )
         stream_text = stream_result[0]["text"]
@@ -125,11 +125,11 @@ async def test_link_prediction_train_and_predict(
         mutate_result = await mcp_client.call_tool(
             "predict_link_prediction",
             {
-                "graphName": projected_undirected_graph,
-                "modelName": model_name,
+                "graph_name": projected_undirected_graph,
+                "model_name": model_name,
                 "mode": "mutate",
-                "topN": 5,
-                "mutateRelationshipType": "PREDICTED_LINK",
+                "top_n": 5,
+                "mutate_relationship_type": "PREDICTED_LINK",
             },
         )
         mutate_text = mutate_result[0]["text"]
@@ -138,7 +138,7 @@ async def test_link_prediction_train_and_predict(
         assert match is not None
         assert int(match.group(1)) > 0
     finally:
-        await mcp_client.call_tool("drop_model", {"modelName": model_name})
+        await mcp_client.call_tool("drop_model", {"model_name": model_name})
 
 
 @pytest.mark.asyncio
@@ -148,13 +148,13 @@ async def test_node_regression_train_and_predict(mcp_client, projected_test_grap
         result = await mcp_client.call_tool(
             "train_node_regression_model",
             {
-                "graphName": projected_test_graph,
-                "modelName": model_name,
-                "targetProperty": "zone",
-                "featureProperties": ["latitude", "longitude", "total_lines"],
-                "splitConfig": {"testFraction": 0.3, "validationFolds": 2},
-                "modelCandidates": [{"method": "linearRegression"}],
-                "randomSeed": 42,
+                "graph_name": projected_test_graph,
+                "model_name": model_name,
+                "target_property": "zone",
+                "feature_properties": ["latitude", "longitude", "total_lines"],
+                "split_config": {"test_fraction": 0.3, "validation_folds": 2},
+                "model_candidates": [{"method": "linear_regression"}],
+                "random_seed": 42,
             },
         )
 
@@ -167,9 +167,9 @@ async def test_node_regression_train_and_predict(mcp_client, projected_test_grap
         stream_result = await mcp_client.call_tool(
             "predict_node_regression",
             {
-                "graphName": projected_test_graph,
-                "modelName": model_name,
-                "nodeIdentifierProperty": "name",
+                "graph_name": projected_test_graph,
+                "model_name": model_name,
+                "node_identifier_property": "name",
             },
         )
         stream_text = stream_result[0]["text"]
@@ -179,7 +179,7 @@ async def test_node_regression_train_and_predict(mcp_client, projected_test_grap
         data_lines = [line for line in lines[1:] if line.strip()]
         assert len(data_lines) == 302
     finally:
-        await mcp_client.call_tool("drop_model", {"modelName": model_name})
+        await mcp_client.call_tool("drop_model", {"model_name": model_name})
 
 
 @pytest.mark.asyncio

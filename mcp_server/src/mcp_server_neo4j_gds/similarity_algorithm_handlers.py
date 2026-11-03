@@ -13,20 +13,20 @@ logger = logging.getLogger("mcp_server_neo4j_gds")
 class NodeSimilarityHandler(AlgorithmHandler):
     def node_similarity(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
             kwargs,
             [
-                "graphName",
-                "nodeIdentifierProperty",
-                "sourceNodeFilter",
-                "targetNodeFilter",
+                "graph_name",
+                "node_identifier_property",
+                "source_node_filter",
+                "target_node_filter",
                 "mode",
             ],
         )
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        source_nodes = kwargs.get("sourceNodeFilter", None)
-        target_nodes = kwargs.get("targetNodeFilter", None)
+        node_identifier_property = kwargs.get("node_identifier_property")
+        source_nodes = kwargs.get("source_node_filter", None)
+        target_nodes = kwargs.get("target_node_filter", None)
         translate_identifiers_to_ids(
             self.gds,
             source_nodes,
@@ -60,7 +60,7 @@ class NodeSimilarityHandler(AlgorithmHandler):
             else:
                 result = self.gds.node_similarity.stream(G, **gds_params)
 
-            node_identifier_property = kwargs.get("nodeIdentifierProperty")
+            node_identifier_property = kwargs.get("node_identifier_property")
             translate_ids_to_identifiers(
                 self.gds,
                 node_identifier_property,
@@ -79,43 +79,43 @@ class NodeSimilarityHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.node_similarity(
-            graphName=arguments.get("graphName"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
-            sourceNodeFilter=arguments.get("sourceNodeFilter"),
-            targetNodeFilter=arguments.get("targetNodeFilter"),
+            graph_name=arguments.get("graph_name"),
+            node_identifier_property=arguments.get("node_identifier_property"),
+            source_node_filter=arguments.get("source_node_filter"),
+            target_node_filter=arguments.get("target_node_filter"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            mutateRelationshipType=arguments.get("mutateRelationshipType"),
-            similarityCutoff=arguments.get("similarityCutoff"),
-            degreeCutoff=arguments.get("degreeCutoff"),
-            upperDegreeCutoff=arguments.get("upperDegreeCutoff"),
-            topK=arguments.get("topK"),
-            bottomK=arguments.get("bottomK"),
-            topN=arguments.get("topN"),
-            bottomN=arguments.get("bottomN"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
-            similarityMetric=arguments.get("similarityMetric"),
-            useComponents=arguments.get("useComponents"),
+            mutate_property=arguments.get("mutate_property"),
+            mutate_relationship_type=arguments.get("mutate_relationship_type"),
+            similarity_cutoff=arguments.get("similarity_cutoff"),
+            degree_cutoff=arguments.get("degree_cutoff"),
+            upper_degree_cutoff=arguments.get("upper_degree_cutoff"),
+            top_k=arguments.get("top_k"),
+            bottom_k=arguments.get("bottom_k"),
+            top_n=arguments.get("top_n"),
+            bottom_n=arguments.get("bottom_n"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
+            similarity_metric=arguments.get("similarity_metric"),
+            use_components=arguments.get("use_components"),
         )
 
 
 class KNearestNeighborsHandler(AlgorithmHandler):
     def k_nearest_neighbors(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
             kwargs,
             [
-                "graphName",
-                "nodeIdentifierProperty",
-                "sourceNodeFilter",
-                "targetNodeFilter",
+                "graph_name",
+                "node_identifier_property",
+                "source_node_filter",
+                "target_node_filter",
                 "mode",
             ],
         )
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        source_nodes = kwargs.get("sourceNodeFilter", None)
-        target_nodes = kwargs.get("targetNodeFilter", None)
+        node_identifier_property = kwargs.get("node_identifier_property")
+        source_nodes = kwargs.get("source_node_filter", None)
+        target_nodes = kwargs.get("target_node_filter", None)
         translate_identifiers_to_ids(
             self.gds,
             source_nodes,
@@ -150,7 +150,7 @@ class KNearestNeighborsHandler(AlgorithmHandler):
             else:
                 result = self.gds.knn.stream(G, **gds_params)
 
-            node_identifier_property = kwargs.get("nodeIdentifierProperty")
+            node_identifier_property = kwargs.get("node_identifier_property")
             translate_ids_to_identifiers(
                 self.gds,
                 node_identifier_property,
@@ -170,21 +170,21 @@ class KNearestNeighborsHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.k_nearest_neighbors(
-            graphName=arguments.get("graphName"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
-            sourceNodeFilter=arguments.get("sourceNodeFilter"),
-            targetNodeFilter=arguments.get("targetNodeFilter"),
+            graph_name=arguments.get("graph_name"),
+            node_identifier_property=arguments.get("node_identifier_property"),
+            source_node_filter=arguments.get("source_node_filter"),
+            target_node_filter=arguments.get("target_node_filter"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            mutateRelationshipType=arguments.get("mutateRelationshipType"),
-            nodeProperties=arguments.get("nodeProperties"),
-            topK=arguments.get("topK"),
-            sampleRate=arguments.get("sampleRate"),
-            deltaThreshold=arguments.get("deltaThreshold"),
-            maxIterations=arguments.get("maxIterations"),
-            randomJoins=arguments.get("randomJoins"),
-            initialSampler=arguments.get("initialSampler"),
-            similarityCutoff=arguments.get("similarityCutoff"),
-            perturbationRate=arguments.get("perturbationRate"),
-            seedTargetNodes=arguments.get("seedTargetNodes"),
+            mutate_property=arguments.get("mutate_property"),
+            mutate_relationship_type=arguments.get("mutate_relationship_type"),
+            node_properties=arguments.get("node_properties"),
+            top_k=arguments.get("top_k"),
+            sample_rate=arguments.get("sample_rate"),
+            delta_threshold=arguments.get("delta_threshold"),
+            max_iterations=arguments.get("max_iterations"),
+            random_joins=arguments.get("random_joins"),
+            initial_sampler=arguments.get("initial_sampler"),
+            similarity_cutoff=arguments.get("similarity_cutoff"),
+            perturbation_rate=arguments.get("perturbation_rate"),
+            seed_target_nodes=arguments.get("seed_target_nodes"),
         )

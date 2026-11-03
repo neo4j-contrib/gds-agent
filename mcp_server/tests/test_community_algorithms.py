@@ -8,8 +8,8 @@ async def test_conductance(mcp_client, projected_undirected_graph):
     result = await mcp_client.call_tool(
         "conductance",
         {
-            "communityProperty": "total_lines",
-            "graphName": projected_undirected_graph,
+            "community_property": "total_lines",
+            "graph_name": projected_undirected_graph,
         },
     )
 
@@ -33,8 +33,8 @@ async def test_k_core_decomposition(mcp_client, projected_undirected_graph):
     result_with_names = await mcp_client.call_tool(
         "k_core_decomposition",
         {
-            "nodeIdentifierProperty": "name",
-            "graphName": projected_undirected_graph,
+            "node_identifier_property": "name",
+            "graph_name": projected_undirected_graph,
         },
     )
 
@@ -53,9 +53,9 @@ async def test_k_1_coloring(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
         "k_1_coloring",
         {
-            "nodeIdentifierProperty": "name",
-            "maxIterations": 5,
-            "graphName": projected_test_graph,
+            "node_identifier_property": "name",
+            "max_iterations": 5,
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -74,9 +74,9 @@ async def test_k_core_decomposition_mutate(mcp_client, projected_undirected_grap
     result = await mcp_client.call_tool(
         "k_core_decomposition",
         {
-            "graphName": projected_undirected_graph,
+            "graph_name": projected_undirected_graph,
             "mode": "mutate",
-            "mutateProperty": "kcore",
+            "mutate_property": "kcore",
         },
     )
 
@@ -96,10 +96,10 @@ async def test_k_1_coloring_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "k_1_coloring",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "color",
-            "maxIterations": 5,
+            "mutate_property": "color",
+            "max_iterations": 5,
         },
     )
 
@@ -126,9 +126,9 @@ async def test_label_propagation(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
         "label_propagation",
         {
-            "nodeIdentifierProperty": "name",
-            "maxIterations": 10,
-            "graphName": projected_test_graph,
+            "node_identifier_property": "name",
+            "max_iterations": 10,
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -147,9 +147,9 @@ async def test_leiden(mcp_client, projected_undirected_graph):
     result_with_names = await mcp_client.call_tool(
         "leiden",
         {
-            "nodeIdentifierProperty": "name",
-            "maxLevels": 10,
-            "graphName": projected_undirected_graph,
+            "node_identifier_property": "name",
+            "max_levels": 10,
+            "graph_name": projected_undirected_graph,
         },
     )
 
@@ -168,9 +168,9 @@ async def test_local_clustering_coefficient(mcp_client, projected_undirected_gra
     result_filtered = await mcp_client.call_tool(
         "local_clustering_coefficient",
         {
-            "nodeIdentifierProperty": "name",
+            "node_identifier_property": "name",
             "nodes": ["Bank"],
-            "graphName": projected_undirected_graph,
+            "graph_name": projected_undirected_graph,
         },
     )
     assert len(result_filtered) == 1
@@ -188,10 +188,10 @@ async def test_label_propagation_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "label_propagation",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "community",
-            "maxIterations": 10,
+            "mutate_property": "community",
+            "max_iterations": 10,
         },
     )
 
@@ -211,10 +211,10 @@ async def test_leiden_mutate(mcp_client, projected_undirected_graph):
     result = await mcp_client.call_tool(
         "leiden",
         {
-            "graphName": projected_undirected_graph,
+            "graph_name": projected_undirected_graph,
             "mode": "mutate",
-            "mutateProperty": "leidenCommunity",
-            "maxLevels": 10,
+            "mutate_property": "leidenCommunity",
+            "max_levels": 10,
         },
     )
 
@@ -236,9 +236,9 @@ async def test_local_clustering_coefficient_mutate(
     result = await mcp_client.call_tool(
         "local_clustering_coefficient",
         {
-            "graphName": projected_undirected_graph,
+            "graph_name": projected_undirected_graph,
             "mode": "mutate",
-            "mutateProperty": "lcc",
+            "mutate_property": "lcc",
         },
     )
 
@@ -258,9 +258,9 @@ async def test_louvain(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
         "louvain",
         {
-            "nodeIdentifierProperty": "name",
-            "maxLevels": 10,
-            "graphName": projected_test_graph,
+            "node_identifier_property": "name",
+            "max_levels": 10,
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -279,10 +279,10 @@ async def test_louvain_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "louvain",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "louvainCommunity",
-            "maxLevels": 10,
+            "mutate_property": "louvainCommunity",
+            "max_levels": 10,
         },
     )
 
@@ -302,8 +302,8 @@ async def test_modularity_metric(mcp_client, projected_undirected_graph):
     result = await mcp_client.call_tool(
         "modularity_metric",
         {
-            "communityProperty": "total_lines",
-            "graphName": projected_undirected_graph,
+            "community_property": "total_lines",
+            "graph_name": projected_undirected_graph,
         },
     )
 
@@ -333,9 +333,9 @@ async def test_modularity_optimization(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
         "modularity_optimization",
         {
-            "nodeIdentifierProperty": "name",
-            "maxIterations": 10,
-            "graphName": projected_test_graph,
+            "node_identifier_property": "name",
+            "max_iterations": 10,
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -354,10 +354,10 @@ async def test_modularity_optimization_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "modularity_optimization",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "modularityCommunity",
-            "maxIterations": 10,
+            "mutate_property": "modularityCommunity",
+            "max_iterations": 10,
         },
     )
 
@@ -377,7 +377,7 @@ async def test_modularity_optimization_mutate(mcp_client, projected_test_graph):
 async def test_strongly_connected_components(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
         "strongly_connected_components",
-        {"nodeIdentifierProperty": "name", "graphName": projected_test_graph},
+        {"node_identifier_property": "name", "graph_name": projected_test_graph},
     )
 
     assert len(result_with_names) == 1
@@ -395,9 +395,9 @@ async def test_triangle_count(mcp_client, projected_undirected_graph):
     result_filtered = await mcp_client.call_tool(
         "triangle_count",
         {
-            "nodeIdentifierProperty": "name",
+            "node_identifier_property": "name",
             "nodes": ["Bank"],
-            "graphName": projected_undirected_graph,
+            "graph_name": projected_undirected_graph,
         },
     )
     assert len(result_filtered) == 1
@@ -415,9 +415,9 @@ async def test_strongly_connected_components_mutate(mcp_client, projected_test_g
     result = await mcp_client.call_tool(
         "strongly_connected_components",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "sccComponent",
+            "mutate_property": "sccComponent",
         },
     )
 
@@ -437,9 +437,9 @@ async def test_triangle_count_mutate(mcp_client, projected_undirected_graph):
     result = await mcp_client.call_tool(
         "triangle_count",
         {
-            "graphName": projected_undirected_graph,
+            "graph_name": projected_undirected_graph,
             "mode": "mutate",
-            "mutateProperty": "triangles",
+            "mutate_property": "triangles",
         },
     )
 
@@ -458,7 +458,7 @@ async def test_triangle_count_mutate(mcp_client, projected_undirected_graph):
 async def test_weakly_connected_components(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
         "weakly_connected_components",
-        {"nodeIdentifierProperty": "name", "graphName": projected_test_graph},
+        {"node_identifier_property": "name", "graph_name": projected_test_graph},
     )
 
     assert len(result_with_names) == 1
@@ -475,7 +475,7 @@ async def test_weakly_connected_components(mcp_client, projected_test_graph):
 async def test_approximate_maximum_k_cut(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
         "approximate_maximum_k_cut",
-        {"nodeIdentifierProperty": "name", "k": 2, "graphName": projected_test_graph},
+        {"node_identifier_property": "name", "k": 2, "graph_name": projected_test_graph},
     )
 
     assert len(result_with_names) == 1
@@ -493,9 +493,9 @@ async def test_weakly_connected_components_mutate(mcp_client, projected_test_gra
     result = await mcp_client.call_tool(
         "weakly_connected_components",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "wccComponent",
+            "mutate_property": "wccComponent",
         },
     )
 
@@ -515,9 +515,9 @@ async def test_approximate_maximum_k_cut_mutate(mcp_client, projected_test_graph
     result = await mcp_client.call_tool(
         "approximate_maximum_k_cut",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "cutCommunity",
+            "mutate_property": "cutCommunity",
             "k": 2,
         },
     )
@@ -538,10 +538,10 @@ async def test_speaker_listener_label_propagation(mcp_client, projected_test_gra
     result_with_names = await mcp_client.call_tool(
         "speaker_listener_label_propagation",
         {
-            "nodeIdentifierProperty": "name",
-            "maxIterations": 10,
-            "minAssociationStrength": 0.1,
-            "graphName": projected_test_graph,
+            "node_identifier_property": "name",
+            "max_iterations": 10,
+            "min_association_strength": 0.1,
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -562,11 +562,11 @@ async def test_speaker_listener_label_propagation_mutate(
     result = await mcp_client.call_tool(
         "speaker_listener_label_propagation",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "sllpCommunity",
-            "maxIterations": 10,
-            "minAssociationStrength": 0.1,
+            "mutate_property": "sllpCommunity",
+            "max_iterations": 10,
+            "min_association_strength": 0.1,
         },
     )
 

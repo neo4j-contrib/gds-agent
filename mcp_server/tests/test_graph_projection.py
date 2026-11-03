@@ -8,8 +8,8 @@ async def test_project_and_drop_graph(mcp_client):
     result = await mcp_client.call_tool(
         "project_graph_cypher",
         {
-            "graphName": "test_projection",
-            "cypherQuery": """
+            "graph_name": "test_projection",
+            "cypher_query": """
                 MATCH (n:UndergroundStation)-[r:LINK]->(m:UndergroundStation)
                 RETURN gds.graph.project(
                     $graph_name,
@@ -39,7 +39,7 @@ async def test_project_and_drop_graph(mcp_client):
 
     # Drop the graph
     drop_result = await mcp_client.call_tool(
-        "drop_graph", {"graphName": "test_projection"}
+        "drop_graph", {"graph_name": "test_projection"}
     )
     assert len(drop_result) == 1
     drop_text = drop_result[0]["text"]
@@ -62,8 +62,8 @@ async def test_projected_test_graph_fixture(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "pagerank",
         {
-            "graphName": projected_test_graph,
-            "nodeIdentifierProperty": "name",
+            "graph_name": projected_test_graph,
+            "node_identifier_property": "name",
         },
     )
 

@@ -3,27 +3,25 @@ import uuid
 from contextlib import suppress
 from typing import Any
 
-from .algorithm_handler import AlgorithmHandler, clean_params, snake_case_keys
+from .algorithm_handler import AlgorithmHandler, clean_params
 from .node_translator import translate_ids_to_identifiers
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
 
 PIPELINE_CONFIG_KEYS = [
-    "graphName",
-    "nodePropertySteps",
-    "featureProperties",
-    "linkFeatures",
-    "splitConfig",
-    "modelCandidates",
-    "autoTuningConfig",
+    "graph_name",
+    "node_property_steps",
+    "feature_properties",
+    "link_features",
+    "split_config",
+    "model_candidates",
+    "auto_tuning_config",
 ]
 
 
 def add_node_property_steps(pipeline, steps):
     for step in steps or []:
-        pipeline.add_node_property(
-            step["procedure"], **snake_case_keys(step.get("config") or {})
-        )
+        pipeline.add_node_property(step["procedure"], **(step.get("config") or {}))
 
 
 def add_model_candidates(pipeline, candidates, default_method, methods):
@@ -36,24 +34,22 @@ def add_model_candidates(pipeline, candidates, default_method, methods):
                 f"Unsupported model candidate method '{method}'. "
                 f"Supported methods: {sorted(methods)}"
             )
-        getattr(pipeline, methods[method])(
-            **snake_case_keys(candidate.get("config") or {})
-        )
+        getattr(pipeline, methods[method])(**(candidate.get("config") or {}))
 
 
 def configure_pipeline(pipeline, kwargs, default_method, methods):
-    add_node_property_steps(pipeline, kwargs.get("nodePropertySteps"))
-    if kwargs.get("splitConfig"):
-        pipeline.configure_split(**snake_case_keys(kwargs["splitConfig"]))
+    add_node_property_steps(pipeline, kwargs.get("node_property_steps"))
+    if kwargs.get("split_config"):
+        pipeline.configure_split(**kwargs["split_config"])
     add_model_candidates(
-        pipeline, kwargs.get("modelCandidates"), default_method, methods
+        pipeline, kwargs.get("model_candidates"), default_method, methods
     )
-    if kwargs.get("autoTuningConfig"):
-        pipeline.configure_auto_tuning(**snake_case_keys(kwargs["autoTuningConfig"]))
+    if kwargs.get("auto_tuning_config"):
+        pipeline.configure_auto_tuning(**kwargs["auto_tuning_config"])
 
 
 def train_pipeline(gds, pipeline, kwargs, default_metrics):
-    G = gds.graph.get(kwargs.get("graphName"))
+    G = gds.graph.get(kwargs.get("graph_name"))
     train_params = clean_params(kwargs, PIPELINE_CONFIG_KEYS)
     train_params.setdefault("metrics", default_metrics)
     logger.info(f"Pipeline train parameters: {train_params}")
@@ -71,14 +67,14 @@ class NodeClassificationTrainHandler(AlgorithmHandler):
             f"nc_pipeline_{uuid.uuid4().hex[:8]}"
         )
         try:
-            pipeline.select_features(kwargs.get("featureProperties"))
+            pipeline.select_features(kwargs.get("feature_properties"))
             configure_pipeline(
                 pipeline,
                 kwargs,
-                "logisticRegression",
+                "logistic_regression",
                 {
-                    "logisticRegression": "add_logistic_regression",
-                    "randomForest": "add_random_forest",
+                    "logistic_regression": "add_logistic_regression",
+                    "random_forest": "add_random_forest",
                     "mlp": "add_mlp",
                 },
             )
@@ -89,30 +85,30 @@ class NodeClassificationTrainHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.train_node_classification_model(
-            graphName=arguments.get("graphName"),
-            modelName=arguments.get("modelName"),
-            targetProperty=arguments.get("targetProperty"),
-            featureProperties=arguments.get("featureProperties"),
-            nodePropertySteps=arguments.get("nodePropertySteps"),
-            splitConfig=arguments.get("splitConfig"),
-            modelCandidates=arguments.get("modelCandidates"),
-            autoTuningConfig=arguments.get("autoTuningConfig"),
+            graph_name=arguments.get("graph_name"),
+            model_name=arguments.get("model_name"),
+            target_property=arguments.get("target_property"),
+            feature_properties=arguments.get("feature_properties"),
+            node_property_steps=arguments.get("node_property_steps"),
+            split_config=arguments.get("split_config"),
+            model_candidates=arguments.get("model_candidates"),
+            auto_tuning_config=arguments.get("auto_tuning_config"),
             metrics=arguments.get("metrics"),
-            targetNodeLabels=arguments.get("targetNodeLabels"),
-            randomSeed=arguments.get("randomSeed"),
+            target_node_labels=arguments.get("target_node_labels"),
+            random_seed=arguments.get("random_seed"),
         )
 
 
 class NodeClassificationPredictHandler(AlgorithmHandler):
     def predict_node_classification(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         model = get_model(
-            kwargs.get("modelName"),
+            kwargs.get("model_name"),
             self.gds.pipeline.node_classification.get_model,
         )
         gds_params = clean_params(
-            kwargs, ["graphName", "modelName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "model_name", "mode", "node_identifier_property"]
         )
         logger.info(f"Node classification predict parameters: {gds_params}")
         if mode == "mutate":
@@ -120,22 +116,24 @@ class NodeClassificationPredictHandler(AlgorithmHandler):
         else:
             result = model.predict_stream(G, **gds_params)
             translate_ids_to_identifiers(
-                self.gds, kwargs.get("nodeIdentifierProperty"), result
+                self.gds, kwargs.get("node_identifier_property"), result
             )
         return result
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.predict_node_classification(
-            graphName=arguments.get("graphName"),
-            modelName=arguments.get("modelName"),
+            graph_name=arguments.get("graph_name"),
+            model_name=arguments.get("model_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            predictedProbabilityProperty=arguments.get("predictedProbabilityProperty"),
-            includePredictedProbabilities=arguments.get(
-                "includePredictedProbabilities"
+            mutate_property=arguments.get("mutate_property"),
+            predicted_probability_property=arguments.get(
+                "predicted_probability_property"
             ),
-            targetNodeLabels=arguments.get("targetNodeLabels"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            include_predicted_probabilities=arguments.get(
+                "include_predicted_probabilities"
+            ),
+            target_node_labels=arguments.get("target_node_labels"),
+            node_identifier_property=arguments.get("node_identifier_property"),
         )
 
 
@@ -145,18 +143,18 @@ class LinkPredictionTrainHandler(AlgorithmHandler):
             f"lp_pipeline_{uuid.uuid4().hex[:8]}"
         )
         try:
-            for feature in kwargs.get("linkFeatures") or []:
+            for feature in kwargs.get("link_features") or []:
                 pipeline.add_feature(
-                    feature["featureType"],
-                    node_properties=feature["nodeProperties"],
+                    feature["feature_type"],
+                    node_properties=feature["node_properties"],
                 )
             configure_pipeline(
                 pipeline,
                 kwargs,
-                "logisticRegression",
+                "logistic_regression",
                 {
-                    "logisticRegression": "add_logistic_regression",
-                    "randomForest": "add_random_forest",
+                    "logistic_regression": "add_logistic_regression",
+                    "random_forest": "add_random_forest",
                     "mlp": "add_mlp",
                 },
             )
@@ -167,39 +165,39 @@ class LinkPredictionTrainHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.train_link_prediction_model(
-            graphName=arguments.get("graphName"),
-            modelName=arguments.get("modelName"),
-            targetRelationshipType=arguments.get("targetRelationshipType"),
-            sourceNodeLabel=arguments.get("sourceNodeLabel"),
-            targetNodeLabel=arguments.get("targetNodeLabel"),
-            linkFeatures=arguments.get("linkFeatures"),
-            nodePropertySteps=arguments.get("nodePropertySteps"),
-            splitConfig=arguments.get("splitConfig"),
-            modelCandidates=arguments.get("modelCandidates"),
-            autoTuningConfig=arguments.get("autoTuningConfig"),
+            graph_name=arguments.get("graph_name"),
+            model_name=arguments.get("model_name"),
+            target_relationship_type=arguments.get("target_relationship_type"),
+            source_node_label=arguments.get("source_node_label"),
+            target_node_label=arguments.get("target_node_label"),
+            link_features=arguments.get("link_features"),
+            node_property_steps=arguments.get("node_property_steps"),
+            split_config=arguments.get("split_config"),
+            model_candidates=arguments.get("model_candidates"),
+            auto_tuning_config=arguments.get("auto_tuning_config"),
             metrics=arguments.get("metrics"),
-            negativeClassWeight=arguments.get("negativeClassWeight"),
-            randomSeed=arguments.get("randomSeed"),
+            negative_class_weight=arguments.get("negative_class_weight"),
+            random_seed=arguments.get("random_seed"),
         )
 
 
 class LinkPredictionPredictHandler(AlgorithmHandler):
     def predict_link_prediction(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         model = get_model(
-            kwargs.get("modelName"),
+            kwargs.get("model_name"),
             self.gds.pipeline.link_prediction.get_model,
         )
         gds_params = clean_params(
-            kwargs, ["graphName", "modelName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "model_name", "mode", "node_identifier_property"]
         )
         logger.info(f"Link prediction predict parameters: {gds_params}")
         if mode == "mutate":
             result = model.predict_mutate(G, **gds_params)
         else:
             result = model.predict_stream(G, **gds_params)
-            node_identifier_property = kwargs.get("nodeIdentifierProperty")
+            node_identifier_property = kwargs.get("node_identifier_property")
             translate_ids_to_identifiers(
                 self.gds, node_identifier_property, result, "node1", "node1Name"
             )
@@ -210,19 +208,19 @@ class LinkPredictionPredictHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.predict_link_prediction(
-            graphName=arguments.get("graphName"),
-            modelName=arguments.get("modelName"),
+            graph_name=arguments.get("graph_name"),
+            model_name=arguments.get("model_name"),
             mode=arguments.get("mode"),
-            mutateRelationshipType=arguments.get("mutateRelationshipType"),
-            mutateProperty=arguments.get("mutateProperty"),
-            topN=arguments.get("topN"),
+            mutate_relationship_type=arguments.get("mutate_relationship_type"),
+            mutate_property=arguments.get("mutate_property"),
+            top_n=arguments.get("top_n"),
             threshold=arguments.get("threshold"),
-            sampleRate=arguments.get("sampleRate"),
-            topK=arguments.get("topK"),
-            deltaThreshold=arguments.get("deltaThreshold"),
-            maxIterations=arguments.get("maxIterations"),
-            randomJoins=arguments.get("randomJoins"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            sample_rate=arguments.get("sample_rate"),
+            top_k=arguments.get("top_k"),
+            delta_threshold=arguments.get("delta_threshold"),
+            max_iterations=arguments.get("max_iterations"),
+            random_joins=arguments.get("random_joins"),
+            node_identifier_property=arguments.get("node_identifier_property"),
         )
 
 
@@ -232,14 +230,14 @@ class NodeRegressionTrainHandler(AlgorithmHandler):
             f"nr_pipeline_{uuid.uuid4().hex[:8]}"
         )
         try:
-            pipeline.select_features(kwargs.get("featureProperties"))
+            pipeline.select_features(kwargs.get("feature_properties"))
             configure_pipeline(
                 pipeline,
                 kwargs,
-                "linearRegression",
+                "linear_regression",
                 {
-                    "linearRegression": "add_linear_regression",
-                    "randomForest": "add_random_forest",
+                    "linear_regression": "add_linear_regression",
+                    "random_forest": "add_random_forest",
                 },
             )
             return train_pipeline(self.gds, pipeline, kwargs, ["MEAN_SQUARED_ERROR"])
@@ -249,30 +247,30 @@ class NodeRegressionTrainHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.train_node_regression_model(
-            graphName=arguments.get("graphName"),
-            modelName=arguments.get("modelName"),
-            targetProperty=arguments.get("targetProperty"),
-            featureProperties=arguments.get("featureProperties"),
-            nodePropertySteps=arguments.get("nodePropertySteps"),
-            splitConfig=arguments.get("splitConfig"),
-            modelCandidates=arguments.get("modelCandidates"),
-            autoTuningConfig=arguments.get("autoTuningConfig"),
+            graph_name=arguments.get("graph_name"),
+            model_name=arguments.get("model_name"),
+            target_property=arguments.get("target_property"),
+            feature_properties=arguments.get("feature_properties"),
+            node_property_steps=arguments.get("node_property_steps"),
+            split_config=arguments.get("split_config"),
+            model_candidates=arguments.get("model_candidates"),
+            auto_tuning_config=arguments.get("auto_tuning_config"),
             metrics=arguments.get("metrics"),
-            targetNodeLabels=arguments.get("targetNodeLabels"),
-            randomSeed=arguments.get("randomSeed"),
+            target_node_labels=arguments.get("target_node_labels"),
+            random_seed=arguments.get("random_seed"),
         )
 
 
 class NodeRegressionPredictHandler(AlgorithmHandler):
     def predict_node_regression(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         model = get_model(
-            kwargs.get("modelName"),
+            kwargs.get("model_name"),
             self.gds.pipeline.node_regression.get_model,
         )
         gds_params = clean_params(
-            kwargs, ["graphName", "modelName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "model_name", "mode", "node_identifier_property"]
         )
         logger.info(f"Node regression predict parameters: {gds_params}")
         if mode == "mutate":
@@ -280,18 +278,18 @@ class NodeRegressionPredictHandler(AlgorithmHandler):
         else:
             result = model.predict_stream(G, **gds_params)
             translate_ids_to_identifiers(
-                self.gds, kwargs.get("nodeIdentifierProperty"), result
+                self.gds, kwargs.get("node_identifier_property"), result
             )
         return result
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.predict_node_regression(
-            graphName=arguments.get("graphName"),
-            modelName=arguments.get("modelName"),
+            graph_name=arguments.get("graph_name"),
+            model_name=arguments.get("model_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            targetNodeLabels=arguments.get("targetNodeLabels"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            mutate_property=arguments.get("mutate_property"),
+            target_node_labels=arguments.get("target_node_labels"),
+            node_identifier_property=arguments.get("node_identifier_property"),
         )
 
 
@@ -313,4 +311,4 @@ class DropModelHandler(AlgorithmHandler):
         return {"modelName": model_name, "dropped": True}
 
     def execute(self, arguments: dict[str, Any]) -> Any:
-        return self.drop_model(model_name=arguments.get("modelName"))
+        return self.drop_model(model_name=arguments.get("model_name"))

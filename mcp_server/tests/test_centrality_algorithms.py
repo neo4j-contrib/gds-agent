@@ -9,10 +9,10 @@ async def test_article_rank(mcp_client, projected_test_graph):
     baseline_result = await mcp_client.call_tool(
         "article_rank",
         {
-            "graphName": projected_test_graph,
-            "nodeIdentifierProperty": "name",
-            "dampingFactor": 0.85,
-            "maxIterations": 20,
+            "graph_name": projected_test_graph,
+            "node_identifier_property": "name",
+            "damping_factor": 0.85,
+            "max_iterations": 20,
             "tolerance": 1e-6,
         },
     )
@@ -32,10 +32,10 @@ async def test_article_rank(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "article_rank",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "nodes": ["Covent Garden", "Southwark"],
-            "nodeIdentifierProperty": "name",
-            "dampingFactor": 0.85,
+            "node_identifier_property": "name",
+            "damping_factor": 0.85,
         },
     )
 
@@ -53,8 +53,8 @@ async def test_article_rank(mcp_client, projected_test_graph):
     basic_result = await mcp_client.call_tool(
         "article_rank",
         {
-            "graphName": projected_test_graph,
-            "dampingFactor": 0.85,
+            "graph_name": projected_test_graph,
+            "damping_factor": 0.85,
         },
     )
 
@@ -69,11 +69,11 @@ async def test_article_rank(mcp_client, projected_test_graph):
     personalized_result = await mcp_client.call_tool(
         "article_rank",
         {
-            "graphName": projected_test_graph,
-            "sourceNodes": ["Covent Garden", "Southwark"],
-            "nodeIdentifierProperty": "name",
-            "dampingFactor": 0.85,
-            "maxIterations": 20,
+            "graph_name": projected_test_graph,
+            "source_nodes": ["Covent Garden", "Southwark"],
+            "node_identifier_property": "name",
+            "damping_factor": 0.85,
+            "max_iterations": 20,
         },
     )
 
@@ -137,11 +137,11 @@ async def test_article_rank(mcp_client, projected_test_graph):
     combined_result = await mcp_client.call_tool(
         "article_rank",
         {
-            "graphName": projected_test_graph,
-            "sourceNodes": ["Covent Garden"],
+            "graph_name": projected_test_graph,
+            "source_nodes": ["Covent Garden"],
             "nodes": ["Covent Garden", "Southwark", "London Bridge"],
-            "nodeIdentifierProperty": "name",
-            "dampingFactor": 0.85,
+            "node_identifier_property": "name",
+            "damping_factor": 0.85,
         },
     )
 
@@ -169,11 +169,11 @@ async def test_article_rank_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "article_rank",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "articleRankScore",
-            "dampingFactor": 0.85,
-            "maxIterations": 20,
+            "mutate_property": "articleRankScore",
+            "damping_factor": 0.85,
+            "max_iterations": 20,
         },
     )
 
@@ -193,7 +193,7 @@ async def test_article_rank_mutate(mcp_client, projected_test_graph):
 async def test_articulation_points(mcp_client, projected_undirected_graph):
     result_with_names = await mcp_client.call_tool(
         "articulation_points",
-        {"graphName": projected_undirected_graph, "nodeIdentifierProperty": "name"},
+        {"graph_name": projected_undirected_graph, "node_identifier_property": "name"},
     )
 
     assert len(result_with_names) == 1
@@ -208,9 +208,9 @@ async def test_articulation_points_mutate(mcp_client, projected_undirected_graph
     result = await mcp_client.call_tool(
         "articulation_points",
         {
-            "graphName": projected_undirected_graph,
+            "graph_name": projected_undirected_graph,
             "mode": "mutate",
-            "mutateProperty": "articulationPoint",
+            "mutate_property": "articulationPoint",
         },
     )
 
@@ -230,9 +230,9 @@ async def test_betweenness_centrality(mcp_client, projected_test_graph):
     result_filtered = await mcp_client.call_tool(
         "betweenness_centrality",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "nodes": ["King's Cross St. Pancras", "Oxford Circus"],
-            "nodeIdentifierProperty": "name",
+            "node_identifier_property": "name",
         },
     )
 
@@ -248,9 +248,9 @@ async def test_betweenness_centrality_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "betweenness_centrality",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "betweenness",
+            "mutate_property": "betweenness",
         },
     )
 
@@ -269,7 +269,7 @@ async def test_betweenness_centrality_mutate(mcp_client, projected_test_graph):
 async def test_bridges(mcp_client, projected_undirected_graph):
     result_with_names = await mcp_client.call_tool(
         "bridges",
-        {"graphName": projected_undirected_graph, "nodeIdentifierProperty": "name"},
+        {"graph_name": projected_undirected_graph, "node_identifier_property": "name"},
     )
 
     assert len(result_with_names) == 1
@@ -286,9 +286,9 @@ async def test_celf(mcp_client, projected_test_graph):
     result_with_names = await mcp_client.call_tool(
         "CELF",
         {
-            "graphName": projected_test_graph,
-            "seedSetSize": 3,
-            "nodeIdentifierProperty": "name",
+            "graph_name": projected_test_graph,
+            "seed_set_size": 3,
+            "node_identifier_property": "name",
         },
     )
 
@@ -304,10 +304,10 @@ async def test_celf_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "CELF",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "celfSpread",
-            "seedSetSize": 3,
+            "mutate_property": "celfSpread",
+            "seed_set_size": 3,
         },
     )
 
@@ -327,9 +327,9 @@ async def test_closeness_centrality(mcp_client, projected_test_graph):
     result_filtered = await mcp_client.call_tool(
         "closeness_centrality",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "nodes": ["King's Cross St. Pancras", "Oxford Circus"],
-            "nodeIdentifierProperty": "name",
+            "node_identifier_property": "name",
         },
     )
 
@@ -345,9 +345,9 @@ async def test_closeness_centrality_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "closeness_centrality",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "closeness",
+            "mutate_property": "closeness",
         },
     )
 
@@ -367,11 +367,11 @@ async def test_degree_centrality(mcp_client, projected_test_graph):
     result_filtered = await mcp_client.call_tool(
         "degree_centrality",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "nodes": ["King's Cross St. Pancras", "Oxford Circus"],
-            "nodeIdentifierProperty": "name",
+            "node_identifier_property": "name",
             "orientation": "NATURAL",
-            "relationshipWeightProperty": "distance",
+            "relationship_weight_property": "distance",
         },
     )
 
@@ -387,9 +387,9 @@ async def test_degree_centrality_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "degree_centrality",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "degree",
+            "mutate_property": "degree",
             "orientation": "NATURAL",
         },
     )
@@ -410,11 +410,11 @@ async def test_eigenvector_centrality(mcp_client, projected_test_graph):
     result_combined = await mcp_client.call_tool(
         "eigenvector_centrality",
         {
-            "graphName": projected_test_graph,
-            "sourceNodes": ["Covent Garden"],
+            "graph_name": projected_test_graph,
+            "source_nodes": ["Covent Garden"],
             "nodes": ["Covent Garden", "Southwark", "London Bridge"],
-            "nodeIdentifierProperty": "name",
-            "maxIterations": 15,
+            "node_identifier_property": "name",
+            "max_iterations": 15,
         },
     )
 
@@ -442,10 +442,10 @@ async def test_eigenvector_centrality_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "eigenvector_centrality",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "eigenvector",
-            "maxIterations": 15,
+            "mutate_property": "eigenvector",
+            "max_iterations": 15,
         },
     )
 
@@ -465,11 +465,11 @@ async def test_pagerank(mcp_client, projected_test_graph):
     result_combined = await mcp_client.call_tool(
         "pagerank",
         {
-            "graphName": projected_test_graph,
-            "sourceNodes": ["Covent Garden"],
+            "graph_name": projected_test_graph,
+            "source_nodes": ["Covent Garden"],
             "nodes": ["Covent Garden", "Southwark", "London Bridge"],
-            "nodeIdentifierProperty": "name",
-            "dampingFactor": 0.85,
+            "node_identifier_property": "name",
+            "damping_factor": 0.85,
         },
     )
 
@@ -497,10 +497,10 @@ async def test_pagerank_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "pagerank",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "pagerank",
-            "dampingFactor": 0.85,
+            "mutate_property": "pagerank",
+            "damping_factor": 0.85,
         },
     )
 
@@ -520,9 +520,9 @@ async def test_harmonic_centrality(mcp_client, projected_test_graph):
     result_filtered = await mcp_client.call_tool(
         "harmonic_centrality",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "nodes": ["King's Cross St. Pancras", "Oxford Circus"],
-            "nodeIdentifierProperty": "name",
+            "node_identifier_property": "name",
         },
     )
 
@@ -538,9 +538,9 @@ async def test_harmonic_centrality_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "harmonic_centrality",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "harmonic",
+            "mutate_property": "harmonic",
         },
     )
 
@@ -560,9 +560,9 @@ async def test_hits(mcp_client, projected_test_graph):
     result_filtered = await mcp_client.call_tool(
         "HITS",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "nodes": ["King's Cross St. Pancras", "Oxford Circus"],
-            "nodeIdentifierProperty": "name",
+            "node_identifier_property": "name",
         },
     )
 
@@ -578,9 +578,9 @@ async def test_hits_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "HITS",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "hits",
+            "mutate_property": "hits",
         },
     )
 

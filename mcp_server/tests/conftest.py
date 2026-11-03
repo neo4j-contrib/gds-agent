@@ -305,13 +305,13 @@ async def projected_test_graph(mcp_client):
 
     await mcp_client.call_tool(
         "project_graph_cypher",
-        {"graphName": graph_name, "cypherQuery": cypher_query},
+        {"graph_name": graph_name, "cypher_query": cypher_query},
     )
 
     yield graph_name
 
     try:
-        await mcp_client.call_tool("drop_graph", {"graphName": graph_name})
+        await mcp_client.call_tool("drop_graph", {"graph_name": graph_name})
     except Exception:
         pass
 
@@ -356,12 +356,12 @@ async def projected_undirected_graph(mcp_client):
 
     await mcp_client.call_tool(
         "project_graph_cypher",
-        {"graphName": graph_name, "cypherQuery": cypher_query},
+        {"graph_name": graph_name, "cypher_query": cypher_query},
     )
 
     yield graph_name
 
     try:
-        await mcp_client.call_tool("drop_graph", {"graphName": graph_name})
+        await mcp_client.call_tool("drop_graph", {"graph_name": graph_name})
     except Exception:
         pass
