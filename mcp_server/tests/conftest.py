@@ -171,6 +171,7 @@ async def mcp_server_process(import_test_data):
             # Tests assert on full results; truncation is covered by unit tests
             "GDS_AGENT_MAX_RESULT_ROWS": "1000000",
             "GDS_AGENT_MAX_RESULT_CHARS": "100000000",
+            "NEO4J_READ_ONLY": "false",
         },
     )
 

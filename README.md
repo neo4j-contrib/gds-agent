@@ -42,6 +42,7 @@ Set as environment variables (or the credential form of your harness's installer
 | `SESSION_MEMORY_GB` / `SESSION_TTL_HOURS`              | no           | session defaults (8 GB / 12 h)                      |
 | `SESSION_TIMEOUT_SECONDS`                              | no           | seconds to wait for a session to become Ready       |
 | `GDS_AGENT_MAX_RESULT_ROWS` / `_CHARS` / `_CELL_CHARS` | no           | tool output limits (500 / 100000 / 200)             |
+| `NEO4J_READ_ONLY`                                  | no           | `write_neo4j_cypher` stays hidden unless this is `false` |
 
 
 By default the server uses STDIO transport for local MCP clients. For HTTP-native clients, run the server with streamable HTTP:
@@ -61,27 +62,11 @@ Sessions are managed explicitly by the agent: three extra tools become available
 
 # The skill
 
-`[skills/neo4j-graph-data-scientist](skills/neo4j-graph-data-scientist/SKILL.md)` is consumed from this one location by the Claude Code plugin, the Gemini extension, `npx skills`, and the release skill zip. It covers GDS-specific workflow best practices with a [troubleshooting](skills/neo4j-graph-data-scientist/references/troubleshooting.md) reference guide, as well as general data science best practices. It is designed for the gds-agent and mcp-neo4j-cypher MCP servers.
+`[skills/neo4j-graph-data-scientist](skills/neo4j-graph-data-scientist/SKILL.md)` is consumed from this one location by the Claude Code plugin, the Gemini extension, `npx skills`, and the release skill zip. It covers GDS-specific workflow best practices with a [troubleshooting](skills/neo4j-graph-data-scientist/references/troubleshooting.md) reference guide, as well as general data science best practices.
 
-# Read-only Cypher alongside GDS
+# Cypher tools
 
-The GDS server deliberately executes no arbitrary Cypher — its only Cypher entry point is graph projection. To let the agent also read the underlying data (inspect properties, aggregate, verify algorithm results), pair it with the `[mcp-neo4j-cypher](https://github.com/neo4j-contrib/mcp-neo4j)` server in read-only mode.
-
-The **Claude Code plugin** and the **Gemini CLI extension** already bundle it: one install configures both servers with the same credentials, and `NEO4J_READ_ONLY=true` removes its write tool. `NEO4J_RESPONSE_TOKEN_LIMIT` caps read-query responses (tokens) so large results don’t overwhelm the model; omit it for no Cypher-side limit. On any other harness, register a second server alongside gds-agent:
-
-```json
-"neo4j-cypher": {
-  "command": "uvx",
-  "args": ["mcp-neo4j-cypher@0.6.0", "--transport", "stdio"],
-  "env": {
-    "NEO4J_URI": "neo4j://localhost:7687",
-    "NEO4J_USERNAME": "neo4j",
-    "NEO4J_PASSWORD": "<your-password>",
-    "NEO4J_READ_ONLY": "true",
-    "NEO4J_RESPONSE_TOKEN_LIMIT": "20000"
-  }
-}
-```
+`read_neo4j_cypher`, `write_neo4j_cypher`, and `get_neo4j_schema` are tools on this server. `get_neo4j_schema` calls APOC (`apoc.meta.schema`). `write_neo4j_cypher` is left off the tool list unless `NEO4J_READ_ONLY=false`.
 
 
 
