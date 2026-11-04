@@ -50,8 +50,8 @@ def test_degree_centrality_filters_before_lookup():
 
     result = DegreeCentralityHandler(FakeGds()).execute(
         {
-            "graphName": "g",
-            "nodeIdentifierProperty": "name",
+            "graph_name": "g",
+            "node_identifier_property": "name",
             "nodes": ["target"],
         }
     )

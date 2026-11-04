@@ -8,9 +8,9 @@ async def test_node_similarity(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "node_similarity",
         {
-            "nodeIdentifierProperty": "name",
-            "topN": 35,
-            "graphName": projected_test_graph,
+            "node_identifier_property": "name",
+            "top_n": 35,
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -36,10 +36,10 @@ async def test_filtered_node_similarity(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "node_similarity",
         {
-            "nodeIdentifierProperty": "name",
-            "topK": 3,
-            "sourceNodeFilter": ["Acton Town"],
-            "graphName": projected_test_graph,
+            "node_identifier_property": "name",
+            "top_k": 3,
+            "source_node_filter": ["Acton Town"],
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -61,10 +61,10 @@ async def test_filtered_node_similarity(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "node_similarity",
         {
-            "nodeIdentifierProperty": "name",
-            "topK": 3,
-            "targetNodeFilter": "Stamford Brook",
-            "graphName": projected_test_graph,
+            "node_identifier_property": "name",
+            "top_k": 3,
+            "target_node_filter": "Stamford Brook",
+            "graph_name": projected_test_graph,
         },
     )
     assert len(result) == 1
@@ -84,11 +84,11 @@ async def test_filtered_node_similarity(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "node_similarity",
         {
-            "nodeIdentifierProperty": "name",
-            "topK": 3,
-            "sourceNodeFilter": ["Acton Town"],
-            "targetNodeFilter": ["Stamford Brook"],
-            "graphName": projected_test_graph,
+            "node_identifier_property": "name",
+            "top_k": 3,
+            "source_node_filter": ["Acton Town"],
+            "target_node_filter": ["Stamford Brook"],
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -112,11 +112,11 @@ async def test_node_similarity_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "node_similarity",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "similarity",
-            "mutateRelationshipType": "SIMILAR_TO",
-            "topK": 3,
+            "mutate_property": "similarity",
+            "mutate_relationship_type": "SIMILAR_TO",
+            "top_k": 3,
         },
     )
 
@@ -136,10 +136,10 @@ async def test_k_nearest_neighbors(mcp_client, projected_undirected_graph):
     result = await mcp_client.call_tool(
         "k_nearest_neighbors",
         {
-            "nodeIdentifierProperty": "name",
-            "topK": 3,
-            "nodeProperties": {"rail": "DEFAULT"},
-            "graphName": projected_undirected_graph,
+            "node_identifier_property": "name",
+            "top_k": 3,
+            "node_properties": {"rail": "DEFAULT"},
+            "graph_name": projected_undirected_graph,
         },
     )
 
@@ -164,11 +164,11 @@ async def test_filtered_knn(mcp_client, projected_undirected_graph):
     result = await mcp_client.call_tool(
         "k_nearest_neighbors",
         {
-            "nodeIdentifierProperty": "name",
-            "topK": 3,
-            "sourceNodeFilter": ["Acton Town"],
-            "nodeProperties": {"rail": "DEFAULT"},
-            "graphName": projected_undirected_graph,
+            "node_identifier_property": "name",
+            "top_k": 3,
+            "source_node_filter": ["Acton Town"],
+            "node_properties": {"rail": "DEFAULT"},
+            "graph_name": projected_undirected_graph,
         },
     )
 
@@ -190,11 +190,11 @@ async def test_filtered_knn(mcp_client, projected_undirected_graph):
     result = await mcp_client.call_tool(
         "k_nearest_neighbors",
         {
-            "nodeIdentifierProperty": "name",
-            "topK": 3,
-            "targetNodeFilter": "Stamford Brook",
-            "nodeProperties": {"rail": "DEFAULT"},
-            "graphName": projected_undirected_graph,
+            "node_identifier_property": "name",
+            "top_k": 3,
+            "target_node_filter": "Stamford Brook",
+            "node_properties": {"rail": "DEFAULT"},
+            "graph_name": projected_undirected_graph,
         },
     )
     assert len(result) == 1
@@ -214,13 +214,13 @@ async def test_filtered_knn(mcp_client, projected_undirected_graph):
     result = await mcp_client.call_tool(
         "k_nearest_neighbors",
         {
-            "nodeIdentifierProperty": "name",
-            "topK": 3,
-            "sourceNodeFilter": ["Acton Town"],
-            "targetNodeFilter": ["Stamford Brook"],
-            "seedTargetNodes": True,  # k-nn filtering is a bit special, it might not necessarily find answer if this is not specified (at least for this small example graph)
-            "nodeProperties": {"rail": "DEFAULT"},
-            "graphName": projected_undirected_graph,
+            "node_identifier_property": "name",
+            "top_k": 3,
+            "source_node_filter": ["Acton Town"],
+            "target_node_filter": ["Stamford Brook"],
+            "seed_target_nodes": True,  # k-nn filtering is a bit special, it might not necessarily find answer if this is not specified (at least for this small example graph)
+            "node_properties": {"rail": "DEFAULT"},
+            "graph_name": projected_undirected_graph,
         },
     )
 
@@ -244,12 +244,12 @@ async def test_knn_mutate(mcp_client, projected_undirected_graph):
     result = await mcp_client.call_tool(
         "k_nearest_neighbors",
         {
-            "graphName": projected_undirected_graph,
+            "graph_name": projected_undirected_graph,
             "mode": "mutate",
-            "mutateProperty": "knnScore",
-            "mutateRelationshipType": "KNN_SIMILAR",
-            "topK": 3,
-            "nodeProperties": {"rail": "DEFAULT"},
+            "mutate_property": "knnScore",
+            "mutate_relationship_type": "KNN_SIMILAR",
+            "top_k": 3,
+            "node_properties": {"rail": "DEFAULT"},
         },
     )
 

@@ -251,12 +251,12 @@ def create_mcp_server(
                         inputSchema={
                             "type": "object",
                             "properties": {
-                                "sessionName": {
+                                "session_name": {
                                     "type": "string",
                                     "description": "Name of the session to delete",
                                 }
                             },
-                            "required": ["sessionName"],
+                            "required": ["session_name"],
                         },
                     ),
                     types.Tool(
@@ -270,16 +270,16 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                         inputSchema={
                             "type": "object",
                             "properties": {
-                                "sessionName": {
+                                "session_name": {
                                     "type": "string",
                                     "description": "Name for the session. 'mcp_' is prepended if missing.",
                                 },
-                                "memoryGB": {
+                                "memory_gb": {
                                     "type": "integer",
                                     "description": "Optional memory size in GB (defaults to SESSION_MEMORY_GB or 8)",
                                 },
                             },
-                            "required": ["sessionName"],
+                            "required": ["session_name"],
                         },
                     ),
                 ]
@@ -403,7 +403,7 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                     ]
 
                 if name == "delete_session":
-                    session_name = arguments.get("sessionName") if arguments else None
+                    session_name = arguments.get("session_name") if arguments else None
                     result = session_manager.delete_session(session_name)
                     return [
                         types.TextContent(type="text", text=serialize_result(result))
@@ -411,15 +411,15 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
 
                 # create_session
                 arguments = arguments or {}
-                session_name = ensure_mcp_session_name(arguments.get("sessionName"))
+                session_name = ensure_mcp_session_name(arguments.get("session_name"))
                 session_manager.create_or_get_session(
                     db_url,
                     (username, password),
                     database,
                     session_name=session_name,
-                    memory_gb=arguments.get("memoryGB"),
+                    memory_gb=arguments.get("memory_gb"),
                 )
-                result = {"sessionName": session_name, "status": "ready"}
+                result = {"session_name": session_name, "status": "ready"}
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
             arguments = arguments or {}
@@ -518,10 +518,10 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                         entry["count"] = int(result["count"].iloc[0])
                 return [types.TextContent(type="text", text=serialize_result(schema))]
 
-            graph_name = arguments.get("graphName")
+            graph_name = arguments.get("graph_name")
 
             if name == "project_graph_cypher":
-                requested_session = arguments.get("sessionName")
+                requested_session = arguments.get("session_name")
                 if mode == GdsMode.SESSION:
                     if not requested_session:
                         return [
@@ -554,7 +554,7 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                 handler = ProjectGraphCypherHandler(project_gds)
                 result = handler.execute(arguments)
                 if mode == GdsMode.SESSION:
-                    session_manager.record_graph(result["graphName"], target_session)
+                    session_manager.record_graph(result["graph_name"], target_session)
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
             active_gds = get_gds_for_graph(graph_name)
@@ -586,7 +586,7 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                     for s_name, s_gds in session_manager.active_sessions():
                         listing = ListGraphsHandler(s_gds).execute({})
                         for graph in listing["graphs"]:
-                            graph["sessionName"] = s_name
+                            graph["session_name"] = s_name
                         graphs.extend(listing["graphs"])
                     result = {"graphs": graphs, "count": len(graphs)}
                 else:
@@ -619,7 +619,7 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
                 for s_name, s_gds in session_manager.active_sessions():
                     listing = ListModelsHandler(s_gds).execute({})
                     for model in listing["models"]:
-                        model["sessionName"] = s_name
+                        model["session_name"] = s_name
                     models.extend(listing["models"])
                 result = {"models": models, "count": len(models)}
                 return [types.TextContent(type="text", text=serialize_result(result))]

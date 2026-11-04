@@ -91,7 +91,7 @@ class FakeGds:
 
 
 def test_graph_info_handler_returns_graph_metadata():
-    result = GraphInfoHandler(FakeGds()).execute({"graphName": "g"})
+    result = GraphInfoHandler(FakeGds()).execute({"graph_name": "g"})
 
     assert result["graphName"] == "g"
     assert result["nodeLabels"] == ["Person"]
@@ -104,10 +104,10 @@ def test_stream_node_properties_handler_maps_arguments():
 
     result = StreamNodePropertiesHandler(gds).execute(
         {
-            "graphName": "g",
-            "nodeProperties": ["score"],
-            "nodeLabels": "Person",
-            "dbNodeProperties": ["name"],
+            "graph_name": "g",
+            "node_properties": ["score"],
+            "node_labels": "Person",
+            "db_node_properties": ["name"],
         }
     )
 
@@ -125,9 +125,9 @@ def test_stream_relationship_properties_handler_maps_arguments():
 
     StreamRelationshipPropertiesHandler(gds).execute(
         {
-            "graphName": "g",
-            "relationshipProperties": "weight",
-            "relationshipTypes": "KNOWS",
+            "graph_name": "g",
+            "relationship_properties": "weight",
+            "relationship_types": "KNOWS",
         }
     )
 
@@ -142,7 +142,7 @@ def test_stream_relationships_handler_maps_arguments():
     gds = FakeGds()
 
     StreamRelationshipsHandler(gds).execute(
-        {"graphName": "g", "relationshipTypes": "KNOWS"}
+        {"graph_name": "g", "relationship_types": "KNOWS"}
     )
 
     _, _, kwargs = gds.calls[0]

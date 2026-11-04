@@ -12,27 +12,27 @@ logger = logging.getLogger("mcp_server_neo4j_gds")
 
 class ConductanceHandler(AlgorithmHandler):
     def conductance(self, **kwargs):
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        gds_params = clean_params(kwargs, ["graphName"])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
+        gds_params = clean_params(kwargs, ["graph_name"])
         logger.info(f"Conductance parameters: {gds_params}")
         result = self.gds.conductance.stream(G, **gds_params)
         return result
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.conductance(
-            graphName=arguments.get("graphName"),
-            communityProperty=arguments.get("communityProperty"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            graph_name=arguments.get("graph_name"),
+            community_property=arguments.get("community_property"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
         )
 
 
 class HDBSCANHandler(AlgorithmHandler):
     def hdbscan(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        node_identifier_property = kwargs.get("node_identifier_property")
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "mode", "node_identifier_property"]
         )
         logger.info(f"HDBSCAN parameters: {gds_params}")
         if mode == "mutate":
@@ -45,24 +45,24 @@ class HDBSCANHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.hdbscan(
-            graphName=arguments.get("graphName"),
+            graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            nodeProperty=arguments.get("nodeProperty"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
-            minClusterSize=arguments.get("minClusterSize"),
+            mutate_property=arguments.get("mutate_property"),
+            node_property=arguments.get("node_property"),
+            node_identifier_property=arguments.get("node_identifier_property"),
+            min_cluster_size=arguments.get("min_cluster_size"),
             samples=arguments.get("samples"),
-            leafSize=arguments.get("leafSize"),
+            leaf_size=arguments.get("leaf_size"),
         )
 
 
 class KCoreDecompositionHandler(AlgorithmHandler):
     def k_core_decomposition(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        node_identifier_property = kwargs.get("node_identifier_property")
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "mode", "node_identifier_property"]
         )
         logger.info(f"K-Core Decomposition parameters: {gds_params}")
         if mode == "mutate":
@@ -74,20 +74,20 @@ class KCoreDecompositionHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.k_core_decomposition(
-            graphName=arguments.get("graphName"),
+            graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            mutate_property=arguments.get("mutate_property"),
+            node_identifier_property=arguments.get("node_identifier_property"),
         )
 
 
 class K1ColoringHandler(AlgorithmHandler):
     def k_1_coloring(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        node_identifier_property = kwargs.get("node_identifier_property")
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "mode", "node_identifier_property"]
         )
         logger.info(f"K-1 Coloring parameters: {gds_params}")
         if mode == "mutate":
@@ -100,22 +100,22 @@ class K1ColoringHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.k_1_coloring(
-            graphName=arguments.get("graphName"),
+            graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
-            maxIterations=arguments.get("maxIterations"),
-            minCommunitySize=arguments.get("minCommunitySize"),
+            mutate_property=arguments.get("mutate_property"),
+            node_identifier_property=arguments.get("node_identifier_property"),
+            max_iterations=arguments.get("max_iterations"),
+            min_community_size=arguments.get("min_community_size"),
         )
 
 
 class KMeansClusteringHandler(AlgorithmHandler):
     def k_means_clustering(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        node_identifier_property = kwargs.get("node_identifier_property")
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "mode", "node_identifier_property"]
         )
         logger.info(f"K-Means Clustering parameters: {gds_params}")
         if mode == "mutate":
@@ -128,28 +128,28 @@ class KMeansClusteringHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.k_means_clustering(
-            graphName=arguments.get("graphName"),
+            graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            nodeProperty=arguments.get("nodeProperty"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            mutate_property=arguments.get("mutate_property"),
+            node_property=arguments.get("node_property"),
+            node_identifier_property=arguments.get("node_identifier_property"),
             k=arguments.get("k"),
-            maxIterations=arguments.get("maxIterations"),
-            deltaThreshold=arguments.get("deltaThreshold"),
-            numberOfRestarts=arguments.get("numberOfRestarts"),
-            initialSampler=arguments.get("initialSampler"),
-            seedCentroids=arguments.get("seedCentroids"),
-            computeSilhouette=arguments.get("computeSilhouette"),
+            max_iterations=arguments.get("max_iterations"),
+            delta_threshold=arguments.get("delta_threshold"),
+            number_of_restarts=arguments.get("number_of_restarts"),
+            initial_sampler=arguments.get("initial_sampler"),
+            seed_centroids=arguments.get("seed_centroids"),
+            compute_silhouette=arguments.get("compute_silhouette"),
         )
 
 
 class LabelPropagationHandler(AlgorithmHandler):
     def label_propagation(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        node_identifier_property = kwargs.get("node_identifier_property")
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "mode", "node_identifier_property"]
         )
         logger.info(f"Label Propagation parameters: {gds_params}")
         if mode == "mutate":
@@ -162,26 +162,26 @@ class LabelPropagationHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.label_propagation(
-            graphName=arguments.get("graphName"),
+            graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            maxIterations=arguments.get("maxIterations"),
-            nodeWeightProperty=arguments.get("nodeWeightProperty"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
-            seedProperty=arguments.get("seedProperty"),
-            consecutiveIds=arguments.get("consecutiveIds"),
-            minCommunitySize=arguments.get("minCommunitySize"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            mutate_property=arguments.get("mutate_property"),
+            max_iterations=arguments.get("max_iterations"),
+            node_weight_property=arguments.get("node_weight_property"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
+            seed_property=arguments.get("seed_property"),
+            consecutive_ids=arguments.get("consecutive_ids"),
+            min_community_size=arguments.get("min_community_size"),
+            node_identifier_property=arguments.get("node_identifier_property"),
         )
 
 
 class LeidenHandler(AlgorithmHandler):
     def leiden(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        node_identifier_property = kwargs.get("node_identifier_property")
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "mode", "node_identifier_property"]
         )
         logger.info(f"Leiden parameters: {gds_params}")
         if mode == "mutate":
@@ -194,19 +194,19 @@ class LeidenHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.leiden(
-            graphName=arguments.get("graphName"),
+            graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            maxLevels=arguments.get("maxLevels"),
+            mutate_property=arguments.get("mutate_property"),
+            max_levels=arguments.get("max_levels"),
             gamma=arguments.get("gamma"),
             theta=arguments.get("theta"),
             tolerance=arguments.get("tolerance"),
-            includeIntermediateCommunities=arguments.get(
-                "includeIntermediateCommunities"
+            include_intermediate_communities=arguments.get(
+                "include_intermediate_communities"
             ),
-            seedProperty=arguments.get("seedProperty"),
-            minCommunitySize=arguments.get("minCommunitySize"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            seed_property=arguments.get("seed_property"),
+            min_community_size=arguments.get("min_community_size"),
+            node_identifier_property=arguments.get("node_identifier_property"),
         )
 
 
@@ -214,10 +214,10 @@ class LocalClusteringCoefficientHandler(AlgorithmHandler):
     def local_clustering_coefficient(self, **kwargs):
         mode = kwargs.get("mode", "stream")
         node_names = kwargs.get("nodes", None)
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        node_identifier_property = kwargs.get("node_identifier_property")
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty", "nodes"]
+            kwargs, ["graph_name", "mode", "node_identifier_property", "nodes"]
         )
         logger.info(f"Local Clustering Coefficient parameters: {gds_params}")
         if mode == "mutate":
@@ -236,11 +236,11 @@ class LocalClusteringCoefficientHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.local_clustering_coefficient(
-            graphName=arguments.get("graphName"),
+            graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
+            mutate_property=arguments.get("mutate_property"),
             triangle_countProperty=arguments.get("triangle_countProperty"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            node_identifier_property=arguments.get("node_identifier_property"),
             nodes=arguments.get("nodes"),
         )
 
@@ -248,10 +248,10 @@ class LocalClusteringCoefficientHandler(AlgorithmHandler):
 class LouvainHandler(AlgorithmHandler):
     def louvain(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        node_identifier_property = kwargs.get("node_identifier_property")
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "mode", "node_identifier_property"]
         )
         logger.info(f"Louvain parameters: {gds_params}")
         if mode == "mutate":
@@ -264,27 +264,27 @@ class LouvainHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.louvain(
-            graphName=arguments.get("graphName"),
+            graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
-            seedProperty=arguments.get("seedProperty"),
-            maxLevels=arguments.get("maxLevels"),
-            maxIterations=arguments.get("maxIterations"),
+            mutate_property=arguments.get("mutate_property"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
+            seed_property=arguments.get("seed_property"),
+            max_levels=arguments.get("max_levels"),
+            max_iterations=arguments.get("max_iterations"),
             tolerance=arguments.get("tolerance"),
-            includeIntermediateCommunities=arguments.get(
-                "includeIntermediateCommunities"
+            include_intermediate_communities=arguments.get(
+                "include_intermediate_communities"
             ),
-            consecutiveIds=arguments.get("consecutiveIds"),
-            minCommunitySize=arguments.get("minCommunitySize"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            consecutive_ids=arguments.get("consecutive_ids"),
+            min_community_size=arguments.get("min_community_size"),
+            node_identifier_property=arguments.get("node_identifier_property"),
         )
 
 
 class ModularityMetricHandler(AlgorithmHandler):
     def modularity_metric(self, **kwargs):
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        gds_params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty"])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
+        gds_params = clean_params(kwargs, ["graph_name", "node_identifier_property"])
         logger.info(f"Modularity Metric parameters: {gds_params}")
         result = self.gds.modularity.stream(G, **gds_params)
 
@@ -292,19 +292,19 @@ class ModularityMetricHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.modularity_metric(
-            graphName=arguments.get("graphName"),
-            communityProperty=arguments.get("communityProperty"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            graph_name=arguments.get("graph_name"),
+            community_property=arguments.get("community_property"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
         )
 
 
 class ModularityOptimizationHandler(AlgorithmHandler):
     def modularity_optimization(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        node_identifier_property = kwargs.get("node_identifier_property")
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "mode", "node_identifier_property"]
         )
         logger.info(f"Modularity Optimization parameters: {gds_params}")
         if mode == "mutate":
@@ -317,26 +317,26 @@ class ModularityOptimizationHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.modularity_optimization(
-            graphName=arguments.get("graphName"),
+            graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            maxIterations=arguments.get("maxIterations"),
+            mutate_property=arguments.get("mutate_property"),
+            max_iterations=arguments.get("max_iterations"),
             tolerance=arguments.get("tolerance"),
-            seedProperty=arguments.get("seedProperty"),
-            consecutiveIds=arguments.get("consecutiveIds"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
-            minCommunitySize=arguments.get("minCommunitySize"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            seed_property=arguments.get("seed_property"),
+            consecutive_ids=arguments.get("consecutive_ids"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
+            min_community_size=arguments.get("min_community_size"),
+            node_identifier_property=arguments.get("node_identifier_property"),
         )
 
 
 class StronglyConnectedComponentsHandler(AlgorithmHandler):
     def strongly_connected_components(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        node_identifier_property = kwargs.get("node_identifier_property")
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "mode", "node_identifier_property"]
         )
         logger.info(f"Strongly Connected Components parameters: {gds_params}")
         if mode == "mutate":
@@ -349,11 +349,11 @@ class StronglyConnectedComponentsHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.strongly_connected_components(
-            graphName=arguments.get("graphName"),
+            graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            consecutiveIds=arguments.get("consecutiveIds"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            mutate_property=arguments.get("mutate_property"),
+            consecutive_ids=arguments.get("consecutive_ids"),
+            node_identifier_property=arguments.get("node_identifier_property"),
         )
 
 
@@ -361,10 +361,10 @@ class TriangleCountHandler(AlgorithmHandler):
     def triangle_count(self, **kwargs):
         mode = kwargs.get("mode", "stream")
         node_names = kwargs.get("nodes", None)
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        node_identifier_property = kwargs.get("node_identifier_property")
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodes", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "mode", "nodes", "node_identifier_property"]
         )
         logger.info(f"Triangle Count parameters: {gds_params}")
         if mode == "mutate":
@@ -380,11 +380,11 @@ class TriangleCountHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.triangle_count(
-            graphName=arguments.get("graphName"),
+            graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            maxDegree=arguments.get("maxDegree"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            mutate_property=arguments.get("mutate_property"),
+            max_degree=arguments.get("max_degree"),
+            node_identifier_property=arguments.get("node_identifier_property"),
             nodes=arguments.get("nodes"),
         )
 
@@ -392,10 +392,10 @@ class TriangleCountHandler(AlgorithmHandler):
 class WeaklyConnectedComponentsHandler(AlgorithmHandler):
     def weakly_connected_components(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        node_identifier_property = kwargs.get("node_identifier_property")
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "mode", "node_identifier_property"]
         )
         logger.info(f"Weakly Connected Components parameters: {gds_params}")
         if mode == "mutate":
@@ -408,25 +408,25 @@ class WeaklyConnectedComponentsHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.weakly_connected_components(
-            graphName=arguments.get("graphName"),
+            graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
-            seedProperty=arguments.get("seedProperty"),
+            mutate_property=arguments.get("mutate_property"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
+            seed_property=arguments.get("seed_property"),
             threshold=arguments.get("threshold"),
-            consecutiveIds=arguments.get("consecutiveIds"),
-            minComponentSize=arguments.get("minComponentSize"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            consecutive_ids=arguments.get("consecutive_ids"),
+            min_component_size=arguments.get("min_component_size"),
+            node_identifier_property=arguments.get("node_identifier_property"),
         )
 
 
 class ApproximateMaximumKCutHandler(AlgorithmHandler):
     def approximate_maximum_k_cut(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        node_identifier_property = kwargs.get("node_identifier_property")
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "mode", "node_identifier_property"]
         )
         logger.info(f"Approximate Maximum K Cut parameters: {gds_params}")
         if mode == "mutate":
@@ -439,25 +439,25 @@ class ApproximateMaximumKCutHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.approximate_maximum_k_cut(
-            graphName=arguments.get("graphName"),
+            graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
+            mutate_property=arguments.get("mutate_property"),
             k=arguments.get("k"),
             iterations=arguments.get("iterations"),
-            vnsMaxNeighborhoodOrder=arguments.get("vnsMaxNeighborhoodOrder"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
-            minCommunitySize=arguments.get("minCommunitySize"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            vns_max_neighborhood_order=arguments.get("vns_max_neighborhood_order"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
+            min_community_size=arguments.get("min_community_size"),
+            node_identifier_property=arguments.get("node_identifier_property"),
         )
 
 
 class SpeakerListenerLabelPropagationHandler(AlgorithmHandler):
     def speaker_listener_label_propagation(self, **kwargs):
         mode = kwargs.get("mode", "stream")
-        node_identifier_property = kwargs.get("nodeIdentifierProperty")
-        G = self.gds.graph.get(kwargs.get("graphName"))
+        node_identifier_property = kwargs.get("node_identifier_property")
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         gds_params = clean_params(
-            kwargs, ["graphName", "mode", "nodeIdentifierProperty"]
+            kwargs, ["graph_name", "mode", "node_identifier_property"]
         )
         logger.info(f"Speaker Listener Label Propagation parameters: {gds_params}")
         if mode == "mutate":
@@ -474,11 +474,11 @@ class SpeakerListenerLabelPropagationHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.speaker_listener_label_propagation(
-            graphName=arguments.get("graphName"),
+            graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            maxIterations=arguments.get("maxIterations"),
-            minAssociationStrength=arguments.get("minAssociationStrength"),
+            mutate_property=arguments.get("mutate_property"),
+            max_iterations=arguments.get("max_iterations"),
+            min_association_strength=arguments.get("min_association_strength"),
             partitioning=arguments.get("partitioning"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
+            node_identifier_property=arguments.get("node_identifier_property"),
         )

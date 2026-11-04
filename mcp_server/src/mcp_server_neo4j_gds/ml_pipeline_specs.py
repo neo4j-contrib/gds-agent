@@ -28,7 +28,7 @@ def _model_candidates_description(default_method):
 
 _auto_tuning_schema = {
     "type": "object",
-    "properties": {"maxTrials": {"type": "integer"}},
+    "properties": {"max_trials": {"type": "integer"}},
     "description": "Auto-tuning configuration, e.g. {maxTrials: 10}. Only relevant when model candidate configs contain ranges.",
 }
 
@@ -45,33 +45,33 @@ ml_pipeline_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to train on. Use project_graph_cypher to create a graph first.",
                 },
-                "modelName": {
+                "model_name": {
                     "type": "string",
                     "description": "Unique name for the trained model in the model catalog.",
                 },
-                "targetProperty": {
+                "target_property": {
                     "type": "string",
                     "description": "Node property holding the class label to predict. Must be an integer property in the projected graph.",
                 },
-                "featureProperties": {
+                "feature_properties": {
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "Node properties to use as model features. Each must exist in the projected graph or be produced by nodePropertySteps.",
                 },
-                "nodePropertySteps": _node_property_steps_schema,
-                "splitConfig": {
+                "node_property_steps": _node_property_steps_schema,
+                "split_config": {
                     "type": "object",
                     "properties": {
-                        "testFraction": {"type": "number"},
-                        "validationFolds": {"type": "integer"},
+                        "test_fraction": {"type": "number"},
+                        "validation_folds": {"type": "integer"},
                     },
                     "description": "Train/test split configuration, e.g. {testFraction: 0.3, validationFolds: 3}.",
                 },
-                "modelCandidates": {
+                "model_candidates": {
                     "type": "array",
                     "items": {
                         "type": "object",
@@ -79,8 +79,8 @@ ml_pipeline_tool_definitions = [
                             "method": {
                                 "type": "string",
                                 "enum": [
-                                    "logisticRegression",
-                                    "randomForest",
+                                    "logistic_regression",
+                                    "random_forest",
                                     "mlp",
                                 ],
                             },
@@ -90,27 +90,27 @@ ml_pipeline_tool_definitions = [
                     },
                     "description": _model_candidates_description("logistic regression"),
                 },
-                "autoTuningConfig": _auto_tuning_schema,
+                "auto_tuning_config": _auto_tuning_schema,
                 "metrics": {
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "Evaluation metrics, e.g. ACCURACY, F1_WEIGHTED, F1_MACRO, OUT_OF_BAG_ERROR. Default is [ACCURACY].",
                 },
-                "targetNodeLabels": {
+                "target_node_labels": {
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "Optional node labels to restrict training to.",
                 },
-                "randomSeed": {
+                "random_seed": {
                     "type": "integer",
                     "description": "A random seed for reproducible training.",
                 },
             },
             "required": [
-                "graphName",
-                "modelName",
-                "targetProperty",
-                "featureProperties",
+                "graph_name",
+                "model_name",
+                "target_property",
+                "feature_properties",
             ],
         },
     ),
@@ -123,24 +123,24 @@ ml_pipeline_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to predict on.",
                 },
-                "modelName": {
+                "model_name": {
                     "type": "string",
                     "description": "Name of the trained node classification model in the model catalog.",
                 },
-                "includePredictedProbabilities": {
+                "include_predicted_probabilities": {
                     "type": "boolean",
                     "description": "In stream mode, also return the predicted probability per class. Default is false.",
                 },
-                "targetNodeLabels": {
+                "target_node_labels": {
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "Optional node labels to restrict prediction to.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes in stream output (e.g., 'name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
@@ -149,16 +149,16 @@ ml_pipeline_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns predictions as a table, 'mutate' writes predictions to the in-memory graph as a node property. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write predicted classes to.",
                 },
-                "predictedProbabilityProperty": {
+                "predicted_probability_property": {
                     "type": "string",
                     "description": "In mutate mode, optionally also write per-class probabilities to this node property.",
                 },
             },
-            "required": ["graphName", "modelName"],
+            "required": ["graph_name", "model_name"],
         },
     ),
     types.Tool(
@@ -173,57 +173,57 @@ ml_pipeline_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to train on. Must contain undirected relationships of the targetRelationshipType.",
                 },
-                "modelName": {
+                "model_name": {
                     "type": "string",
                     "description": "Unique name for the trained model in the model catalog.",
                 },
-                "targetRelationshipType": {
+                "target_relationship_type": {
                     "type": "string",
                     "description": "The relationship type to learn to predict. Must be undirected in the projection.",
                 },
-                "sourceNodeLabel": {
+                "source_node_label": {
                     "type": "string",
                     "description": "Optional node label of relationship source nodes to learn from.",
                 },
-                "targetNodeLabel": {
+                "target_node_label": {
                     "type": "string",
                     "description": "Optional node label of relationship target nodes to learn from.",
                 },
-                "linkFeatures": {
+                "link_features": {
                     "type": "array",
                     "items": {
                         "type": "object",
                         "properties": {
-                            "featureType": {
+                            "feature_type": {
                                 "type": "string",
-                                "enum": ["hadamard", "cosine", "l2", "sameCategory"],
+                                "enum": ["hadamard", "cosine", "l2", "same_category"],
                             },
-                            "nodeProperties": {
+                            "node_properties": {
                                 "type": "array",
                                 "items": {"type": "string"},
                             },
                         },
-                        "required": ["featureType", "nodeProperties"],
+                        "required": ["feature_type", "node_properties"],
                     },
                     "description": "How to combine node properties of a node pair into link features, e.g. [{featureType: 'hadamard', nodeProperties: ['embedding']}]. "
                     "Node properties must exist in the projection or be produced by nodePropertySteps.",
                 },
-                "nodePropertySteps": _node_property_steps_schema,
-                "splitConfig": {
+                "node_property_steps": _node_property_steps_schema,
+                "split_config": {
                     "type": "object",
                     "properties": {
-                        "trainFraction": {"type": "number"},
-                        "testFraction": {"type": "number"},
-                        "validationFolds": {"type": "integer"},
-                        "negativeSamplingRatio": {"type": "number"},
+                        "train_fraction": {"type": "number"},
+                        "test_fraction": {"type": "number"},
+                        "validation_folds": {"type": "integer"},
+                        "negative_sampling_ratio": {"type": "number"},
                     },
                     "description": "Relationship split configuration, e.g. {trainFraction: 0.25, testFraction: 0.25, validationFolds: 3}.",
                 },
-                "modelCandidates": {
+                "model_candidates": {
                     "type": "array",
                     "items": {
                         "type": "object",
@@ -231,8 +231,8 @@ ml_pipeline_tool_definitions = [
                             "method": {
                                 "type": "string",
                                 "enum": [
-                                    "logisticRegression",
-                                    "randomForest",
+                                    "logistic_regression",
+                                    "random_forest",
                                     "mlp",
                                 ],
                             },
@@ -242,26 +242,26 @@ ml_pipeline_tool_definitions = [
                     },
                     "description": _model_candidates_description("logistic regression"),
                 },
-                "autoTuningConfig": _auto_tuning_schema,
+                "auto_tuning_config": _auto_tuning_schema,
                 "metrics": {
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "Evaluation metrics, e.g. AUCPR, OUT_OF_BAG_ERROR. Default is [AUCPR].",
                 },
-                "negativeClassWeight": {
+                "negative_class_weight": {
                     "type": "number",
                     "description": "Weight of negative examples in the loss. Positive examples have weight 1.",
                 },
-                "randomSeed": {
+                "random_seed": {
                     "type": "integer",
                     "description": "A random seed for reproducible training.",
                 },
             },
             "required": [
-                "graphName",
-                "modelName",
-                "targetRelationshipType",
-                "linkFeatures",
+                "graph_name",
+                "model_name",
+                "target_relationship_type",
+                "link_features",
             ],
         },
     ),
@@ -275,15 +275,15 @@ ml_pipeline_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to predict on.",
                 },
-                "modelName": {
+                "model_name": {
                     "type": "string",
                     "description": "Name of the trained link prediction model in the model catalog.",
                 },
-                "topN": {
+                "top_n": {
                     "type": "integer",
                     "description": "Limit on the number of predicted relationships to output, ordered by probability. Required when sampleRate is 1 (the default exhaustive search).",
                 },
@@ -291,27 +291,27 @@ ml_pipeline_tool_definitions = [
                     "type": "number",
                     "description": "Minimum predicted probability for a relationship to be output (exhaustive search only). Default is 0.",
                 },
-                "sampleRate": {
+                "sample_rate": {
                     "type": "number",
                     "description": "Between 0 and 1. If below 1, an approximate K-nearest-neighbor-based search is used instead of scoring every node pair. Default is 1.",
                 },
-                "topK": {
+                "top_k": {
                     "type": "integer",
                     "description": "For approximate search (sampleRate below 1): number of predicted relationships to output per node. Default is 10.",
                 },
-                "deltaThreshold": {
+                "delta_threshold": {
                     "type": "number",
                     "description": "For approximate search: early stopping threshold as a fraction of updated potential relationships. Default is 0.001.",
                 },
-                "maxIterations": {
+                "max_iterations": {
                     "type": "integer",
                     "description": "For approximate search: maximum number of iterations. Default is 100.",
                 },
-                "randomJoins": {
+                "random_joins": {
                     "type": "integer",
                     "description": "For approximate search: number of random node comparisons per iteration. Default is 10.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes in stream output (e.g., 'name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
@@ -320,16 +320,16 @@ ml_pipeline_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns predicted node pairs as a table, 'mutate' writes predicted relationships to the in-memory graph. Default is 'stream'.",
                 },
-                "mutateRelationshipType": {
+                "mutate_relationship_type": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The relationship type to use for the new predicted relationships.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "In mutate mode, the relationship property to store the predicted probability in. Default is 'probability'.",
                 },
             },
-            "required": ["graphName", "modelName"],
+            "required": ["graph_name", "model_name"],
         },
     ),
     types.Tool(
@@ -344,40 +344,40 @@ ml_pipeline_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to train on. Use project_graph_cypher to create a graph first.",
                 },
-                "modelName": {
+                "model_name": {
                     "type": "string",
                     "description": "Unique name for the trained model in the model catalog.",
                 },
-                "targetProperty": {
+                "target_property": {
                     "type": "string",
                     "description": "Numeric node property to predict.",
                 },
-                "featureProperties": {
+                "feature_properties": {
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "Node properties to use as model features. Each must exist in the projected graph or be produced by nodePropertySteps.",
                 },
-                "nodePropertySteps": _node_property_steps_schema,
-                "splitConfig": {
+                "node_property_steps": _node_property_steps_schema,
+                "split_config": {
                     "type": "object",
                     "properties": {
-                        "testFraction": {"type": "number"},
-                        "validationFolds": {"type": "integer"},
+                        "test_fraction": {"type": "number"},
+                        "validation_folds": {"type": "integer"},
                     },
                     "description": "Train/test split configuration, e.g. {testFraction: 0.3, validationFolds: 3}.",
                 },
-                "modelCandidates": {
+                "model_candidates": {
                     "type": "array",
                     "items": {
                         "type": "object",
                         "properties": {
                             "method": {
                                 "type": "string",
-                                "enum": ["linearRegression", "randomForest"],
+                                "enum": ["linear_regression", "random_forest"],
                             },
                             "config": {"type": "object"},
                         },
@@ -385,27 +385,27 @@ ml_pipeline_tool_definitions = [
                     },
                     "description": _model_candidates_description("linear regression"),
                 },
-                "autoTuningConfig": _auto_tuning_schema,
+                "auto_tuning_config": _auto_tuning_schema,
                 "metrics": {
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "Evaluation metrics, e.g. MEAN_SQUARED_ERROR, ROOT_MEAN_SQUARED_ERROR, MEAN_ABSOLUTE_ERROR. Default is [MEAN_SQUARED_ERROR].",
                 },
-                "targetNodeLabels": {
+                "target_node_labels": {
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "Optional node labels to restrict training to.",
                 },
-                "randomSeed": {
+                "random_seed": {
                     "type": "integer",
                     "description": "A random seed for reproducible training.",
                 },
             },
             "required": [
-                "graphName",
-                "modelName",
-                "targetProperty",
-                "featureProperties",
+                "graph_name",
+                "model_name",
+                "target_property",
+                "feature_properties",
             ],
         },
     ),
@@ -418,20 +418,20 @@ ml_pipeline_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to predict on.",
                 },
-                "modelName": {
+                "model_name": {
                     "type": "string",
                     "description": "Name of the trained node regression model in the model catalog.",
                 },
-                "targetNodeLabels": {
+                "target_node_labels": {
                     "type": "array",
                     "items": {"type": "string"},
                     "description": "Optional node labels to restrict prediction to.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes in stream output (e.g., 'name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
@@ -440,12 +440,12 @@ ml_pipeline_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns predictions as a table, 'mutate' writes predictions to the in-memory graph as a node property. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write predicted values to.",
                 },
             },
-            "required": ["graphName", "modelName"],
+            "required": ["graph_name", "model_name"],
         },
     ),
     types.Tool(
@@ -465,12 +465,12 @@ ml_pipeline_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "modelName": {
+                "model_name": {
                     "type": "string",
                     "description": "Name of the model to drop. Use list_models to see available models.",
                 }
             },
-            "required": ["modelName"],
+            "required": ["model_name"],
         },
     ),
 ]

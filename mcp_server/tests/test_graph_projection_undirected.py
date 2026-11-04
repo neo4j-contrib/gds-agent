@@ -26,9 +26,9 @@ def test_session_mode_forwards_undirected_relationship_types():
 
     ProjectGraphCypherHandler(gds).execute(
         {
-            "graphName": "g",
-            "cypherQuery": CYPHER,
-            "undirectedRelationshipTypes": ["LINK"],
+            "graph_name": "g",
+            "cypher_query": CYPHER,
+            "undirected_relationship_types": ["LINK"],
         }
     )
 
@@ -40,7 +40,7 @@ def test_session_mode_without_undirected_passes_none():
     gds = Mock(spec=AuraGraphDataScience)
     gds.graph.project.cypher.return_value = (_mock_graph(), {})
 
-    ProjectGraphCypherHandler(gds).execute({"graphName": "g", "cypherQuery": CYPHER})
+    ProjectGraphCypherHandler(gds).execute({"graph_name": "g", "cypher_query": CYPHER})
 
     _, kwargs = gds.graph.project.cypher.call_args
     assert kwargs["undirected_relationship_types"] is None
@@ -52,9 +52,9 @@ def test_plugin_mode_rejects_undirected_relationship_types():
     with pytest.raises(ValueError, match="plugin"):
         ProjectGraphCypherHandler(gds).execute(
             {
-                "graphName": "g",
-                "cypherQuery": CYPHER,
-                "undirectedRelationshipTypes": ["LINK"],
+                "graph_name": "g",
+                "cypher_query": CYPHER,
+                "undirected_relationship_types": ["LINK"],
             }
         )
     gds.graph.project.cypher.assert_not_called()

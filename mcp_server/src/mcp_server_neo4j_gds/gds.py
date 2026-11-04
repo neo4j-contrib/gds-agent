@@ -19,7 +19,7 @@ def projected_graph_from_params(gds, node_labels=None, undirected=False, **kwarg
 
     Supports both:
     - Positional node_labels as the 2nd argument.
-    - nodeLabels/relTypes passed either directly as kwargs or nested under a 'kwargs' dict.
+    - node_labels/rel_types passed either directly as kwargs or nested under a 'kwargs' dict.
 
     Returns the projected GDS graph. The caller is responsible for dropping it
     (e.g., gds.graph.drop(G)).
@@ -31,12 +31,15 @@ def projected_graph_from_params(gds, node_labels=None, undirected=False, **kwarg
         else kwargs
     )
 
-    # Prefer explicit node_labels positional arg, fall back to params["nodeLabels"]
-    nodeLabels = params.get("nodeLabels", node_labels)
-    relTypes = params.get("relTypes")
+    # Prefer explicit node_labels positional arg, fall back to params["node_labels"]
+    node_labels = params.get("node_labels", node_labels)
+    rel_types = params.get("rel_types")
 
     with projected_graph(
-        gds, node_labels=nodeLabels, relationship_types=relTypes, undirected=undirected
+        gds,
+        node_labels=node_labels,
+        relationship_types=rel_types,
+        undirected=undirected,
     ) as G:
         yield G
 
@@ -203,10 +206,10 @@ def get_node_properties_keys(gds: GraphDataScience, node_labels=None):
     return df["properties_keys"].iloc[0]
 
 
-def get_relationship_properties_keys(gds: GraphDataScience, relationshipTypes=None):
-    if relationshipTypes is None:
-        relationshipTypes = []
-    rel_query = create_relationship_cypher_match_query([], relationshipTypes)
+def get_relationship_properties_keys(gds: GraphDataScience, relationship_types=None):
+    if relationship_types is None:
+        relationship_types = []
+    rel_query = create_relationship_cypher_match_query([], relationship_types)
     property_extractor = """
                             WITH keys(properties(r)) AS prop_keys_list
                             UNWIND prop_keys_list AS prop_keys

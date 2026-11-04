@@ -11,7 +11,7 @@ similarity_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "sourceNodeFilter": {
+                "source_node_filter": {
                     "anyOf": [
                         {
                             "type": "array",
@@ -24,7 +24,7 @@ similarity_tool_definitions = [
                     ],
                     "description": "The source node filter to apply. Accepts a List of node names, or a single label. An empty list is treated as no filter (the algorithm runs for all source nodes).",
                 },
-                "targetNodeFilter": {
+                "target_node_filter": {
                     "anyOf": [
                         {
                             "type": "array",
@@ -37,52 +37,52 @@ similarity_tool_definitions = [
                     ],
                     "description": "The target node filter to apply. Accepts a List of node names, or a single label. An empty list is treated as no filter (the algorithm runs for all target nodes).",
                 },
-                "similarityCutoff": {
+                "similarity_cutoff": {
                     "type": "number",
                     "description": "Lower limit for the similarity score to be present in the result. Values must be between 0 and 1.",
                 },
-                "degreeCutoff": {
+                "degree_cutoff": {
                     "type": "integer",
                     "description": "Inclusive lower bound on the node degree for a node to be considered in the comparisons. This value can not be lower than 1.",
                 },
-                "upperDegreeCutoff": {
+                "upper_degree_cutoff": {
                     "type": "integer",
                     "description": "Inclusive upper bound on the node degree for a node to be considered in the comparisons. This value can not be lower than 1.",
                 },
-                "topK": {
+                "top_k": {
                     "type": "integer",
                     "description": "Limit on the number of scores per node. The K largest results are returned. This value cannot be lower than 1. Use this instead of topN whenever the sourceNode consists of a single node, or it is specifically stated that results are to be computed for each source node",
                 },
-                "bottomK": {
+                "bottom_k": {
                     "type": "integer",
                     "description": "Limit on the number of scores per node. The K smallest results are returned. This value cannot be lower than 1.",
                 },
-                "topN": {
+                "top_n": {
                     "type": "integer",
                     "description": "Global limit on the number of scores computed. The N largest total results are returned. This value cannot be negative, a value of 0 means no global limit.",
                 },
-                "bottomN": {
+                "bottom_n": {
                     "type": "integer",
                     "description": "Global limit on the number of scores computed. The N smallest total results are returned. This value cannot be negative, a value of 0 means no global limit.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
-                "similarityMetric": {
+                "similarity_metric": {
                     "type": "string",
                     "enum": ["JACCARD", "OVERLAP", "COSINE"],
                     "description": "The metric used to compute similarity.",
                 },
-                "useComponents": {
+                "use_components": {
                     "type": "boolean",
                     "description": "If enabled, Node Similarity will use components to improve the performance of the computation, skipping comparisons of nodes in different components. Set to false (Default): the algorithm does not use components, but computes similarity across the entire graph. Set to true: the algorithm uses components, and will compute these components before computing similarity. Set to String: use pre-computed components stored in graph, String is the key for a node property representing components.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -91,16 +91,16 @@ similarity_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the relationship property to write similarity scores to.",
                 },
-                "mutateRelationshipType": {
+                "mutate_relationship_type": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The relationship type to use for the new relationships.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -128,7 +128,7 @@ similarity_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "sourceNodeFilter": {
+                "source_node_filter": {
                     "anyOf": [
                         {
                             "type": "array",
@@ -141,7 +141,7 @@ similarity_tool_definitions = [
                     ],
                     "description": "The source node filter to apply. Accepts a List of node names, or a single label. An empty list is treated as no filter (the algorithm runs for all source nodes).",
                 },
-                "targetNodeFilter": {
+                "target_node_filter": {
                     "anyOf": [
                         {
                             "type": "array",
@@ -154,52 +154,52 @@ similarity_tool_definitions = [
                     ],
                     "description": "The target node filter to apply. Accepts a List of node names, or a single label. An empty list is treated as no filter (the algorithm runs for all target nodes).",
                 },
-                "nodeProperties": {
+                "node_properties": {
                     "type": "object",
                     "description": "The node properties to use for similarity computation along with their selected similarity metrics. Accepts a Map of property keys to metrics. For example: {embedding: 'COSINE',age: 'DEFAULT',lotteryNumbers: 'OVERLAP'}. DEFAULT refers to COSINE.",
                 },
-                "topK": {
+                "top_k": {
                     "type": "integer",
                     "description": "The number of neighbors to find for each node. The K-nearest neighbors are returned. This value cannot be lower than 1.",
                 },
-                "sampleRate": {
+                "sample_rate": {
                     "type": "number",
                     "description": "Sample rate to limit the number of comparisons per node. Value must be between 0 (exclusive) and 1 (inclusive).",
                 },
-                "deltaThreshold": {
+                "delta_threshold": {
                     "type": "number",
                     "description": "Value as a percentage to determine when to stop early. If fewer updates than the configured value happen, the algorithm stops. Value must be between 0 (exclusive) and 1 (inclusive).",
                 },
-                "maxIterations": {
+                "max_iterations": {
                     "type": "integer",
                     "description": "Hard limit to stop the algorithm after that many iterations.",
                 },
-                "randomJoins": {
+                "random_joins": {
                     "type": "integer",
                     "description": "The number of random attempts per node to connect new node neighbors based on random selection, for each iteration.",
                 },
-                "initialSampler": {
+                "initial_sampler": {
                     "type": "string",
-                    "enum": ["uniform", "randomWalk"],
-                    "description": 'The method used to sample the first k random neighbors for each node. "uniform" and "randomWalk", both case-insensitive, are valid inputs.',
+                    "enum": ["uniform", "random_walk"],
+                    "description": 'The method used to sample the first k random neighbors for each node. "uniform" and "random_walk", both case-insensitive, are valid inputs.',
                 },
-                "similarityCutoff": {
+                "similarity_cutoff": {
                     "type": "number",
                     "description": "Filter out from the list of K-nearest neighbors nodes with similarity below this threshold.",
                 },
-                "perturbationRate": {
+                "perturbation_rate": {
                     "type": "number",
                     "description": "The probability of replacing the least similar known neighbor with an encountered neighbor of equal similarity.",
                 },
-                "seedTargetNodes": {
+                "seed_target_nodes": {
                     "type": "boolean",
                     "description": "Enable seeding of target nodes. If seeded, every node picks some of the target nodes initially. This guarantees that for every node we can avoid empty result (when the algorithm did not find for it any similar neighbors from the target set). Can only be used if targetNodeFilter is set.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -208,16 +208,16 @@ similarity_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the relationship property to write similarity scores to.",
                 },
-                "mutateRelationshipType": {
+                "mutate_relationship_type": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The relationship type to use for the new relationships.",
                 },
             },
-            "required": ["nodeProperties", "graphName"],
+            "required": ["node_properties", "graph_name"],
         },
     ),
 ]

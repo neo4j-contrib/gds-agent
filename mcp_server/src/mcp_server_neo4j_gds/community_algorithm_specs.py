@@ -7,22 +7,22 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
-                "communityProperty": {
+                "community_property": {
                     "type": "string",
                     "description": "The node property that holds the community ID as an integer for each node. "
                     "Note that only non-negative community IDs are considered valid and will have their conductance computed.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "The relationship property that holds the weight of the relationships. "
                     "If not provided, all relationships are considered to have a weight of 1.",
                 },
             },
-            "required": ["graphName", "communityProperty"],
+            "required": ["graph_name", "community_property"],
         },
     ),
     types.Tool(
@@ -38,7 +38,7 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -47,19 +47,19 @@ community_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
-                "nodeProperty": {
+                "node_property": {
                     "type": "string",
                     "description": "A node property corresponding to an array of floats used by HDBSCAN to compute clusters",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "minClusterSize": {
+                "min_cluster_size": {
                     "type": "integer",
                     "description": "The minimum number of nodes that a cluster should contain.",
                 },
@@ -67,12 +67,12 @@ community_tool_definitions = [
                     "type": "integer",
                     "description": "The number of neighbours to be considered when computing the core distances of a node.",
                 },
-                "leafSize": {
+                "leaf_size": {
                     "type": "integer",
                     "description": "The number of leaf nodes of the supporting tree data structure.",
                 },
             },
-            "required": ["graphName", "nodeProperty"],
+            "required": ["graph_name", "node_property"],
         },
     ),
     types.Tool(
@@ -88,7 +88,7 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -97,16 +97,16 @@ community_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -123,7 +123,7 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -132,24 +132,24 @@ community_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "maxIterations": {
+                "max_iterations": {
                     "type": "integer",
                     "description": "The maximum number of iterations to run the coloring algorithm.",
                 },
-                "minCommunitySize": {
+                "min_community_size": {
                     "type": "integer",
                     "description": "Only nodes inside communities larger or equal the given value are returned.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -167,7 +167,7 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -176,15 +176,15 @@ community_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
-                "nodeProperty": {
+                "node_property": {
                     "type": "string",
                     "description": "A node property corresponding to an array of floats used by K-Means to cluster nodes into communities.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
@@ -192,34 +192,34 @@ community_tool_definitions = [
                     "type": "integer",
                     "description": "The number of clusters to create.",
                 },
-                "maxIterations": {
+                "max_iterations": {
                     "type": "integer",
                     "description": "The maximum number of iterations the algorithm will run.",
                 },
-                "deltaThreshold": {
+                "delta_threshold": {
                     "type": "number",
                     "description": "Value as a percentage to determine when to stop early. If fewer than 'deltaThreshold * |nodes|' nodes change their cluster , the algorithm stops. Value must be between 0 (exclusive) and 1 (inclusive).",
                 },
-                "numberOfRestarts": {
+                "number_of_restarts": {
                     "type": "integer",
                     "description": "Number of times to execute K-Means with different initial centers. The communities returned are those minimizing the average node-center distances.",
                 },
-                "initialSampler": {
+                "initial_sampler": {
                     "type": "string",
                     "enum": ["uniform", "kmeans++"],
                     "description": "The method used to sample the first k centroids. 'uniform' and 'kmeans++', both case-insensitive, are valid inputs.",
                 },
-                "seedCentroids": {
+                "seed_centroids": {
                     "type": "array",
                     "items": {"type": "array", "items": {"type": "number"}},
                     "description": "Parameter to explicitly give the initial centroids. It cannot be enabled together with a non-default value of the numberOfRestarts parameter.",
                 },
-                "computeSilhouette": {
+                "compute_silhouette": {
                     "type": "boolean",
                     "description": "If set to true, the silhouette scores are computed once the clustering has been determined. Silhouette is a metric on how well the nodes have been clustered.",
                 },
             },
-            "required": ["graphName", "nodeProperty"],
+            "required": ["graph_name", "node_property"],
         },
     ),
     types.Tool(
@@ -230,7 +230,7 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -239,40 +239,40 @@ community_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
-                "maxIterations": {
+                "max_iterations": {
                     "type": "integer",
                     "description": "The maximum number of iterations to run.",
                 },
-                "nodeWeightProperty": {
+                "node_weight_property": {
                     "type": "string",
                     "description": "The name of a node property that contains node weights.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
-                "seedProperty": {
+                "seed_property": {
                     "type": "string",
                     "description": "The name of a node property that defines an initial numeric label.",
                 },
-                "consecutiveIds": {
+                "consecutive_ids": {
                     "type": "boolean",
                     "description": "Flag to decide whether component identifiers are mapped into a consecutive id space (requires additional memory).",
                 },
-                "minCommunitySize": {
+                "min_community_size": {
                     "type": "integer",
                     "description": "Only nodes inside communities larger or equal the given value are returned.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -286,7 +286,7 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -295,11 +295,11 @@ community_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
-                "maxLevels": {
+                "max_levels": {
                     "type": "integer",
                     "description": "The maximum number of levels in which the graph is clustered and then condensed.",
                 },
@@ -315,24 +315,24 @@ community_tool_definitions = [
                     "type": "number",
                     "description": "Minimum change in modularity between iterations. If the modularity changes less than the tolerance value, the result is considered stable and the algorithm returns.",
                 },
-                "includeIntermediateCommunities": {
+                "include_intermediate_communities": {
                     "type": "boolean",
                     "description": "Indicates whether to write intermediate communities. If set to false, only the final community is persisted.",
                 },
-                "seedProperty": {
+                "seed_property": {
                     "type": "string",
                     "description": "Used to set the initial community for a node. The property value needs to be a non-negative number.",
                 },
-                "minCommunitySize": {
+                "min_community_size": {
                     "type": "integer",
                     "description": "Only nodes inside communities larger or equal the given value are returned.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -348,7 +348,7 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -357,15 +357,15 @@ community_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
-                "triangleCountProperty": {
+                "triangle_count_property": {
                     "type": "string",
                     "description": "Node property that contains pre-computed triangle count.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
@@ -375,7 +375,7 @@ community_tool_definitions = [
                     "description": "Optional list of node identifiers to filter results. Matching is exact. Requires nodeIdentifierProperty to be specified.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -387,7 +387,7 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -396,23 +396,23 @@ community_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
-                "seedProperty": {
+                "seed_property": {
                     "type": "string",
                     "description": "Used to set the initial community for a node. The property value needs to be a non-negative number.",
                 },
-                "maxLevels": {
+                "max_levels": {
                     "type": "integer",
                     "description": "The maximum number of levels in which the graph is clustered and then condensed.",
                 },
-                "maxIterations": {
+                "max_iterations": {
                     "type": "integer",
                     "description": "The maximum number of iterations that the modularity optimization will run for each level.",
                 },
@@ -420,24 +420,24 @@ community_tool_definitions = [
                     "type": "number",
                     "description": "Minimum change in modularity between iterations. If the modularity changes less than the tolerance value, the result is considered stable and the algorithm returns.",
                 },
-                "includeIntermediateCommunities": {
+                "include_intermediate_communities": {
                     "type": "boolean",
                     "description": "Indicates whether to write intermediate communities. If set to false, only the final community is persisted.",
                 },
-                "consecutiveIds": {
+                "consecutive_ids": {
                     "type": "boolean",
                     "description": "Flag to decide whether component identifiers are mapped into a consecutive id space (requires additional memory). Cannot be used in combination with the includeIntermediateCommunities flag.",
                 },
-                "minCommunitySize": {
+                "min_community_size": {
                     "type": "integer",
                     "description": "Only nodes inside communities larger or equal the given value are returned.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -448,20 +448,20 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
-                "communityProperty": {
+                "community_property": {
                     "type": "string",
                     "description": "The node property that holds the community ID as an integer for each node. Note that only non-negative community IDs are considered valid and will have their modularity score computed.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
             },
-            "required": ["graphName", "communityProperty"],
+            "required": ["graph_name", "community_property"],
         },
     ),
     types.Tool(
@@ -473,7 +473,7 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -482,11 +482,11 @@ community_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
-                "maxIterations": {
+                "max_iterations": {
                     "type": "integer",
                     "description": "The maximum number of iterations to run.",
                 },
@@ -494,28 +494,28 @@ community_tool_definitions = [
                     "type": "number",
                     "description": "Minimum change in modularity between iterations. If the modularity changes less than the tolerance value, the result is considered stable and the algorithm returns.",
                 },
-                "seedProperty": {
+                "seed_property": {
                     "type": "string",
                     "description": "Used to define initial set of labels.",
                 },
-                "consecutiveIds": {
+                "consecutive_ids": {
                     "type": "boolean",
                     "description": "Flag to decide whether component identifiers are mapped into a consecutive id space (requires additional memory).",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
-                "minCommunitySize": {
+                "min_community_size": {
                     "type": "integer",
                     "description": "Only nodes inside communities larger or equal the given value are returned.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -526,7 +526,7 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -535,20 +535,20 @@ community_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
-                "consecutiveIds": {
+                "consecutive_ids": {
                     "type": "boolean",
                     "description": "Flag to decide whether component identifiers are mapped into a consecutive id space (requires additional memory).",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -563,7 +563,7 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -572,15 +572,15 @@ community_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
-                "maxDegree": {
+                "max_degree": {
                     "type": "integer",
                     "description": "If a node has a degree higher than this it will not be considered by the algorithm. The triangle count for these nodes will be -1.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
@@ -590,7 +590,7 @@ community_tool_definitions = [
                     "description": "Optional list of node identifiers to filter results. Matching is exact. Requires nodeIdentifierProperty to be specified.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -604,7 +604,7 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -613,15 +613,15 @@ community_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
-                "seedProperty": {
+                "seed_property": {
                     "type": "string",
                     "description": "Used to set the initial component for a node. The property value needs to be a number.",
                 },
@@ -629,20 +629,20 @@ community_tool_definitions = [
                     "type": "number",
                     "description": "The value of the weight above which the relationship is considered in the computation.",
                 },
-                "consecutiveIds": {
+                "consecutive_ids": {
                     "type": "boolean",
                     "description": "Flag to decide whether component identifiers are mapped into a consecutive id space (requires additional memory).",
                 },
-                "minComponentSize": {
+                "min_component_size": {
                     "type": "integer",
                     "description": "Only nodes inside communities larger or equal the given value are returned.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -658,7 +658,7 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -667,7 +667,7 @@ community_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
@@ -679,24 +679,24 @@ community_tool_definitions = [
                     "type": "integer",
                     "description": "The number of iterations the algorithm will run before returning the best solution among all the iterations.",
                 },
-                "vnsMaxNeighborhoodOrder": {
+                "vns_max_neighborhood_order": {
                     "type": "integer",
                     "description": "The maximum number of nodes VNS will swap when perturbing solutions.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "If set, the values stored at the given property are used as relationship weights during the computation. If not set, the graph is considered unweighted.",
                 },
-                "minCommunitySize": {
+                "min_community_size": {
                     "type": "integer",
                     "description": "Only nodes inside communities larger or equal the given value are returned.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -708,7 +708,7 @@ community_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "The name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -717,15 +717,15 @@ community_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
-                "maxIterations": {
+                "max_iterations": {
                     "type": "integer",
                     "description": "Maximum number of iterations to run.",
                 },
-                "minAssociationStrength": {
+                "min_association_strength": {
                     "type": "number",
                     "description": "Minimum influence required for a community to retain a node.",
                 },
@@ -734,12 +734,12 @@ community_tool_definitions = [
                     "enum": ["AUTO", "RANGE", "DEGREE"],
                     "description": "The partitioning scheme used to divide the work between threads. Available options are AUTO, RANGE, DEGREE.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "The name of a node property to use as node identifier in the result. If provided, the result will include a 'nodeName' column with values from this property.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
 ]

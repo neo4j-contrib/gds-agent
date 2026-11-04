@@ -14,9 +14,9 @@ async def test_find_shortest_path(mcp_client, projected_test_graph):
         {
             "start_node": "Bayswater",
             "end_node": "Westbourne Park",
-            "nodeIdentifierProperty": "name",
+            "node_identifier_property": "name",
             "relationship_property": "time",
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -43,8 +43,8 @@ async def test_find_shortest_path(mcp_client, projected_test_graph):
         {
             "start_node": "NonExistentStation1",
             "end_node": "NonExistentStation2",
-            "nodeIdentifierProperty": "name",
-            "graphName": projected_test_graph,
+            "node_identifier_property": "name",
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -58,11 +58,11 @@ async def test_delta_stepping_shortest_path(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "delta_stepping_shortest_path",
         {
-            "sourceNode": "Bayswater",
-            "nodeIdentifierProperty": "name",
+            "source_node": "Bayswater",
+            "node_identifier_property": "name",
             "delta": 2.0,
-            "relationshipWeightProperty": "time",
-            "graphName": projected_test_graph,
+            "relationship_weight_property": "time",
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -89,10 +89,10 @@ async def test_delta_stepping_shortest_path(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "delta_stepping_shortest_path",
         {
-            "sourceNode": "NonExistentStation",
-            "nodeIdentifierProperty": "name",
+            "source_node": "NonExistentStation",
+            "node_identifier_property": "name",
             "delta": 1.0,
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -105,10 +105,10 @@ async def test_dijkstra_single_source_shortest_path(mcp_client, projected_test_g
     result = await mcp_client.call_tool(
         "dijkstra_single_source_shortest_path",
         {
-            "sourceNode": "Bayswater",
-            "nodeIdentifierProperty": "name",
-            "relationshipWeightProperty": "time",
-            "graphName": projected_test_graph,
+            "source_node": "Bayswater",
+            "node_identifier_property": "name",
+            "relationship_weight_property": "time",
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -135,9 +135,9 @@ async def test_dijkstra_single_source_shortest_path(mcp_client, projected_test_g
     result = await mcp_client.call_tool(
         "dijkstra_single_source_shortest_path",
         {
-            "sourceNode": "NonExistentStation",
-            "nodeIdentifierProperty": "name",
-            "graphName": projected_test_graph,
+            "source_node": "NonExistentStation",
+            "node_identifier_property": "name",
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -150,13 +150,13 @@ async def test_a_star_shortest_path(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "a_star_shortest_path",
         {
-            "sourceNode": "Bayswater",
-            "targetNode": "Westbourne Park",
-            "nodeIdentifierProperty": "name",
-            "relationshipWeightProperty": "time",
-            "latitudeProperty": "latitude",
-            "longitudeProperty": "longitude",
-            "graphName": projected_test_graph,
+            "source_node": "Bayswater",
+            "target_node": "Westbourne Park",
+            "node_identifier_property": "name",
+            "relationship_weight_property": "time",
+            "latitude_property": "latitude",
+            "longitude_property": "longitude",
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -181,12 +181,12 @@ async def test_a_star_shortest_path(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "a_star_shortest_path",
         {
-            "sourceNode": "NonExistentStation1",
-            "targetNode": "NonExistentStation2",
-            "nodeIdentifierProperty": "name",
-            "latitudeProperty": "latitude",
-            "longitudeProperty": "longitude",
-            "graphName": projected_test_graph,
+            "source_node": "NonExistentStation1",
+            "target_node": "NonExistentStation2",
+            "node_identifier_property": "name",
+            "latitude_property": "latitude",
+            "longitude_property": "longitude",
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -200,12 +200,12 @@ async def test_yens_shortest_paths(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "yens_shortest_paths",
         {
-            "sourceNode": "Bayswater",
-            "targetNode": "Westbourne Park",
-            "nodeIdentifierProperty": "name",
-            "relationshipWeightProperty": "time",
+            "source_node": "Bayswater",
+            "target_node": "Westbourne Park",
+            "node_identifier_property": "name",
+            "relationship_weight_property": "time",
             "k": 3,
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -244,11 +244,11 @@ async def test_yens_shortest_paths(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "yens_shortest_paths",
         {
-            "sourceNode": "NonExistentStation1",
-            "targetNode": "NonExistentStation2",
-            "nodeIdentifierProperty": "name",
+            "source_node": "NonExistentStation1",
+            "target_node": "NonExistentStation2",
+            "node_identifier_property": "name",
             "k": 2,
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -262,10 +262,10 @@ async def test_minimum_weight_spanning_tree(mcp_client, projected_undirected_gra
     result = await mcp_client.call_tool(
         "minimum_weight_spanning_tree",
         {
-            "sourceNode": "Canada Water",
-            "nodeIdentifierProperty": "name",
-            "relationshipWeightProperty": "time",
-            "graphName": projected_undirected_graph,
+            "source_node": "Canada Water",
+            "node_identifier_property": "name",
+            "relationship_weight_property": "time",
+            "graph_name": projected_undirected_graph,
         },
     )
 
@@ -293,9 +293,9 @@ async def test_minimum_weight_spanning_tree(mcp_client, projected_undirected_gra
     result = await mcp_client.call_tool(
         "minimum_weight_spanning_tree",
         {
-            "sourceNode": "NonExistentStation",
-            "nodeIdentifierProperty": "name",
-            "graphName": projected_undirected_graph,
+            "source_node": "NonExistentStation",
+            "node_identifier_property": "name",
+            "graph_name": projected_undirected_graph,
         },
     )
 
@@ -309,11 +309,11 @@ async def test_minimum_directed_steiner_tree(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "minimum_directed_steiner_tree",
         {
-            "sourceNode": "Green Park",
-            "targetNodes": ["Regent's Park", "Piccadilly Circus", "Knightsbridge"],
-            "nodeIdentifierProperty": "name",
-            "relationshipWeightProperty": "time",
-            "graphName": projected_test_graph,
+            "source_node": "Green Park",
+            "target_nodes": ["Regent's Park", "Piccadilly Circus", "Knightsbridge"],
+            "node_identifier_property": "name",
+            "relationship_weight_property": "time",
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -341,10 +341,10 @@ async def test_minimum_directed_steiner_tree(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "minimum_directed_steiner_tree",
         {
-            "sourceNode": "NonExistentStation",
-            "targetNodes": ["Tower Hill"],
-            "nodeIdentifierProperty": "name",
-            "graphName": projected_test_graph,
+            "source_node": "NonExistentStation",
+            "target_nodes": ["Tower Hill"],
+            "node_identifier_property": "name",
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -358,9 +358,9 @@ async def test_prize_collecting_steiner_tree(mcp_client, projected_undirected_gr
     result = await mcp_client.call_tool(
         "prize_collecting_steiner_tree",
         {
-            "relationshipWeightProperty": "time",
-            "prizeProperty": "zone",
-            "graphName": projected_undirected_graph,
+            "relationship_weight_property": "time",
+            "prize_property": "zone",
+            "graph_name": projected_undirected_graph,
         },
     )
 
@@ -390,8 +390,8 @@ async def test_all_pairs_shortest_paths(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "all_pairs_shortest_paths",
         {
-            "relationshipWeightProperty": "time",
-            "graphName": projected_test_graph,
+            "relationship_weight_property": "time",
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -428,11 +428,11 @@ async def test_random_walk(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "random_walk",
         {
-            "sourceNodes": ["Bayswater"],
-            "nodeIdentifierProperty": "name",
-            "walkLength": 5,
-            "walksPerNode": 3,
-            "graphName": projected_test_graph,
+            "source_nodes": ["Bayswater"],
+            "node_identifier_property": "name",
+            "walk_length": 5,
+            "walks_per_node": 3,
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -448,9 +448,9 @@ async def test_random_walk(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "random_walk",
         {
-            "walkLength": 3,
-            "walksPerNode": 1,
-            "graphName": projected_test_graph,
+            "walk_length": 3,
+            "walks_per_node": 1,
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -468,10 +468,10 @@ async def test_breadth_first_search(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "breadth_first_search",
         {
-            "sourceNode": "Bayswater",
-            "nodeIdentifierProperty": "name",
-            "maxDepth": 3,
-            "graphName": projected_test_graph,
+            "source_node": "Bayswater",
+            "node_identifier_property": "name",
+            "max_depth": 3,
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -497,9 +497,9 @@ async def test_breadth_first_search(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "breadth_first_search",
         {
-            "sourceNode": "NonExistentStation",
-            "nodeIdentifierProperty": "name",
-            "graphName": projected_test_graph,
+            "source_node": "NonExistentStation",
+            "node_identifier_property": "name",
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -513,10 +513,10 @@ async def test_depth_first_search(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "depth_first_search",
         {
-            "sourceNode": "Bayswater",
-            "nodeIdentifierProperty": "name",
-            "maxDepth": 3,
-            "graphName": projected_test_graph,
+            "source_node": "Bayswater",
+            "node_identifier_property": "name",
+            "max_depth": 3,
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -542,9 +542,9 @@ async def test_depth_first_search(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "depth_first_search",
         {
-            "sourceNode": "NonExistentStation",
-            "nodeIdentifierProperty": "name",
-            "graphName": projected_test_graph,
+            "source_node": "NonExistentStation",
+            "node_identifier_property": "name",
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -560,10 +560,10 @@ async def test_bellman_ford_single_source_shortest_path(
     result = await mcp_client.call_tool(
         "bellman_ford_single_source_shortest_path",
         {
-            "sourceNode": "Bayswater",
-            "nodeIdentifierProperty": "name",
-            "relationshipWeightProperty": "time",
-            "graphName": projected_test_graph,
+            "source_node": "Bayswater",
+            "node_identifier_property": "name",
+            "relationship_weight_property": "time",
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -599,9 +599,9 @@ async def test_bellman_ford_single_source_shortest_path(
     result = await mcp_client.call_tool(
         "bellman_ford_single_source_shortest_path",
         {
-            "sourceNode": "NonExistentStation",
-            "nodeIdentifierProperty": "name",
-            "graphName": projected_test_graph,
+            "source_node": "NonExistentStation",
+            "node_identifier_property": "name",
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -615,8 +615,8 @@ async def test_longest_path(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "longest_path",
         {
-            "relationshipWeightProperty": "time",
-            "graphName": projected_test_graph,
+            "relationship_weight_property": "time",
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -632,10 +632,10 @@ async def test_longest_path(mcp_client, projected_test_graph):
     result_filtered = await mcp_client.call_tool(
         "longest_path",
         {
-            "targetNodes": ["Notting Hill Gate"],
-            "nodeIdentifierProperty": "name",
-            "relationshipWeightProperty": "time",
-            "graphName": projected_test_graph,
+            "target_nodes": ["Notting Hill Gate"],
+            "node_identifier_property": "name",
+            "relationship_weight_property": "time",
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -656,16 +656,16 @@ async def test_max_flow(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "max_flow",
         {
-            "sourceNodes": ["Baker Street"],
-            "targetNodes": [
+            "source_nodes": ["Baker Street"],
+            "target_nodes": [
                 "Bond Street",
                 "Euston Square",
                 "Paddington",
                 "Wembley Park",
             ],
-            "nodeIdentifierProperty": "name",
-            "capacityProperty": "time",
-            "graphName": projected_test_graph,
+            "node_identifier_property": "name",
+            "capacity_property": "time",
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -681,11 +681,11 @@ async def test_random_walk_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "random_walk",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "mode": "mutate",
-            "mutateProperty": "randomWalkPath",
-            "walkLength": 10,
-            "walksPerNode": 5,
+            "mutate_property": "randomWalkPath",
+            "walk_length": 10,
+            "walks_per_node": 5,
         },
     )
 
@@ -700,13 +700,13 @@ async def test_find_shortest_path_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "find_shortest_path",
         {
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
             "start_node": "Bayswater",
             "end_node": "Westbourne Park",
-            "nodeIdentifierProperty": "name",
+            "node_identifier_property": "name",
             "relationship_property": "time",
             "mode": "mutate",
-            "mutateRelationshipType": "SHORTEST_PATH",
+            "mutate_relationship_type": "SHORTEST_PATH",
         },
     )
 
@@ -726,13 +726,13 @@ async def test_delta_stepping_shortest_path_mutate(mcp_client, projected_test_gr
     result = await mcp_client.call_tool(
         "delta_stepping_shortest_path",
         {
-            "graphName": projected_test_graph,
-            "sourceNode": "Bayswater",
-            "nodeIdentifierProperty": "name",
+            "graph_name": projected_test_graph,
+            "source_node": "Bayswater",
+            "node_identifier_property": "name",
             "delta": 2.0,
-            "relationshipWeightProperty": "time",
+            "relationship_weight_property": "time",
             "mode": "mutate",
-            "mutateRelationshipType": "DELTA_PATH",
+            "mutate_relationship_type": "DELTA_PATH",
         },
     )
 
@@ -754,12 +754,12 @@ async def test_dijkstra_single_source_shortest_path_mutate(
     result = await mcp_client.call_tool(
         "dijkstra_single_source_shortest_path",
         {
-            "graphName": projected_test_graph,
-            "sourceNode": "Bayswater",
-            "nodeIdentifierProperty": "name",
-            "relationshipWeightProperty": "time",
+            "graph_name": projected_test_graph,
+            "source_node": "Bayswater",
+            "node_identifier_property": "name",
+            "relationship_weight_property": "time",
             "mode": "mutate",
-            "mutateRelationshipType": "DIJKSTRA_PATH",
+            "mutate_relationship_type": "DIJKSTRA_PATH",
         },
     )
 
@@ -779,12 +779,12 @@ async def test_breadth_first_search_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "breadth_first_search",
         {
-            "graphName": projected_test_graph,
-            "sourceNode": "Bayswater",
-            "nodeIdentifierProperty": "name",
-            "maxDepth": 3,
+            "graph_name": projected_test_graph,
+            "source_node": "Bayswater",
+            "node_identifier_property": "name",
+            "max_depth": 3,
             "mode": "mutate",
-            "mutateRelationshipType": "BFS_TREE",
+            "mutate_relationship_type": "BFS_TREE",
         },
     )
 
@@ -804,12 +804,12 @@ async def test_depth_first_search_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "depth_first_search",
         {
-            "graphName": projected_test_graph,
-            "sourceNode": "Bayswater",
-            "nodeIdentifierProperty": "name",
-            "maxDepth": 3,
+            "graph_name": projected_test_graph,
+            "source_node": "Bayswater",
+            "node_identifier_property": "name",
+            "max_depth": 3,
             "mode": "mutate",
-            "mutateRelationshipType": "DFS_TREE",
+            "mutate_relationship_type": "DFS_TREE",
         },
     )
 
@@ -831,12 +831,12 @@ async def test_bellman_ford_single_source_shortest_path_mutate(
     result = await mcp_client.call_tool(
         "bellman_ford_single_source_shortest_path",
         {
-            "graphName": projected_test_graph,
-            "sourceNode": "Bayswater",
-            "nodeIdentifierProperty": "name",
-            "relationshipWeightProperty": "time",
+            "graph_name": projected_test_graph,
+            "source_node": "Bayswater",
+            "node_identifier_property": "name",
+            "relationship_weight_property": "time",
             "mode": "mutate",
-            "mutateRelationshipType": "BELLMAN_FORD_PATH",
+            "mutate_relationship_type": "BELLMAN_FORD_PATH",
         },
     )
 
@@ -858,13 +858,13 @@ async def test_minimum_weight_spanning_tree_mutate(
     result = await mcp_client.call_tool(
         "minimum_weight_spanning_tree",
         {
-            "graphName": projected_undirected_graph,
-            "sourceNode": "Canada Water",
-            "nodeIdentifierProperty": "name",
-            "relationshipWeightProperty": "time",
+            "graph_name": projected_undirected_graph,
+            "source_node": "Canada Water",
+            "node_identifier_property": "name",
+            "relationship_weight_property": "time",
             "mode": "mutate",
-            "mutateProperty": "mstWeight",
-            "mutateRelationshipType": "MST_EDGE",
+            "mutate_property": "mstWeight",
+            "mutate_relationship_type": "MST_EDGE",
         },
     )
 
@@ -884,14 +884,14 @@ async def test_max_flow_mutate(mcp_client, projected_test_graph):
     result = await mcp_client.call_tool(
         "max_flow",
         {
-            "graphName": projected_test_graph,
-            "sourceNodes": ["Baker Street"],
-            "targetNodes": ["Bond Street"],
-            "nodeIdentifierProperty": "name",
-            "capacityProperty": "time",
+            "graph_name": projected_test_graph,
+            "source_nodes": ["Baker Street"],
+            "target_nodes": ["Bond Street"],
+            "node_identifier_property": "name",
+            "capacity_property": "time",
             "mode": "mutate",
-            "mutateProperty": "flow",
-            "mutateRelationshipType": "FLOW_EDGE",
+            "mutate_property": "flow",
+            "mutate_relationship_type": "FLOW_EDGE",
         },
     )
 
@@ -920,9 +920,9 @@ async def test_find_shortest_path_rejects_injection_in_node_identifier_property(
         {
             "start_node": "Bayswater",
             "end_node": "Westbourne Park",
-            "nodeIdentifierProperty": _MALICIOUS_NODE_IDENTIFIER_PROPERTY,
+            "node_identifier_property": _MALICIOUS_NODE_IDENTIFIER_PROPERTY,
             "relationship_property": "time",
-            "graphName": projected_test_graph,
+            "graph_name": projected_test_graph,
         },
     )
 
@@ -957,9 +957,9 @@ async def test_find_shortest_path_with_integer_identifier(
             {
                 "start_node": 1001,
                 "end_node": 10010,
-                "nodeIdentifierProperty": "testId",
+                "node_identifier_property": "testId",
                 "relationship_property": "time",
-                "graphName": projected_test_graph,
+                "graph_name": projected_test_graph,
             },
         )
         result_data = json.loads(result[0]["text"])

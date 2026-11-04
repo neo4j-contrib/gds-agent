@@ -8,7 +8,7 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
                 },
@@ -17,7 +17,7 @@ centrality_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
@@ -26,15 +26,15 @@ centrality_tool_definitions = [
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of node to filter return the ArticleRank for.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "dampingFactor": {
+                "damping_factor": {
                     "type": "number",
                     "description": "The damping factor of the ArticleRank calculation. Must be in [0, 1).",
                 },
-                "maxIterations": {
+                "max_iterations": {
                     "type": "integer",
                     "description": "Maximum number of iterations for ArticleRank",
                 },
@@ -42,11 +42,11 @@ centrality_tool_definitions = [
                     "type": "number",
                     "description": "Minimum change in scores between iterations.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Property of the relationship to use for weighting. If not specified, all relationships are treated equally.",
                 },
-                "sourceNodes": {
+                "source_nodes": {
                     "description": "The nodes to use for computing Personalized Article Rank.",
                     "type": "array",
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
@@ -58,7 +58,7 @@ centrality_tool_definitions = [
                     "To apply scaler-specific configuration, use the Map syntax: {scaler: 'name', ...}.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -67,7 +67,7 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
                 },
@@ -76,16 +76,16 @@ centrality_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -94,7 +94,7 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
                 },
@@ -103,7 +103,7 @@ centrality_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
@@ -112,20 +112,20 @@ centrality_tool_definitions = [
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of node names to filter betweenness centrality results for.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "samplingSize": {
+                "sampling_size": {
                     "type": "integer",
                     "description": "The number of source nodes to consider for computing centrality scores.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Property of the relationship to use for weighting. If not specified, all relationships are treated equally.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -134,16 +134,16 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -153,7 +153,7 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
                 },
@@ -162,28 +162,28 @@ centrality_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
-                "seedSetSize": {
+                "seed_set_size": {
                     "type": "integer",
                     "description": "The number of nodes that maximize the expected spread in the network.",
                 },
-                "monteCarloSimulations": {
+                "monte_carlo_simulations": {
                     "type": "integer",
                     "description": "The number of Monte Carlo simulations to run for estimating the expected spread.",
                 },
-                "propagationProbability": {
+                "propagation_probability": {
                     "type": "number",
                     "description": "The probability of propagating influence from a node to its neighbors.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
             },
-            "required": ["graphName", "seedSetSize"],
+            "required": ["graph_name", "seed_set_size"],
         },
     ),
     types.Tool(
@@ -194,7 +194,7 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
                 },
@@ -203,7 +203,7 @@ centrality_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
@@ -212,16 +212,16 @@ centrality_tool_definitions = [
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of node names to filter closeness centrality results for.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "useWassermanFaust": {
+                "use_wasserman_faust": {
                     "type": "boolean",
                     "description": "If true, uses the Wasserman-Faust formula for closeness centrality. ",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -230,7 +230,7 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
                 },
@@ -239,7 +239,7 @@ centrality_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
@@ -248,7 +248,7 @@ centrality_tool_definitions = [
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of node names to filter degree centrality results for.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
@@ -256,12 +256,12 @@ centrality_tool_definitions = [
                     "type": "string",
                     "description": "The orientation used to compute node degrees. Supported orientations are NATURAL (for out-degree), REVERSE (for in-degree) and UNDIRECTED (for both in-degree and out-degree). If the projection used undirectedRelationshipTypes, each relationship is already stored in both directions, so UNDIRECTED counts every neighbor twice. Use NATURAL on that projection, or divide the score by 2.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Property of the relationship to use for weighting. If not specified, all relationships are treated equally.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -278,7 +278,7 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
                 },
@@ -287,7 +287,7 @@ centrality_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
@@ -296,11 +296,11 @@ centrality_tool_definitions = [
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of node names to filter eigenvector centrality results for.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "maxIterations": {
+                "max_iterations": {
                     "type": "integer",
                     "description": "Maximum number of iterations for Eigenvector Centrality",
                 },
@@ -308,11 +308,11 @@ centrality_tool_definitions = [
                     "type": "number",
                     "description": "Minimum change in scores between iterations. If all scores change less than the tolerance value the result is considered stable and the algorithm returns.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Property of the relationship to use for weighting. If not specified, all relationships are treated equally.",
                 },
-                "sourceNodes": {
+                "source_nodes": {
                     "description": "The nodes to use for computing Personalized Eigenvector Centrality.",
                     "type": "array",
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
@@ -324,7 +324,7 @@ centrality_tool_definitions = [
                     "To apply scaler-specific configuration, use the Map syntax: {scaler: 'name', ...}.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -333,7 +333,7 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
                 },
@@ -342,7 +342,7 @@ centrality_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
@@ -351,15 +351,15 @@ centrality_tool_definitions = [
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of node names to filter PageRank results for.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "dampingFactor": {
+                "damping_factor": {
                     "type": "number",
                     "description": "The damping factor of the Page Rank calculation. Must be in [0, 1).",
                 },
-                "maxIterations": {
+                "max_iterations": {
                     "type": "integer",
                     "description": "Maximum number of iterations for PageRank",
                 },
@@ -367,13 +367,13 @@ centrality_tool_definitions = [
                     "type": "number",
                     "description": "Minimum change in scores between iterations. If all scores change less than the tolerance value the result is considered stable and the algorithm returns.",
                 },
-                "sourceNodes": {
+                "source_nodes": {
                     "description": "The nodes to use for computing Personalized PageRank.",
                     "type": "array",
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -383,7 +383,7 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
                 },
@@ -392,7 +392,7 @@ centrality_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
@@ -401,12 +401,12 @@ centrality_tool_definitions = [
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of node names to filter harmonic centrality results for.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -417,7 +417,7 @@ centrality_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Create a graph first using project_graph_cypher.",
                 },
@@ -426,7 +426,7 @@ centrality_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. Used as a prefix for the two properties written: {mutateProperty}_auth and {mutateProperty}_hub.",
                 },
@@ -435,11 +435,11 @@ centrality_tool_definitions = [
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of node names to filter HITS results for.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "hitsIterations": {
+                "hits_iterations": {
                     "type": "integer",
                     "description": "The number of hits iterations to run. The number of pregel iterations will be equal to hitsIterations * 4.",
                 },
@@ -449,7 +449,7 @@ centrality_tool_definitions = [
                     "description": "The partitioning scheme used to divide the work between threads. Available options are AUTO, RANGE, DEGREE.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
 ]

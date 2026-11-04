@@ -58,8 +58,8 @@ class DijkstraShortestPathHandler(AlgorithmHandler):
         if start_node_id is None or end_node_id is None:
             return {"found": False, "message": "One or both node names not found"}
 
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        params = clean_params(kwargs, ["graphName", "mode"])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
+        params = clean_params(kwargs, ["graph_name", "mode"])
         logger.info(f"Dijkstra single-source shortest path parameters: {params}")
 
         if mode == "mutate":
@@ -103,11 +103,11 @@ class DijkstraShortestPathHandler(AlgorithmHandler):
         return self.find_shortest_path(
             arguments.get("start_node"),
             arguments.get("end_node"),
-            arguments.get("nodeIdentifierProperty"),
-            graphName=arguments.get("graphName"),
-            relationshipWeightProperty=arguments.get("relationship_property"),
+            arguments.get("node_identifier_property"),
+            graph_name=arguments.get("graph_name"),
+            relationship_weight_property=arguments.get("relationship_property"),
             mode=arguments.get("mode"),
-            mutateRelationshipType=arguments.get("mutateRelationshipType"),
+            mutate_relationship_type=arguments.get("mutate_relationship_type"),
         )
 
 
@@ -119,14 +119,14 @@ class DeltaSteppingShortestPathHandler(AlgorithmHandler):
         node_identifier_property = _validate_property_name(node_identifier_property)
         resolved = {}
         translate_identifiers_to_ids(
-            self.gds, source_node, "sourceNode", node_identifier_property, resolved
+            self.gds, source_node, "source_node", node_identifier_property, resolved
         )
-        source_node_id = resolved.get("sourceNode")
+        source_node_id = resolved.get("source_node")
         if source_node_id is None:
             return {"found": False, "message": "Source node name not found"}
 
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        params = clean_params(kwargs, ["graphName", "mode"])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
+        params = clean_params(kwargs, ["graph_name", "mode"])
         logger.info(f"Delta-Stepping shortest path parameters: {params}")
 
         if mode == "mutate":
@@ -186,13 +186,13 @@ class DeltaSteppingShortestPathHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.delta_stepping_shortest_path(
-            arguments.get("sourceNode"),
-            arguments.get("nodeIdentifierProperty"),
-            graphName=arguments.get("graphName"),
+            arguments.get("source_node"),
+            arguments.get("node_identifier_property"),
+            graph_name=arguments.get("graph_name"),
             delta=arguments.get("delta"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
             mode=arguments.get("mode"),
-            mutateRelationshipType=arguments.get("mutateRelationshipType"),
+            mutate_relationship_type=arguments.get("mutate_relationship_type"),
         )
 
 
@@ -204,14 +204,14 @@ class DijkstraSingleSourceShortestPathHandler(AlgorithmHandler):
         node_identifier_property = _validate_property_name(node_identifier_property)
         resolved = {}
         translate_identifiers_to_ids(
-            self.gds, source_node, "sourceNode", node_identifier_property, resolved
+            self.gds, source_node, "source_node", node_identifier_property, resolved
         )
-        source_node_id = resolved.get("sourceNode")
+        source_node_id = resolved.get("source_node")
         if source_node_id is None:
             return {"found": False, "message": "Source node name not found"}
 
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        params = clean_params(kwargs, ["graphName", "mode"])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
+        params = clean_params(kwargs, ["graph_name", "mode"])
         logger.info(f"Dijkstra single-source shortest path parameters: {params}")
 
         if mode == "mutate":
@@ -271,12 +271,12 @@ class DijkstraSingleSourceShortestPathHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.dijkstra_single_source_shortest_path(
-            arguments.get("sourceNode"),
-            arguments.get("nodeIdentifierProperty"),
-            graphName=arguments.get("graphName"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            arguments.get("source_node"),
+            arguments.get("node_identifier_property"),
+            graph_name=arguments.get("graph_name"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
             mode=arguments.get("mode"),
-            mutateRelationshipType=arguments.get("mutateRelationshipType"),
+            mutate_relationship_type=arguments.get("mutate_relationship_type"),
         )
 
 
@@ -292,18 +292,18 @@ class AStarShortestPathHandler(AlgorithmHandler):
         node_identifier_property = _validate_property_name(node_identifier_property)
         resolved = {}
         translate_identifiers_to_ids(
-            self.gds, source_node, "sourceNode", node_identifier_property, resolved
+            self.gds, source_node, "source_node", node_identifier_property, resolved
         )
         translate_identifiers_to_ids(
-            self.gds, target_node, "targetNode", node_identifier_property, resolved
+            self.gds, target_node, "target_node", node_identifier_property, resolved
         )
-        source_node_id = resolved.get("sourceNode")
-        target_node_id = resolved.get("targetNode")
+        source_node_id = resolved.get("source_node")
+        target_node_id = resolved.get("target_node")
         if source_node_id is None or target_node_id is None:
             return {"found": False, "message": "One or both node names not found"}
 
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        params = clean_params(kwargs, ["graphName", "mode"])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
+        params = clean_params(kwargs, ["graph_name", "mode"])
         logger.info(f"A* shortest path parameters: {params}")
 
         if mode == "mutate":
@@ -345,15 +345,15 @@ class AStarShortestPathHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.a_star_shortest_path(
-            arguments.get("sourceNode"),
-            arguments.get("targetNode"),
-            arguments.get("nodeIdentifierProperty"),
-            graphName=arguments.get("graphName"),
-            latitudeProperty=arguments.get("latitudeProperty"),
-            longitudeProperty=arguments.get("longitudeProperty"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            arguments.get("source_node"),
+            arguments.get("target_node"),
+            arguments.get("node_identifier_property"),
+            graph_name=arguments.get("graph_name"),
+            latitude_property=arguments.get("latitude_property"),
+            longitude_property=arguments.get("longitude_property"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
             mode=arguments.get("mode"),
-            mutateRelationshipType=arguments.get("mutateRelationshipType"),
+            mutate_relationship_type=arguments.get("mutate_relationship_type"),
         )
 
 
@@ -369,18 +369,18 @@ class YensShortestPathsHandler(AlgorithmHandler):
         node_identifier_property = _validate_property_name(node_identifier_property)
         resolved = {}
         translate_identifiers_to_ids(
-            self.gds, source_node, "sourceNode", node_identifier_property, resolved
+            self.gds, source_node, "source_node", node_identifier_property, resolved
         )
         translate_identifiers_to_ids(
-            self.gds, target_node, "targetNode", node_identifier_property, resolved
+            self.gds, target_node, "target_node", node_identifier_property, resolved
         )
-        source_node_id = resolved.get("sourceNode")
-        target_node_id = resolved.get("targetNode")
+        source_node_id = resolved.get("source_node")
+        target_node_id = resolved.get("target_node")
         if source_node_id is None or target_node_id is None:
             return {"found": False, "message": "One or both node names not found"}
 
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        params = clean_params(kwargs, ["graphName", "mode"])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
+        params = clean_params(kwargs, ["graph_name", "mode"])
         logger.info(f"Yen's shortest paths parameters: {params}")
 
         if mode == "mutate":
@@ -438,14 +438,14 @@ class YensShortestPathsHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.yens_shortest_paths(
-            arguments.get("sourceNode"),
-            arguments.get("targetNode"),
-            arguments.get("nodeIdentifierProperty"),
-            graphName=arguments.get("graphName"),
+            arguments.get("source_node"),
+            arguments.get("target_node"),
+            arguments.get("node_identifier_property"),
+            graph_name=arguments.get("graph_name"),
             k=arguments.get("k"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
             mode=arguments.get("mode"),
-            mutateRelationshipType=arguments.get("mutateRelationshipType"),
+            mutate_relationship_type=arguments.get("mutate_relationship_type"),
         )
 
 
@@ -457,14 +457,14 @@ class MinimumWeightSpanningTreeHandler(AlgorithmHandler):
         node_identifier_property = _validate_property_name(node_identifier_property)
         resolved = {}
         translate_identifiers_to_ids(
-            self.gds, source_node, "sourceNode", node_identifier_property, resolved
+            self.gds, source_node, "source_node", node_identifier_property, resolved
         )
-        source_node_id = resolved.get("sourceNode")
+        source_node_id = resolved.get("source_node")
         if source_node_id is None:
             return {"found": False, "message": "Source node name not found"}
 
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        params = clean_params(kwargs, ["graphName", "mode"])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
+        params = clean_params(kwargs, ["graph_name", "mode"])
         logger.info(f"Minimum Weight Spanning Tree parameters: {params}")
 
         if mode == "mutate":
@@ -527,14 +527,14 @@ class MinimumWeightSpanningTreeHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.minimum_weight_spanning_tree(
-            arguments.get("sourceNode"),
-            arguments.get("nodeIdentifierProperty"),
-            graphName=arguments.get("graphName"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            arguments.get("source_node"),
+            arguments.get("node_identifier_property"),
+            graph_name=arguments.get("graph_name"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
             objective=arguments.get("objective"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            mutateRelationshipType=arguments.get("mutateRelationshipType"),
+            mutate_property=arguments.get("mutate_property"),
+            mutate_relationship_type=arguments.get("mutate_relationship_type"),
         )
 
 
@@ -550,9 +550,9 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
         node_identifier_property = _validate_property_name(node_identifier_property)
         resolved = {}
         translate_identifiers_to_ids(
-            self.gds, source_node, "sourceNode", node_identifier_property, resolved
+            self.gds, source_node, "source_node", node_identifier_property, resolved
         )
-        source_node_id = resolved.get("sourceNode")
+        source_node_id = resolved.get("source_node")
         if source_node_id is None:
             return {"found": False, "message": "Source node name not found"}
 
@@ -566,11 +566,11 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
             translate_identifiers_to_ids(
                 self.gds,
                 target_name,
-                "targetNode",
+                "target_node",
                 node_identifier_property,
                 resolved,
             )
-            target_node_id = resolved.get("targetNode")
+            target_node_id = resolved.get("target_node")
             if target_node_id is not None:
                 target_node_ids.append(target_node_id)
                 target_node_names.append(
@@ -589,8 +589,8 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
         if not target_node_ids:
             return {"found": False, "message": "No target nodes found"}
 
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        params = clean_params(kwargs, ["graphName"])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
+        params = clean_params(kwargs, ["graph_name"])
         logger.info(f"Minimum Directed Steiner Tree parameters: {params}")
 
         # Run the steiner tree algorithm
@@ -647,20 +647,20 @@ class MinimumDirectedSteinerTreeHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.minimum_directed_steiner_tree(
-            arguments.get("sourceNode"),
-            arguments.get("targetNodes"),
-            arguments.get("nodeIdentifierProperty"),
-            graphName=arguments.get("graphName"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            arguments.get("source_node"),
+            arguments.get("target_nodes"),
+            arguments.get("node_identifier_property"),
+            graph_name=arguments.get("graph_name"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
             delta=arguments.get("delta"),
-            applyRerouting=arguments.get("applyRerouting"),
+            apply_rerouting=arguments.get("apply_rerouting"),
         )
 
 
 class PrizeCollectingSteinerTreeHandler(AlgorithmHandler):
     def prize_collecting_steiner_tree(self, **kwargs):
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        params = clean_params(kwargs, ["graphName"])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
+        params = clean_params(kwargs, ["graph_name"])
         logger.info(f"Prize-Collecting Steiner Tree parameters: {params}")
 
         # Run the prize-collecting steiner tree algorithm
@@ -715,16 +715,16 @@ class PrizeCollectingSteinerTreeHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.prize_collecting_steiner_tree(
-            graphName=arguments.get("graphName"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
-            prizeProperty=arguments.get("prizeProperty"),
+            graph_name=arguments.get("graph_name"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
+            prize_property=arguments.get("prize_property"),
         )
 
 
 class AllPairsShortestPathsHandler(AlgorithmHandler):
     def all_pairs_shortest_paths(self, **kwargs):
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        params = clean_params(kwargs, ["graphName"])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
+        params = clean_params(kwargs, ["graph_name"])
         logger.info(f"All Pairs Shortest Paths parameters: {params}")
 
         # Run the all pairs shortest paths algorithm
@@ -759,8 +759,8 @@ class AllPairsShortestPathsHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.all_pairs_shortest_paths(
-            graphName=arguments.get("graphName"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            graph_name=arguments.get("graph_name"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
         )
 
 
@@ -769,8 +769,8 @@ class RandomWalkHandler(AlgorithmHandler):
         mode = kwargs.get("mode", "stream")
         # Process source nodes if provided
         source_node_ids = []
-        if kwargs.get("sourceNodes"):
-            node_identifier_property = kwargs.get("nodeIdentifierProperty")
+        if kwargs.get("source_nodes"):
+            node_identifier_property = kwargs.get("node_identifier_property")
             if not node_identifier_property:
                 return {
                     "found": False,
@@ -781,15 +781,17 @@ class RandomWalkHandler(AlgorithmHandler):
             resolved = {}
             translate_identifiers_to_ids(
                 self.gds,
-                kwargs["sourceNodes"],
-                "sourceNodes",
+                kwargs["source_nodes"],
+                "source_nodes",
                 node_identifier_property,
                 resolved,
             )
-            source_node_ids = resolved.get("sourceNodes", [])
+            source_node_ids = resolved.get("source_nodes", [])
 
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty", "mode"])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
+        params = clean_params(
+            kwargs, ["graph_name", "node_identifier_property", "mode"]
+        )
         logger.info(f"Random Walk parameters: {params}")
 
         # Add source nodes if found
@@ -836,17 +838,17 @@ class RandomWalkHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.random_walk(
-            graphName=arguments.get("graphName"),
-            sourceNodes=arguments.get("sourceNodes"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
-            walkLength=arguments.get("walkLength"),
-            walksPerNode=arguments.get("walksPerNode"),
-            inOutFactor=arguments.get("inOutFactor"),
-            returnFactor=arguments.get("returnFactor"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
-            walkBufferSize=arguments.get("walkBufferSize"),
+            graph_name=arguments.get("graph_name"),
+            source_nodes=arguments.get("source_nodes"),
+            node_identifier_property=arguments.get("node_identifier_property"),
+            walk_length=arguments.get("walk_length"),
+            walks_per_node=arguments.get("walks_per_node"),
+            in_out_factor=arguments.get("in_out_factor"),
+            return_factor=arguments.get("return_factor"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
+            walk_buffer_size=arguments.get("walk_buffer_size"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
+            mutate_property=arguments.get("mutate_property"),
         )
 
 
@@ -859,27 +861,29 @@ class BreadthFirstSearchHandler(AlgorithmHandler):
         node_identifier_property = _validate_property_name(node_identifier_property)
         resolved = {}
         translate_identifiers_to_ids(
-            self.gds, source_node, "sourceNode", node_identifier_property, resolved
+            self.gds, source_node, "source_node", node_identifier_property, resolved
         )
-        source_node_id = resolved.get("sourceNode")
+        source_node_id = resolved.get("source_node")
         if source_node_id is None:
             return {"found": False, "message": "Source node name not found"}
 
         # Process target nodes if provided
         target_node_ids = []
-        if kwargs.get("targetNodes"):
+        if kwargs.get("target_nodes"):
             resolved = {}
             translate_identifiers_to_ids(
                 self.gds,
-                kwargs["targetNodes"],
-                "targetNodes",
+                kwargs["target_nodes"],
+                "target_nodes",
                 node_identifier_property,
                 resolved,
             )
-            target_node_ids = resolved.get("targetNodes", [])
+            target_node_ids = resolved.get("target_nodes", [])
 
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty", "mode"])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
+        params = clean_params(
+            kwargs, ["graph_name", "node_identifier_property", "mode"]
+        )
 
         # Add target nodes if found
         if target_node_ids:
@@ -931,13 +935,13 @@ class BreadthFirstSearchHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.breadth_first_search(
-            arguments.get("sourceNode"),
-            arguments.get("nodeIdentifierProperty"),
-            graphName=arguments.get("graphName"),
-            targetNodes=arguments.get("targetNodes"),
-            maxDepth=arguments.get("maxDepth"),
+            arguments.get("source_node"),
+            arguments.get("node_identifier_property"),
+            graph_name=arguments.get("graph_name"),
+            target_nodes=arguments.get("target_nodes"),
+            max_depth=arguments.get("max_depth"),
             mode=arguments.get("mode"),
-            mutateRelationshipType=arguments.get("mutateRelationshipType"),
+            mutate_relationship_type=arguments.get("mutate_relationship_type"),
         )
 
 
@@ -948,27 +952,29 @@ class DepthFirstSearchHandler(AlgorithmHandler):
         node_identifier_property = _validate_property_name(node_identifier_property)
         resolved = {}
         translate_identifiers_to_ids(
-            self.gds, source_node, "sourceNode", node_identifier_property, resolved
+            self.gds, source_node, "source_node", node_identifier_property, resolved
         )
-        source_node_id = resolved.get("sourceNode")
+        source_node_id = resolved.get("source_node")
         if source_node_id is None:
             return {"found": False, "message": "Source node name not found"}
 
         # Process target nodes if provided
         target_node_ids = []
-        if kwargs.get("targetNodes"):
+        if kwargs.get("target_nodes"):
             resolved = {}
             translate_identifiers_to_ids(
                 self.gds,
-                kwargs["targetNodes"],
-                "targetNodes",
+                kwargs["target_nodes"],
+                "target_nodes",
                 node_identifier_property,
                 resolved,
             )
-            target_node_ids = resolved.get("targetNodes", [])
+            target_node_ids = resolved.get("target_nodes", [])
 
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty", "mode"])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
+        params = clean_params(
+            kwargs, ["graph_name", "node_identifier_property", "mode"]
+        )
         # Add target nodes if found
         if target_node_ids:
             params["target_nodes"] = target_node_ids
@@ -1019,13 +1025,13 @@ class DepthFirstSearchHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.depth_first_search(
-            arguments.get("sourceNode"),
-            arguments.get("nodeIdentifierProperty"),
-            graphName=arguments.get("graphName"),
-            targetNodes=arguments.get("targetNodes"),
-            maxDepth=arguments.get("maxDepth"),
+            arguments.get("source_node"),
+            arguments.get("node_identifier_property"),
+            graph_name=arguments.get("graph_name"),
+            target_nodes=arguments.get("target_nodes"),
+            max_depth=arguments.get("max_depth"),
             mode=arguments.get("mode"),
-            mutateRelationshipType=arguments.get("mutateRelationshipType"),
+            mutate_relationship_type=arguments.get("mutate_relationship_type"),
         )
 
 
@@ -1038,14 +1044,16 @@ class BellmanFordSingleSourceShortestPathHandler(AlgorithmHandler):
         node_identifier_property = _validate_property_name(node_identifier_property)
         resolved = {}
         translate_identifiers_to_ids(
-            self.gds, source_node, "sourceNode", node_identifier_property, resolved
+            self.gds, source_node, "source_node", node_identifier_property, resolved
         )
-        source_node_id = resolved.get("sourceNode")
+        source_node_id = resolved.get("source_node")
         if source_node_id is None:
             return {"found": False, "message": "Source node name not found"}
 
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        params = clean_params(kwargs, ["graphName", "nodeIdentifierProperty", "mode"])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
+        params = clean_params(
+            kwargs, ["graph_name", "node_identifier_property", "mode"]
+        )
         logger.info(f"Bellman-Ford Single-Source Shortest Path parameters: {params}")
 
         if mode == "mutate":
@@ -1107,12 +1115,12 @@ class BellmanFordSingleSourceShortestPathHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.bellman_ford_single_source_shortest_path(
-            arguments.get("sourceNode"),
-            arguments.get("nodeIdentifierProperty"),
-            graphName=arguments.get("graphName"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            arguments.get("source_node"),
+            arguments.get("node_identifier_property"),
+            graph_name=arguments.get("graph_name"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
             mode=arguments.get("mode"),
-            mutateRelationshipType=arguments.get("mutateRelationshipType"),
+            mutate_relationship_type=arguments.get("mutate_relationship_type"),
         )
 
 
@@ -1120,8 +1128,8 @@ class LongestPathHandler(AlgorithmHandler):
     def longest_path(self, **kwargs):
         # Process target nodes if provided
         target_node_ids = []
-        if kwargs.get("targetNodes"):
-            node_identifier_property = kwargs.get("nodeIdentifierProperty")
+        if kwargs.get("target_nodes"):
+            node_identifier_property = kwargs.get("node_identifier_property")
             if not node_identifier_property:
                 return {
                     "found": False,
@@ -1132,16 +1140,16 @@ class LongestPathHandler(AlgorithmHandler):
             resolved = {}
             translate_identifiers_to_ids(
                 self.gds,
-                kwargs["targetNodes"],
-                "targetNodes",
+                kwargs["target_nodes"],
+                "target_nodes",
                 node_identifier_property,
                 resolved,
             )
-            target_node_ids = resolved.get("targetNodes", [])
-        G = self.gds.graph.get(kwargs.get("graphName"))
+            target_node_ids = resolved.get("target_nodes", [])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
         params = clean_params(
             kwargs,
-            ["graphName", "nodeIdentifierProperty", "targetNodes"],
+            ["graph_name", "node_identifier_property", "target_nodes"],
         )
         logger.info(f"Longest Path parameters: {params}")
 
@@ -1197,10 +1205,10 @@ class LongestPathHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.longest_path(
-            graphName=arguments.get("graphName"),
-            targetNodes=arguments.get("targetNodes"),
-            nodeIdentifierProperty=arguments.get("nodeIdentifierProperty"),
-            relationshipWeightProperty=arguments.get("relationshipWeightProperty"),
+            graph_name=arguments.get("graph_name"),
+            target_nodes=arguments.get("target_nodes"),
+            node_identifier_property=arguments.get("node_identifier_property"),
+            relationship_weight_property=arguments.get("relationship_weight_property"),
         )
 
 
@@ -1223,11 +1231,11 @@ class MaxFlowHandler(AlgorithmHandler):
             translate_identifiers_to_ids(
                 self.gds,
                 source_name,
-                "sourceNode",
+                "source_node",
                 node_identifier_property,
                 resolved,
             )
-            source_node_id = resolved.get("sourceNode")
+            source_node_id = resolved.get("source_node")
             if source_node_id is not None:
                 source_node_ids.append(source_node_id)
                 source_node_names.append(
@@ -1256,11 +1264,11 @@ class MaxFlowHandler(AlgorithmHandler):
             translate_identifiers_to_ids(
                 self.gds,
                 target_name,
-                "targetNode",
+                "target_node",
                 node_identifier_property,
                 resolved,
             )
-            target_node_id = resolved.get("targetNode")
+            target_node_id = resolved.get("target_node")
             if target_node_id is not None:
                 target_node_ids.append(target_node_id)
                 target_node_names.append(
@@ -1279,8 +1287,8 @@ class MaxFlowHandler(AlgorithmHandler):
         if not target_node_ids:
             return {"found": False, "message": "No target nodes found"}
 
-        G = self.gds.graph.get(kwargs.get("graphName"))
-        params = clean_params(kwargs, ["graphName", "mode"])
+        G = self.gds.graph.get(kwargs.get("graph_name"))
+        params = clean_params(kwargs, ["graph_name", "mode"])
         logger.info(f"Max Flow parameters: {params}")
 
         if mode == "mutate":
@@ -1320,12 +1328,12 @@ class MaxFlowHandler(AlgorithmHandler):
 
     def execute(self, arguments: dict[str, Any]) -> Any:
         return self.max_flow(
-            arguments.get("sourceNodes"),
-            arguments.get("targetNodes"),
-            arguments.get("nodeIdentifierProperty"),
-            graphName=arguments.get("graphName"),
-            capacityProperty=arguments.get("capacityProperty"),
+            arguments.get("source_nodes"),
+            arguments.get("target_nodes"),
+            arguments.get("node_identifier_property"),
+            graph_name=arguments.get("graph_name"),
+            capacity_property=arguments.get("capacity_property"),
             mode=arguments.get("mode"),
-            mutateProperty=arguments.get("mutateProperty"),
-            mutateRelationshipType=arguments.get("mutateRelationshipType"),
+            mutate_property=arguments.get("mutate_property"),
+            mutate_relationship_type=arguments.get("mutate_relationship_type"),
         )

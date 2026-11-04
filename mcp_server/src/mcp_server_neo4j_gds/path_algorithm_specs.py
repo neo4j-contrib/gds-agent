@@ -7,7 +7,7 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -16,7 +16,7 @@ path_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
                 },
-                "mutateRelationshipType": {
+                "mutate_relationship_type": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
@@ -28,7 +28,7 @@ path_tool_definitions = [
                     "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Identifier of the ending node. Use a JSON number when the identifier property is numeric.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
@@ -38,10 +38,10 @@ path_tool_definitions = [
                 },
             },
             "required": [
-                "graphName",
+                "graph_name",
                 "start_node",
                 "end_node",
-                "nodeIdentifierProperty",
+                "node_identifier_property",
             ],
         },
     ),
@@ -55,7 +55,7 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -64,15 +64,15 @@ path_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
                 },
-                "mutateRelationshipType": {
+                "mutate_relationship_type": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
-                "sourceNode": {
+                "source_node": {
                     "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the source node to find shortest paths from.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
@@ -80,12 +80,12 @@ path_tool_definitions = [
                     "type": "number",
                     "description": "The bucket width for grouping nodes with the same tentative distance to the source node.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
             },
-            "required": ["graphName", "sourceNode", "nodeIdentifierProperty"],
+            "required": ["graph_name", "source_node", "node_identifier_property"],
         },
     ),
     types.Tool(
@@ -97,7 +97,7 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -106,24 +106,24 @@ path_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
                 },
-                "mutateRelationshipType": {
+                "mutate_relationship_type": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
-                "sourceNode": {
+                "source_node": {
                     "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the source node to find shortest paths from.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
             },
-            "required": ["graphName", "sourceNode", "nodeIdentifierProperty"],
+            "required": ["graph_name", "source_node", "node_identifier_property"],
         },
     ),
     types.Tool(
@@ -141,7 +141,7 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -150,42 +150,42 @@ path_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
                 },
-                "mutateRelationshipType": {
+                "mutate_relationship_type": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
-                "sourceNode": {
+                "source_node": {
                     "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the source node to find shortest path from.",
                 },
-                "targetNode": {
+                "target_node": {
                     "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the target node to find shortest path to.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "latitudeProperty": {
+                "latitude_property": {
                     "type": "string",
                     "description": "The node property that stores the latitude value.",
                 },
-                "longitudeProperty": {
+                "longitude_property": {
                     "type": "string",
                     "description": "The node property that stores the longitude value.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
             },
             "required": [
-                "graphName",
-                "sourceNode",
-                "targetNode",
-                "nodeIdentifierProperty",
-                "latitudeProperty",
-                "longitudeProperty",
+                "graph_name",
+                "source_node",
+                "target_node",
+                "node_identifier_property",
+                "latitude_property",
+                "longitude_property",
             ],
         },
     ),
@@ -204,7 +204,7 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -213,19 +213,19 @@ path_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
                 },
-                "mutateRelationshipType": {
+                "mutate_relationship_type": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
-                "sourceNode": {
+                "source_node": {
                     "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the source node to find shortest paths from.",
                 },
-                "targetNode": {
+                "target_node": {
                     "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the target node to find shortest paths to.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
@@ -233,16 +233,16 @@ path_tool_definitions = [
                     "type": "integer",
                     "description": "The number of shortest paths to compute between source and target node.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
             },
             "required": [
-                "graphName",
-                "sourceNode",
-                "targetNode",
-                "nodeIdentifierProperty",
+                "graph_name",
+                "source_node",
+                "target_node",
+                "node_identifier_property",
             ],
         },
     ),
@@ -258,7 +258,7 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -267,23 +267,23 @@ path_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships with properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The relationship property in the GDS graph to which the weight is written.",
                 },
-                "mutateRelationshipType": {
+                "mutate_relationship_type": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
-                "sourceNode": {
+                "source_node": {
                     "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the starting source node.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
@@ -293,7 +293,7 @@ path_tool_definitions = [
                     "description": "If specified, the parameter dictates whether to find the minimum or the maximum weight spanning tree. By default, a minimum weight spanning tree is returned. Permitted values are 'minimum' and 'maximum'.",
                 },
             },
-            "required": ["graphName", "sourceNode", "nodeIdentifierProperty"],
+            "required": ["graph_name", "source_node", "node_identifier_property"],
         },
     ),
     types.Tool(
@@ -312,24 +312,24 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
-                "sourceNode": {
+                "source_node": {
                     "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the starting source node.",
                 },
-                "targetNodes": {
+                "target_nodes": {
                     "type": "array",
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of target node names to connect in the steiner tree.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
@@ -337,16 +337,16 @@ path_tool_definitions = [
                     "type": "number",
                     "description": "The bucket width for grouping nodes with the same tentative distance to the source node. Look into the Delta-Stepping documentation for more information.",
                 },
-                "applyRerouting": {
+                "apply_rerouting": {
                     "type": "boolean",
                     "description": "If specified, the algorithm will try to improve the outcome via an additional post-processing heuristic.",
                 },
             },
             "required": [
-                "graphName",
-                "sourceNode",
-                "targetNodes",
-                "nodeIdentifierProperty",
+                "graph_name",
+                "source_node",
+                "target_nodes",
+                "node_identifier_property",
             ],
         },
     ),
@@ -365,20 +365,20 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
-                "prizeProperty": {
+                "prize_property": {
                     "type": "string",
                     "description": "The name of node property that denotes a node's prize.",
                 },
             },
-            "required": ["graphName", "prizeProperty"],
+            "required": ["graph_name", "prize_property"],
         },
     ),
     types.Tool(
@@ -392,16 +392,16 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -420,7 +420,7 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -429,45 +429,45 @@ path_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as node properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The name of the node property to write the algorithm results to.",
                 },
-                "sourceNodes": {
+                "source_nodes": {
                     "type": "array",
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "The list of nodes from which to do a random walk.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "walkLength": {
+                "walk_length": {
                     "type": "integer",
                     "description": "The number of steps in a single random walk.",
                 },
-                "walksPerNode": {
+                "walks_per_node": {
                     "type": "integer",
                     "description": "The number of random walks generated for each node.",
                 },
-                "inOutFactor": {
+                "in_out_factor": {
                     "type": "number",
                     "description": "Tendency of the random walk to stay close to the start node or fan out in the graph. Higher value means stay local.",
                 },
-                "returnFactor": {
+                "return_factor": {
                     "type": "number",
                     "description": "Tendency of the random walk to return to the last visited node. A value below 1.0 means a higher tendency.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights to influence the probabilities of the random walks. The weights need to be >= 0. If unspecified, the algorithm runs unweighted.",
                 },
-                "walkBufferSize": {
+                "walk_buffer_size": {
                     "type": "integer",
                     "description": "The number of random walks to complete before starting training.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -480,7 +480,7 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -489,29 +489,29 @@ path_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
                 },
-                "mutateRelationshipType": {
+                "mutate_relationship_type": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
-                "sourceNode": {
+                "source_node": {
                     "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the starting source node.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "targetNodes": {
+                "target_nodes": {
                     "type": "array",
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "Names of target nodes. Traversal terminates when any target node is visited.",
                 },
-                "maxDepth": {
+                "max_depth": {
                     "type": "integer",
                     "description": "The maximum distance from the source node at which nodes are visited.",
                 },
             },
-            "required": ["graphName", "sourceNode", "nodeIdentifierProperty"],
+            "required": ["graph_name", "source_node", "node_identifier_property"],
         },
     ),
     types.Tool(
@@ -524,7 +524,7 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -533,29 +533,29 @@ path_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
                 },
-                "mutateRelationshipType": {
+                "mutate_relationship_type": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
-                "sourceNode": {
+                "source_node": {
                     "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the starting source node.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "targetNodes": {
+                "target_nodes": {
                     "type": "array",
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "Names of target nodes. Traversal terminates when any target node is visited.",
                 },
-                "maxDepth": {
+                "max_depth": {
                     "type": "integer",
                     "description": "The maximum distance from the source node at which nodes are visited.",
                 },
             },
-            "required": ["graphName", "sourceNode", "nodeIdentifierProperty"],
+            "required": ["graph_name", "source_node", "node_identifier_property"],
         },
     ),
     types.Tool(
@@ -574,7 +574,7 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -583,24 +583,24 @@ path_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
                 },
-                "mutateRelationshipType": {
+                "mutate_relationship_type": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
-                "sourceNode": {
+                "source_node": {
                     "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Name of the starting source node.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
             },
-            "required": ["graphName", "sourceNode", "nodeIdentifierProperty"],
+            "required": ["graph_name", "source_node", "node_identifier_property"],
         },
     ),
     types.Tool(
@@ -614,25 +614,25 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
-                "targetNodes": {
+                "target_nodes": {
                     "type": "array",
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of target node names to filter results. Only paths ending at these nodes will be returned.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties. Required when targetNodes is specified.",
                 },
-                "relationshipWeightProperty": {
+                "relationship_weight_property": {
                     "type": "string",
                     "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
                 },
             },
-            "required": ["graphName"],
+            "required": ["graph_name"],
         },
     ),
     types.Tool(
@@ -642,7 +642,7 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graphName": {
+                "graph_name": {
                     "type": "string",
                     "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
                 },
@@ -651,39 +651,39 @@ path_tool_definitions = [
                     "enum": ["stream", "mutate"],
                     "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships with properties. Default is 'stream'.",
                 },
-                "mutateProperty": {
+                "mutate_property": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The relationship property in the GDS graph to which the flow is written.",
                 },
-                "mutateRelationshipType": {
+                "mutate_relationship_type": {
                     "type": "string",
                     "description": "Required when mode is 'mutate'. The relationship type for new relationships written to the projected graph.",
                 },
-                "sourceNodes": {
+                "source_nodes": {
                     "type": "array",
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of source node names from which flow originates.",
                 },
-                "targetNodes": {
+                "target_nodes": {
                     "type": "array",
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "List of target node names to which flow is sent.",
                 },
-                "nodeIdentifierProperty": {
+                "node_identifier_property": {
                     "type": "string",
                     "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
                 },
-                "capacityProperty": {
+                "capacity_property": {
                     "type": "string",
                     "description": "Name of the relationship property that specifies the maximum flow capacity for each edge.",
                 },
             },
             "required": [
-                "graphName",
-                "sourceNodes",
-                "targetNodes",
-                "nodeIdentifierProperty",
-                "capacityProperty",
+                "graph_name",
+                "source_nodes",
+                "target_nodes",
+                "node_identifier_property",
+                "capacity_property",
             ],
         },
     ),
