@@ -9,8 +9,8 @@ means: do not retry the same call. Instead:
 
 - Re-run in `mode: "mutate"` and read back selectively with
   `stream_node_properties` (filter by `nodeLabels`) or the other accessors.
-- Or narrow the algorithm itself (`nodes` filter, `topK`/`topN`, higher
-  `similarityCutoff`, `minCommunitySize`, ...).
+- Or narrow the algorithm itself (`nodes` filter, `top_k`/`top_n`, higher
+  `similarity_cutoff`, `min_community_size`, ...).
 
 ## Out-of-memory errors
 
@@ -24,5 +24,5 @@ If a call fails with out-of-memory or `Memory required to run … exceeds availa
 
 | Error | Cause -> Fix |
 |---|---|
-|Algorithm requires UNDIRECTED graphs|The selected algorithm can only run on undirected graphs but you supplied a directed graph projection -> Project another graph that is undirected by setting undirectedRelationshipTypes. |
-|Node/relationship has wrong label/type or wrong properties|Some specified node label, relationship type or node/relationship properties do not exist. This could be due to schema inspection being incomplete. -> Use the schema inspection tools if it haven't been executed yet. If so, use `read_neo4j_cypher` or `get_neo4j_schema` to inspect detailed schema information.|
+|Algorithm requires UNDIRECTED graphs|The algorithm received a directed projection -> Re-project the graph as undirected, following the mode-specific `project_graph_cypher` schema.|
+|Node/relationship has wrong label/type or properties|The requested schema element does not exist -> Inspect it with `get_neo4j_schema`, the property-key tools, or `read_neo4j_cypher`, then correct the call.|
