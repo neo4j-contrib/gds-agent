@@ -51,6 +51,13 @@ from .similarity_algorithm_specs import similarity_tool_definitions
 
 logger = logging.getLogger("mcp_server_neo4j_gds")
 SERVER_NAME = "neo4j_gds"
+SERVER_INSTRUCTIONS = (
+    "Inspect the Neo4j schema before assuming labels, relationship types, or properties. "
+    "GDS algorithms require an in-memory graph created with project_graph_cypher; in Aura "
+    "session mode, create a session first. Use stream mode for returned rows and mutate mode "
+    "to store results in the projected graph for later steps. node_identifier_property maps "
+    "database property values to readable node identifiers. Drop unused graphs, models, and sessions."
+)
 try:
     SERVER_VERSION = version("gds-agent")
 except PackageNotFoundError:
@@ -263,10 +270,10 @@ def create_mcp_server(
                         name="create_session",
                         description="""Create a named GDS session, or reconnect to an existing one.
 
-Sessions are never created implicitly: create one with this tool before projecting graphs with project_graph_cypher (its sessionName parameter picks the target session). All other tools locate a graph's session automatically from graphName.
+Sessions are never created implicitly: create one with this tool before projecting graphs with project_graph_cypher (its session_name parameter picks the target session). All other tools locate a graph's session automatically from graph_name.
 Most workflows need a single session holding all projected graphs; create additional sessions only to isolate graphs on separate compute, e.g. to run independent analyses in parallel.
-To resize an existing session (e.g. after an OOM), delete it with delete_session and create it again with a larger memoryGB; this drops all graphs projected into it.
-Session names are prefixed with 'mcp_' if not already; the returned sessionName is the actual name.""",
+To resize an existing session (e.g. after an OOM), delete it with delete_session and create it again with a larger memory_gb; this drops all graphs projected into it.
+Session names are prefixed with 'mcp_' if not already; the returned session_name is the actual name.""",
                         inputSchema={
                             "type": "object",
                             "properties": {
@@ -659,6 +666,7 @@ Session names are prefixed with 'mcp_' if not already; the returned sessionName 
     server = Server(
         SERVER_NAME,
         version=SERVER_VERSION,
+        instructions=SERVER_INSTRUCTIONS,
         on_list_tools=handle_list_tools,
         on_call_tool=handle_call_tool,
     )
