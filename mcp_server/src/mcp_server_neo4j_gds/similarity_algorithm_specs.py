@@ -1,221 +1,150 @@
 from mcp import types
 
+from .common_specs import (
+    GRAPH_NAME_DESCRIPTION,
+    MAX_ITERATIONS_DESCRIPTION,
+    MODE_DESCRIPTION,
+    MUTATE_REL_PROPERTY_DESCRIPTION,
+    MUTATE_REL_TYPE_DESCRIPTION,
+    NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+    RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
+)
+
+_NODE_FILTER_SCHEMA = {
+    "anyOf": [
+        {
+            "type": "array",
+            "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
+        },
+        {"type": "string"},
+        {"type": "number"},
+    ],
+}
+
 similarity_tool_definitions = [
     types.Tool(
         name="node_similarity",
-        description="The Node Similarity algorithm compares a set of nodes based on the nodes they are connected to. "
-        "Two nodes are considered similar if they share many of the same neighbors. "
-        "Node Similarity computes pair-wise similarities based on the Jaccard metric, also known as the Jaccard Similarity Score, the Overlap coefficient, also known as the Szymkiewicz–Simpson coefficient, and the Cosine Similarity score. "
-        "The first two are most frequently associated with unweighted sets, whereas Cosine with weighted input."
-        "Filters on source nodes, target nodes, or both can additionally be provided to compute results for subset of nodes.",
+        description="Compute pairwise node similarity based on shared neighbors (JACCARD, OVERLAP, or COSINE). Use k_nearest_neighbors for similarity based on node properties.",
         inputSchema={
             "type": "object",
             "properties": {
                 "source_node_filter": {
-                    "anyOf": [
-                        {
-                            "type": "array",
-                            "items": {
-                                "anyOf": [{"type": "string"}, {"type": "number"}]
-                            },
-                        },
-                        {"type": "string"},
-                        {"type": "number"},
-                    ],
-                    "description": "The source node filter to apply. Accepts a List of node names, or a single label. An empty list is treated as no filter (the algorithm runs for all source nodes).",
+                    **_NODE_FILTER_SCHEMA,
+                    "description": "Source label, or identifier value(s) when node_identifier_property is set.",
                 },
                 "target_node_filter": {
-                    "anyOf": [
-                        {
-                            "type": "array",
-                            "items": {
-                                "anyOf": [{"type": "string"}, {"type": "number"}]
-                            },
-                        },
-                        {"type": "string"},
-                        {"type": "number"},
-                    ],
-                    "description": "The target node filter to apply. Accepts a List of node names, or a single label. An empty list is treated as no filter (the algorithm runs for all target nodes).",
+                    **_NODE_FILTER_SCHEMA,
+                    "description": "Target label, or identifier value(s) when node_identifier_property is set.",
                 },
                 "similarity_cutoff": {
                     "type": "number",
-                    "description": "Lower limit for the similarity score to be present in the result. Values must be between 0 and 1.",
+                    "description": "Minimum similarity score in [0, 1] to include in results.",
                 },
                 "degree_cutoff": {
                     "type": "integer",
-                    "description": "Inclusive lower bound on the node degree for a node to be considered in the comparisons. This value can not be lower than 1.",
+                    "description": "Minimum node degree (>= 1) required for comparison.",
                 },
                 "upper_degree_cutoff": {
                     "type": "integer",
-                    "description": "Inclusive upper bound on the node degree for a node to be considered in the comparisons. This value can not be lower than 1.",
+                    "description": "Maximum node degree (>= 1) allowed for comparison.",
                 },
                 "top_k": {
                     "type": "integer",
-                    "description": "Limit on the number of scores per node. The K largest results are returned. This value cannot be lower than 1. Use this instead of topN whenever the sourceNode consists of a single node, or it is specifically stated that results are to be computed for each source node",
+                    "description": "Maximum number of highest-scoring neighbors returned per node (>= 1).",
                 },
                 "bottom_k": {
                     "type": "integer",
-                    "description": "Limit on the number of scores per node. The K smallest results are returned. This value cannot be lower than 1.",
+                    "description": "Maximum number of lowest-scoring neighbors returned per node (>= 1).",
                 },
                 "top_n": {
                     "type": "integer",
-                    "description": "Global limit on the number of scores computed. The N largest total results are returned. This value cannot be negative, a value of 0 means no global limit.",
+                    "description": "Global limit on highest-scoring node pairs returned across the graph (0 = unlimited).",
                 },
                 "bottom_n": {
                     "type": "integer",
-                    "description": "Global limit on the number of scores computed. The N smallest total results are returned. This value cannot be negative, a value of 0 means no global limit.",
+                    "description": "Global limit on lowest-scoring node pairs returned across the graph (0 = unlimited).",
                 },
-                "relationship_weight_property": {
-                    "type": "string",
-                    "description": "Name of the relationship property to use as weights. If unspecified, the algorithm runs unweighted.",
-                },
+                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
                 "similarity_metric": {
                     "type": "string",
                     "enum": ["JACCARD", "OVERLAP", "COSINE"],
-                    "description": "The metric used to compute similarity.",
+                    "description": "Similarity metric to compute.",
                 },
                 "use_components": {
-                    "type": "boolean",
-                    "description": "If enabled, Node Similarity will use components to improve the performance of the computation, skipping comparisons of nodes in different components. Set to false (Default): the algorithm does not use components, but computes similarity across the entire graph. Set to true: the algorithm uses components, and will compute these components before computing similarity. Set to String: use pre-computed components stored in graph, String is the key for a node property representing components.",
+                    "anyOf": [{"type": "boolean"}, {"type": "string"}],
+                    "description": "true computes WCC first; false compares all nodes; a string names a precomputed component node property.",
                 },
-                "node_identifier_property": {
-                    "type": "string",
-                    "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
-                },
-                "graph_name": {
-                    "type": "string",
-                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
-                },
-                "mode": {
-                    "type": "string",
-                    "enum": ["stream", "mutate"],
-                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
-                },
-                "mutate_property": {
-                    "type": "string",
-                    "description": "Required when mode is 'mutate'. The name of the relationship property to write similarity scores to.",
-                },
-                "mutate_relationship_type": {
-                    "type": "string",
-                    "description": "Required when mode is 'mutate'. The relationship type to use for the new relationships.",
-                },
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_property": MUTATE_REL_PROPERTY_DESCRIPTION,
+                "mutate_relationship_type": MUTATE_REL_TYPE_DESCRIPTION,
             },
             "required": ["graph_name"],
         },
     ),
     types.Tool(
         name="k_nearest_neighbors",
-        description="The K-Nearest Neighbors algorithm computes a distance value for all node pairs in the graph and creates new relationships between each node and its k nearest neighbors. "
-        "The distance is calculated based on node properties. "
-        "The input of this algorithm is a homogeneous graph; any node label or relationships type information in the graph is ignored. "
-        "The graph does not need to be connected, in fact, existing relationships between nodes will be ignored - apart from random walk sampling if that that initial sampling option is used. "
-        "New relationships are created between each node and its k nearest neighbors. "
-        "The K-Nearest Neighbors algorithm compares given properties of each node. The k nodes where these properties are most similar are the k-nearest neighbors. "
-        "The initial set of neighbors is picked at random and verified and refined in multiple iterations. The number of iterations is limited by the configuration parameter maxIterations. "
-        "The algorithm may stop earlier if the neighbor lists only change by a small amount, which can be controlled by the configuration parameter deltaThreshold. "
-        "The particular implementation is based on Efficient k-nearest neighbor graph construction for generic similarity measures by Wei Dong et al. "
-        "Instead of comparing every node with every other node, the algorithm selects possible neighbors based on the assumption, that the neighbors-of-neighbors of a node are most likely already the nearest one. "
-        "The algorithm scales quasi-linear with respect to the node count, instead of being quadratic. "
-        "Furthermore, the algorithm only compares a sample of all possible neighbors on each iteration, assuming that eventually all possible neighbors will be seen. "
-        "This can be controlled with the configuration parameter sampleRate: A valid sample rate must be in between 0 (exclusive) and 1 (inclusive). "
-        "The default value is 0.5. The parameter is used to control the trade-off between accuracy and runtime-performance. "
-        "A higher sample rate will increase the accuracy of the result. The algorithm will also require more memory and will take longer to compute. "
-        "A lower sample rate will increase the runtime-performance. Some potential nodes may be missed in the comparison and may not be included in the result. "
-        "When encountered neighbors have equal similarity to the least similar already known neighbor, randomly selecting which node to keep can reduce the risk of some neighborhoods not being explored. "
-        "This behavior is controlled by the configuration parameter perturbationRate. "
-        "The output of the algorithm are new relationships between nodes and their k-nearest neighbors. Similarity scores are expressed via relationship properties."
-        "Filters on source nodes, target nodes, or both can additionally be provided to compute results for subset of nodes.",
+        description="Find each node's top_k most similar neighbors based on node properties (ignores existing relationships; use node_similarity for shared-neighbor topology similarity).",
         inputSchema={
             "type": "object",
             "properties": {
                 "source_node_filter": {
-                    "anyOf": [
-                        {
-                            "type": "array",
-                            "items": {
-                                "anyOf": [{"type": "string"}, {"type": "number"}]
-                            },
-                        },
-                        {"type": "string"},
-                        {"type": "number"},
-                    ],
-                    "description": "The source node filter to apply. Accepts a List of node names, or a single label. An empty list is treated as no filter (the algorithm runs for all source nodes).",
+                    **_NODE_FILTER_SCHEMA,
+                    "description": "Source label, or identifier value(s) when node_identifier_property is set.",
                 },
                 "target_node_filter": {
-                    "anyOf": [
-                        {
-                            "type": "array",
-                            "items": {
-                                "anyOf": [{"type": "string"}, {"type": "number"}]
-                            },
-                        },
-                        {"type": "string"},
-                        {"type": "number"},
-                    ],
-                    "description": "The target node filter to apply. Accepts a List of node names, or a single label. An empty list is treated as no filter (the algorithm runs for all target nodes).",
+                    **_NODE_FILTER_SCHEMA,
+                    "description": "Target label, or identifier value(s) when node_identifier_property is set.",
                 },
                 "node_properties": {
                     "type": "object",
-                    "description": "The node properties to use for similarity computation along with their selected similarity metrics. Accepts a Map of property keys to metrics. For example: {embedding: 'COSINE',age: 'DEFAULT',lotteryNumbers: 'OVERLAP'}. DEFAULT refers to COSINE.",
+                    "description": "Map of node property names to similarity metrics, e.g. {embedding: 'COSINE', age: 'DEFAULT', tags: 'OVERLAP'}.",
                 },
                 "top_k": {
                     "type": "integer",
-                    "description": "The number of neighbors to find for each node. The K-nearest neighbors are returned. This value cannot be lower than 1.",
+                    "minimum": 1,
+                    "description": "Number of nearest neighbors to find per node (>= 1).",
                 },
                 "sample_rate": {
                     "type": "number",
-                    "description": "Sample rate to limit the number of comparisons per node. Value must be between 0 (exclusive) and 1 (inclusive).",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1,
+                    "description": "Fraction of neighbors sampled per iteration in (0, 1] (default: 0.5).",
                 },
                 "delta_threshold": {
                     "type": "number",
-                    "description": "Value as a percentage to determine when to stop early. If fewer updates than the configured value happen, the algorithm stops. Value must be between 0 (exclusive) and 1 (inclusive).",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1,
+                    "description": "Early stopping threshold in (0, 1] on the fraction of neighbor updates.",
                 },
-                "max_iterations": {
-                    "type": "integer",
-                    "description": "Hard limit to stop the algorithm after that many iterations.",
-                },
+                "max_iterations": MAX_ITERATIONS_DESCRIPTION,
                 "random_joins": {
                     "type": "integer",
-                    "description": "The number of random attempts per node to connect new node neighbors based on random selection, for each iteration.",
+                    "description": "Number of random neighbor connection attempts per node per iteration.",
                 },
                 "initial_sampler": {
                     "type": "string",
                     "enum": ["uniform", "random_walk"],
-                    "description": 'The method used to sample the first k random neighbors for each node. "uniform" and "random_walk", both case-insensitive, are valid inputs.',
+                    "description": "Method to sample initial k neighbors per node.",
                 },
                 "similarity_cutoff": {
                     "type": "number",
-                    "description": "Filter out from the list of K-nearest neighbors nodes with similarity below this threshold.",
+                    "description": "Minimum similarity threshold to retain a neighbor.",
                 },
                 "perturbation_rate": {
                     "type": "number",
-                    "description": "The probability of replacing the least similar known neighbor with an encountered neighbor of equal similarity.",
+                    "description": "Probability of replacing the least similar neighbor with an equally similar candidate.",
                 },
                 "seed_target_nodes": {
                     "type": "boolean",
-                    "description": "Enable seeding of target nodes. If seeded, every node picks some of the target nodes initially. This guarantees that for every node we can avoid empty result (when the algorithm did not find for it any similar neighbors from the target set). Can only be used if targetNodeFilter is set.",
+                    "description": "Seed initial candidates from target_node_filter to avoid empty results (requires target_node_filter).",
                 },
-                "node_identifier_property": {
-                    "type": "string",
-                    "description": "Property name to use for identifying nodes (e.g., 'name', 'Name', 'title'). Use get_node_properties_keys to find available properties.",
-                },
-                "graph_name": {
-                    "type": "string",
-                    "description": "Name of the projected graph to run the algorithm on. Use project_graph_cypher to create a graph first.",
-                },
-                "mode": {
-                    "type": "string",
-                    "enum": ["stream", "mutate"],
-                    "description": "Execution mode: 'stream' returns results as a table, 'mutate' writes results to the in-memory graph as relationships. Default is 'stream'.",
-                },
-                "mutate_property": {
-                    "type": "string",
-                    "description": "Required when mode is 'mutate'. The name of the relationship property to write similarity scores to.",
-                },
-                "mutate_relationship_type": {
-                    "type": "string",
-                    "description": "Required when mode is 'mutate'. The relationship type to use for the new relationships.",
-                },
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_property": MUTATE_REL_PROPERTY_DESCRIPTION,
+                "mutate_relationship_type": MUTATE_REL_TYPE_DESCRIPTION,
             },
             "required": ["node_properties", "graph_name"],
         },

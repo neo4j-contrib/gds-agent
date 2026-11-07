@@ -1,28 +1,23 @@
 from mcp import types
 
+from .common_specs import GRAPH_NAME_DESCRIPTION
+
 graph_projection_tool_definitions = [
     types.Tool(
         name="project_graph_cypher",
-        description="""Project a graph using a custom Cypher query for use with GDS algorithms.
+        description="""Project an in-memory GDS graph using a Cypher query. Persists until dropped with drop_graph.
+Only nodes in result rows are projected; use MATCH (n) OPTIONAL MATCH (n)-[r]->(m) to include degree-0 nodes.
+sourceNodeProperties and targetNodeProperties map property names to numeric Cypher expressions.
 
-The graph will persist in memory until explicitly dropped with drop_graph.
-Use this to create a graph projection, then reference it by name when running algorithms.
-
-In Aura session mode, sessionName is required and must name a session previously created with create_session. All other tools locate a graph's session automatically from graphName, so multiple graphs in one session need no extra parameters.
-
-Only nodes in result rows are projected. MATCH (n)-[r]->(m) drops isolates. For a node set that must include degree-0 nodes, use MATCH (n) OPTIONAL MATCH (n)-[r]->(m) instead.
-
-Plugin (on-prem) mode — call gds.graph.project() with $graph_name as the first argument:
+Plugin (on-prem) mode — call gds.graph.project() with $graph_name as first argument:
 MATCH (n:Station)-[r:CONNECTED]->(m:Station)
 RETURN gds.graph.project(
-    $graph_name,
-    n,
-    m,
+    $graph_name, n, m,
     {
         sourceNodeLabels: labels(n),
         targetNodeLabels: labels(m),
-        sourceNodeProperties: {latitude: toFloat(n.latitude), longitude: toFloat(n.longitude)},
-        targetNodeProperties: {latitude: toFloat(m.latitude), longitude: toFloat(m.longitude)},
+        sourceNodeProperties: {latitude: toFloat(n.latitude)},
+        targetNodeProperties: {latitude: toFloat(m.latitude)},
         relationshipType: type(r),
         relationshipProperties: {distance: toFloat(r.distance)}
     },
@@ -30,49 +25,35 @@ RETURN gds.graph.project(
 )
 The 5th argument is an optional configuration map; include it with undirectedRelationshipTypes only when the projection must be undirected, otherwise omit it.
 
-Aura Graph Analytics (session) mode — call gds.graph.project.remote() with NO graph_name argument:
+Aura session mode — requires session_name (from create_session). Call gds.graph.project.remote(n, m, dataConfig) with NO $graph_name and NO 4th config map; pass undirected types via the undirected_relationship_types tool parameter instead:
 MATCH (n:Station)-[r:CONNECTED]->(m:Station)
 RETURN gds.graph.project.remote(
-    n,
-    m,
+    n, m,
     {
         sourceNodeLabels: labels(n),
         targetNodeLabels: labels(m),
-        sourceNodeProperties: {latitude: toFloat(n.latitude), longitude: toFloat(n.longitude)},
-        targetNodeProperties: {latitude: toFloat(m.latitude), longitude: toFloat(m.longitude)},
+        sourceNodeProperties: {latitude: toFloat(n.latitude)},
+        targetNodeProperties: {latitude: toFloat(m.latitude)},
         relationshipType: type(r),
         relationshipProperties: {distance: toFloat(r.distance)}
     }
-)
-
-Property keys above are examples. sourceNodeProperties and targetNodeProperties are maps of name to a numeric Cypher expression.
-
-To project UNDIRECTED relationships in session mode, use the separate undirectedRelationshipTypes tool parameter, e.g. ["CONNECTED"]. Do NOT add undirectedRelationshipTypes or orientation to the gds.graph.project.remote() data config map.
-In plugin (on-prem) mode, declare undirected relationships inside the query instead, in the optional configuration map (5th argument of gds.graph.project, after the data config map) as shown in the plugin example above.
-
-References:
-- Plugin: https://neo4j.com/docs/graph-data-science/current/management-ops/graph-creation/graph-project-cypher-projection/
-- Sessions: https://neo4j.com/docs/graph-data-science-client/current/aura-graph-analytics/#_projecting_graphs_into_a_gds_session
-""",
+)""",
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": {
-                    "type": "string",
-                    "description": "Unique name for the projected graph (e.g., 'my_graph', 'station_network'). This name will be used to reference the graph in algorithm tools.",
-                },
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "cypher_query": {
                     "type": "string",
-                    "description": "Cypher query that matches nodes and relationships, then returns the graph projection call. In plugin mode, call gds.graph.project() with $graph_name as the first argument. In Aura session mode, call gds.graph.project.remote() with exactly three arguments: source node, target node, and data config; do not pass graph name or a fourth config argument.",
+                    "description": "Cypher projection query returning gds.graph.project($graph_name, ...) in plugin mode or gds.graph.project.remote(...) in session mode.",
                 },
                 "undirected_relationship_types": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "Optional. Relationship types to project as UNDIRECTED, e.g. ['LINK']. Required by algorithms that need undirected input, such as link prediction pipeline training. Only applies to Aura session mode, where it is a top-level projection parameter and must NOT appear in the gds.graph.project.remote() data config map. In plugin (on-prem) mode, omit this parameter and declare undirected relationships inside the Cypher query instead.",
+                    "description": "Aura session mode only: relationship types to project as UNDIRECTED, e.g. ['LINK']. In plugin mode, omit this and set undirectedRelationshipTypes in the 5th argument of gds.graph.project().",
                 },
                 "session_name": {
                     "type": "string",
-                    "description": "Required in Aura session mode, not allowed in plugin mode. GDS session to project the graph into; must already exist (use create_session). 'mcp_' is prepended if missing. Most workflows project all graphs into one session; use separate sessions only to isolate graphs on separate compute, e.g. for parallel analyses.",
+                    "description": "Required in Aura session mode (not allowed in plugin mode). Existing GDS session name (from create_session); 'mcp_' is prepended if missing.",
                 },
             },
             "required": ["graph_name", "cypher_query"],
@@ -80,73 +61,52 @@ References:
     ),
     types.Tool(
         name="drop_graph",
-        description="""Drop a projected graph from memory.
-        This frees up memory and removes the graph projection. The graph must be dropped before a new graph with the same name can be created.
-        This does not affect the underlying data in the Neo4j database - only the in-memory projection.
-        """,
+        description="Drop a projected graph from memory to free resources (does not affect the Neo4j database).",
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": {
-                    "type": "string",
-                    "description": "Name of the graph to drop. This should be the name used when projecting the graph with project_graph_cypher.",
-                }
+                "graph_name": GRAPH_NAME_DESCRIPTION,
             },
             "required": ["graph_name"],
         },
     ),
     types.Tool(
         name="list_graphs",
-        description="""List all projected graphs currently in memory with their metadata.
-        Returns information about each graph including node count, relationship count, memory usage, and schema.
-        In Aura session mode, graphs from all active sessions are listed, each tagged with its sessionName.
-        Use this to see what graphs are available for running algorithms on.
-        """,
+        description="List all projected graphs currently in memory with node/relationship counts, memory usage, and schema.",
         inputSchema={"type": "object", "properties": {}},
     ),
     types.Tool(
         name="get_graph_info",
-        description="""Inspect one projected graph in the GDS graph catalog.
-        Returns graph object metadata including counts, labels, relationship types, projected properties, degree distribution, density, memory usage, configuration, and timestamps.
-        Use this before running mutate/stream algorithms to understand the graph schema and available in-memory properties.
-        """,
+        description="Inspect a projected graph's metadata, counts, labels, relationship types, in-memory properties, degree distribution, and memory usage.",
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": {
-                    "type": "string",
-                    "description": "Name of the projected graph to inspect.",
-                }
+                "graph_name": GRAPH_NAME_DESCRIPTION,
             },
             "required": ["graph_name"],
         },
     ),
     types.Tool(
         name="stream_node_properties",
-        description="""Stream node properties from a projected GDS graph.
-        Use this after running algorithms in mutate mode to inspect mutated node properties, or to inspect properties included during graph projection. This reads from the in-memory GDS graph, not directly from Neo4j, except for optional dbNodeProperties.
-        """,
+        description="Stream projected or mutated node properties from an in-memory GDS graph.",
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": {
-                    "type": "string",
-                    "description": "Name of the projected graph.",
-                },
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "node_properties": {
                     "type": ["string", "array"],
                     "items": {"type": "string"},
-                    "description": "Projected node property or properties to stream, such as a mutateProperty written by an algorithm.",
+                    "description": "Projected or mutated node property name(s) to stream.",
                 },
                 "node_labels": {
                     "type": ["string", "array"],
                     "items": {"type": "string"},
-                    "description": "Optional node label or labels to stream from. Defaults to all labels.",
+                    "description": "Optional node label(s) to filter by (defaults to all labels).",
                 },
                 "db_node_properties": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "Optional Neo4j database node properties to include alongside projected properties, such as name or identifier fields.",
+                    "description": "Optional Neo4j database node properties to join alongside projected properties (e.g., 'name').",
                 },
             },
             "required": ["graph_name", "node_properties"],
@@ -154,25 +114,20 @@ References:
     ),
     types.Tool(
         name="stream_relationship_properties",
-        description="""Stream relationship properties from a projected GDS graph.
-        Use this after mutate mode algorithms that write relationship properties, or to inspect relationship properties included during projection.
-        """,
+        description="Stream projected or mutated relationship properties from an in-memory GDS graph.",
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": {
-                    "type": "string",
-                    "description": "Name of the projected graph.",
-                },
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "relationship_properties": {
                     "type": ["string", "array"],
                     "items": {"type": "string"},
-                    "description": "Projected relationship property or properties to stream.",
+                    "description": "Projected or mutated relationship property name(s) to stream.",
                 },
                 "relationship_types": {
                     "type": ["string", "array"],
                     "items": {"type": "string"},
-                    "description": "Optional relationship type or types to stream from. Defaults to all types.",
+                    "description": "Optional relationship type(s) to filter by (defaults to all types).",
                 },
             },
             "required": ["graph_name", "relationship_properties"],
@@ -180,20 +135,15 @@ References:
     ),
     types.Tool(
         name="stream_relationships",
-        description="""Stream relationship topology from a projected GDS graph.
-        Returns source node id, target node id, and relationship type rows from the in-memory graph. Use this to inspect projected topology by relationship type.
-        """,
+        description="Stream relationship topology (source node ID, target node ID, relationship type) from an in-memory GDS graph.",
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": {
-                    "type": "string",
-                    "description": "Name of the projected graph.",
-                },
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "relationship_types": {
                     "type": ["string", "array"],
                     "items": {"type": "string"},
-                    "description": "Optional relationship type or types to stream. Defaults to all types.",
+                    "description": "Optional relationship type(s) to filter by (defaults to all types).",
                 },
             },
             "required": ["graph_name"],

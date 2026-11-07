@@ -9,6 +9,19 @@ def test_server_version_comes_from_package_metadata():
     assert server_module.SERVER_VERSION not in ("", "0.0.0")
 
 
+def test_server_instructions_are_advertised():
+    server = server_module.Server(
+        server_module.SERVER_NAME,
+        version=server_module.SERVER_VERSION,
+        instructions=server_module.SERVER_INSTRUCTIONS,
+    )
+
+    options = server_module.initialization_options(server)
+
+    assert options.instructions == server_module.SERVER_INSTRUCTIONS
+    assert "project_graph_cypher" in options.instructions
+
+
 def test_env_value_treats_empty_string_as_unset(monkeypatch):
     monkeypatch.setenv("GDS_AGENT_TEST_VAR", "")
 

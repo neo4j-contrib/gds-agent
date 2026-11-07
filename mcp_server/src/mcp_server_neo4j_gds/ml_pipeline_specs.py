@@ -1,67 +1,76 @@
 from mcp import types
 
+from .common_specs import (
+    GRAPH_NAME_DESCRIPTION,
+    MODE_DESCRIPTION,
+    MUTATE_NODE_PROPERTY_DESCRIPTION,
+    MUTATE_REL_TYPE_DESCRIPTION,
+    NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+    RANDOM_SEED_DESCRIPTION,
+)
+
 _node_property_steps_schema = {
     "type": "array",
     "items": {
         "type": "object",
         "properties": {
             "procedure": {"type": "string"},
-            "config": {"type": "object"},
+            "config": {
+                "type": "object",
+                "properties": {"mutate_property": {"type": "string"}},
+                "required": ["mutate_property"],
+            },
         },
-        "required": ["procedure"],
+        "required": ["procedure", "config"],
     },
-    "description": "Optional GDS algorithm steps executed on the graph before training to produce extra node properties, in order. "
-    "Each step is {procedure, config} where procedure is a GDS algorithm name (e.g. 'fastRP', 'degree', 'pageRank', 'beta.hashgnn') and config is its mutate-mode configuration "
-    "(must include mutateProperty; e.g. {mutateProperty: 'embedding', embeddingDimension: 64}). "
-    "Properties produced here can be used as features.",
+    "description": "Optional GDS algorithm steps executed before training to compute extra node properties: [{procedure, config}] where config includes mutate_property (e.g. {procedure: 'fastRP', config: {mutate_property: 'embedding', embedding_dimension: 64}}).",
 }
 
 
 def _model_candidates_description(default_method):
     return (
-        "Model candidates to evaluate during training; the best one (by the first metric) is selected. "
-        "Each entry is {method, config}. "
-        "Hyperparameter ranges for auto-tuning can be given as {range: [min, max]} values inside config. "
-        f"If omitted, a single default candidate is added ({default_method})."
+        "Model candidates [{method, config}] to evaluate; selects the best by the first metric. "
+        f"Supports hyperparameter tuning via {{range: [min, max]}} in config. If omitted, adds {{method: '{default_method}'}}."
     )
 
 
 _auto_tuning_schema = {
     "type": "object",
     "properties": {"max_trials": {"type": "integer"}},
-    "description": "Auto-tuning configuration, e.g. {maxTrials: 10}. Only relevant when model candidate configs contain ranges.",
+    "description": "Auto-tuning config, e.g. {max_trials: 10} (used when candidate configs contain ranges).",
+}
+
+_TRAIN_MODEL_NAME_SCHEMA = {
+    "type": "string",
+    "description": "Unique name for the trained model in the model catalog.",
+}
+
+_FEATURE_PROPERTIES_SCHEMA = {
+    "type": "array",
+    "items": {"type": "string"},
+    "description": "Node properties used as features (must exist in the projection or be produced by node_property_steps).",
+}
+
+_TARGET_NODE_LABELS_SCHEMA = {
+    "type": "array",
+    "items": {"type": "string"},
+    "description": "Optional node labels to restrict to.",
 }
 
 ml_pipeline_tool_definitions = [
     types.Tool(
         name="train_node_classification_model",
-        description="Train a node classification model on a projected graph and store it in the GDS model catalog under modelName. "
-        "Node classification predicts a categorical node property (the targetProperty) from feature properties using supervised machine learning. "
-        "This tool builds a GDS node classification pipeline (node property steps, feature selection, train/test split, model candidates), trains it, "
-        "evaluates it with the given metrics, and cleans up the temporary pipeline. "
-        "The targetProperty must be an integer property in the projected graph, and all feature properties must exist in the projection "
-        "(either projected from the database or produced by nodePropertySteps). "
-        "Use predict_node_classification to apply the trained model.",
+        description="Train a supervised node classification model to predict an integer target_property and store it in the model catalog (use predict_node_classification for inference).",
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": {
-                    "type": "string",
-                    "description": "Name of the projected graph to train on. Use project_graph_cypher to create a graph first.",
-                },
-                "model_name": {
-                    "type": "string",
-                    "description": "Unique name for the trained model in the model catalog.",
-                },
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "model_name": _TRAIN_MODEL_NAME_SCHEMA,
                 "target_property": {
                     "type": "string",
-                    "description": "Node property holding the class label to predict. Must be an integer property in the projected graph.",
+                    "description": "Integer node property holding the class label to predict.",
                 },
-                "feature_properties": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "Node properties to use as model features. Each must exist in the projected graph or be produced by nodePropertySteps.",
-                },
+                "feature_properties": _FEATURE_PROPERTIES_SCHEMA,
                 "node_property_steps": _node_property_steps_schema,
                 "split_config": {
                     "type": "object",
@@ -69,7 +78,7 @@ ml_pipeline_tool_definitions = [
                         "test_fraction": {"type": "number"},
                         "validation_folds": {"type": "integer"},
                     },
-                    "description": "Train/test split configuration, e.g. {testFraction: 0.3, validationFolds: 3}.",
+                    "description": "Train/test split config, e.g. {test_fraction: 0.3, validation_folds: 3}.",
                 },
                 "model_candidates": {
                     "type": "array",
@@ -88,23 +97,16 @@ ml_pipeline_tool_definitions = [
                         },
                         "required": ["method"],
                     },
-                    "description": _model_candidates_description("logistic regression"),
+                    "description": _model_candidates_description("logistic_regression"),
                 },
                 "auto_tuning_config": _auto_tuning_schema,
                 "metrics": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "Evaluation metrics, e.g. ACCURACY, F1_WEIGHTED, F1_MACRO, OUT_OF_BAG_ERROR. Default is [ACCURACY].",
+                    "description": "Evaluation metrics, e.g. ACCURACY, F1_WEIGHTED, F1_MACRO, OUT_OF_BAG_ERROR (default: [ACCURACY]).",
                 },
-                "target_node_labels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "Optional node labels to restrict training to.",
-                },
-                "random_seed": {
-                    "type": "integer",
-                    "description": "A random seed for reproducible training.",
-                },
+                "target_node_labels": _TARGET_NODE_LABELS_SCHEMA,
+                "random_seed": RANDOM_SEED_DESCRIPTION,
             },
             "required": [
                 "graph_name",
@@ -116,46 +118,26 @@ ml_pipeline_tool_definitions = [
     ),
     types.Tool(
         name="predict_node_classification",
-        description="Predict class labels for nodes in a projected graph using a trained node classification model from the model catalog "
-        "(see train_node_classification_model). "
-        "The graph must contain the feature properties the model was trained on. "
-        "Stream mode returns predicted classes (and optionally probabilities) per node; mutate mode writes predictions to the in-memory graph.",
+        description="Predict node class labels using a trained model; the graph must contain the feature properties expected by the model.",
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": {
-                    "type": "string",
-                    "description": "Name of the projected graph to predict on.",
-                },
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "model_name": {
                     "type": "string",
                     "description": "Name of the trained node classification model in the model catalog.",
                 },
                 "include_predicted_probabilities": {
                     "type": "boolean",
-                    "description": "In stream mode, also return the predicted probability per class. Default is false.",
+                    "description": "In stream mode, also return per-class probabilities (default: false).",
                 },
-                "target_node_labels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "Optional node labels to restrict prediction to.",
-                },
-                "node_identifier_property": {
-                    "type": "string",
-                    "description": "Property name to use for identifying nodes in stream output (e.g., 'name', 'title'). Use get_node_properties_keys to find available properties.",
-                },
-                "mode": {
-                    "type": "string",
-                    "enum": ["stream", "mutate"],
-                    "description": "Execution mode: 'stream' returns predictions as a table, 'mutate' writes predictions to the in-memory graph as a node property. Default is 'stream'.",
-                },
-                "mutate_property": {
-                    "type": "string",
-                    "description": "Required when mode is 'mutate'. The name of the node property to write predicted classes to.",
-                },
+                "target_node_labels": _TARGET_NODE_LABELS_SCHEMA,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_property": MUTATE_NODE_PROPERTY_DESCRIPTION,
                 "predicted_probability_property": {
                     "type": "string",
-                    "description": "In mutate mode, optionally also write per-class probabilities to this node property.",
+                    "description": "In mutate mode, optional node property to store per-class probabilities.",
                 },
             },
             "required": ["graph_name", "model_name"],
@@ -163,35 +145,23 @@ ml_pipeline_tool_definitions = [
     ),
     types.Tool(
         name="train_link_prediction_model",
-        description="Train a link prediction model on a projected graph and store it in the GDS model catalog under modelName. "
-        "Link prediction predicts missing or future relationships of the targetRelationshipType between node pairs, using link features "
-        "computed by combining node properties (e.g. embeddings) of both nodes. "
-        "This tool builds a GDS link prediction pipeline (node property steps, link features, relationship split, model candidates), trains it, "
-        "and cleans up the temporary pipeline. "
-        "IMPORTANT: the projected graph must contain UNDIRECTED relationships of the targetRelationshipType; project with undirectedRelationshipTypes. "
-        "Use predict_link_prediction to apply the trained model.",
+        description="Train a supervised link prediction model for target_relationship_type and store it in the model catalog (use predict_link_prediction for inference). Requires target_relationship_type to be UNDIRECTED in the projection.",
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": {
-                    "type": "string",
-                    "description": "Name of the projected graph to train on. Must contain undirected relationships of the targetRelationshipType.",
-                },
-                "model_name": {
-                    "type": "string",
-                    "description": "Unique name for the trained model in the model catalog.",
-                },
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "model_name": _TRAIN_MODEL_NAME_SCHEMA,
                 "target_relationship_type": {
                     "type": "string",
-                    "description": "The relationship type to learn to predict. Must be undirected in the projection.",
+                    "description": "Relationship type to predict (must be projected as UNDIRECTED).",
                 },
                 "source_node_label": {
                     "type": "string",
-                    "description": "Optional node label of relationship source nodes to learn from.",
+                    "description": "Optional source node label filter.",
                 },
                 "target_node_label": {
                     "type": "string",
-                    "description": "Optional node label of relationship target nodes to learn from.",
+                    "description": "Optional target node label filter.",
                 },
                 "link_features": {
                     "type": "array",
@@ -209,8 +179,7 @@ ml_pipeline_tool_definitions = [
                         },
                         "required": ["feature_type", "node_properties"],
                     },
-                    "description": "How to combine node properties of a node pair into link features, e.g. [{featureType: 'hadamard', nodeProperties: ['embedding']}]. "
-                    "Node properties must exist in the projection or be produced by nodePropertySteps.",
+                    "description": "Pairwise link feature combiner steps, e.g. [{feature_type: 'hadamard', node_properties: ['embedding']}].",
                 },
                 "node_property_steps": _node_property_steps_schema,
                 "split_config": {
@@ -221,7 +190,7 @@ ml_pipeline_tool_definitions = [
                         "validation_folds": {"type": "integer"},
                         "negative_sampling_ratio": {"type": "number"},
                     },
-                    "description": "Relationship split configuration, e.g. {trainFraction: 0.25, testFraction: 0.25, validationFolds: 3}.",
+                    "description": "Relationship split config, e.g. {train_fraction: 0.25, test_fraction: 0.25, validation_folds: 3}.",
                 },
                 "model_candidates": {
                     "type": "array",
@@ -240,22 +209,19 @@ ml_pipeline_tool_definitions = [
                         },
                         "required": ["method"],
                     },
-                    "description": _model_candidates_description("logistic regression"),
+                    "description": _model_candidates_description("logistic_regression"),
                 },
                 "auto_tuning_config": _auto_tuning_schema,
                 "metrics": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "Evaluation metrics, e.g. AUCPR, OUT_OF_BAG_ERROR. Default is [AUCPR].",
+                    "description": "Evaluation metrics, e.g. AUCPR, OUT_OF_BAG_ERROR (default: [AUCPR]).",
                 },
                 "negative_class_weight": {
                     "type": "number",
-                    "description": "Weight of negative examples in the loss. Positive examples have weight 1.",
+                    "description": "Relative weight of negative examples in the loss function.",
                 },
-                "random_seed": {
-                    "type": "integer",
-                    "description": "A random seed for reproducible training.",
-                },
+                "random_seed": RANDOM_SEED_DESCRIPTION,
             },
             "required": [
                 "graph_name",
@@ -267,66 +233,53 @@ ml_pipeline_tool_definitions = [
     ),
     types.Tool(
         name="predict_link_prediction",
-        description="Predict new relationships in a projected graph using a trained link prediction model from the model catalog "
-        "(see train_link_prediction_model). "
-        "The graph must contain the node properties the model's link features were built from, and the relationships must be undirected. "
-        "Stream mode returns predicted node pairs with probabilities; mutate mode writes the top predicted relationships to the in-memory graph. "
-        "By default an exhaustive search over all node pairs is used and topN is required; set sampleRate below 1 for a faster approximate search.",
+        description="Predict new relationships on an undirected projected graph using a trained link prediction model (exhaustive search requires top_n; set sample_rate < 1 for approximate kNN search).",
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": {
-                    "type": "string",
-                    "description": "Name of the projected graph to predict on.",
-                },
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "model_name": {
                     "type": "string",
                     "description": "Name of the trained link prediction model in the model catalog.",
                 },
                 "top_n": {
                     "type": "integer",
-                    "description": "Limit on the number of predicted relationships to output, ordered by probability. Required when sampleRate is 1 (the default exhaustive search).",
+                    "minimum": 1,
+                    "description": "Number of top predictions to return (required when sample_rate is omitted or 1).",
                 },
                 "threshold": {
                     "type": "number",
-                    "description": "Minimum predicted probability for a relationship to be output (exhaustive search only). Default is 0.",
+                    "description": "Minimum predicted probability in exhaustive search (default: 0).",
                 },
                 "sample_rate": {
                     "type": "number",
-                    "description": "Between 0 and 1. If below 1, an approximate K-nearest-neighbor-based search is used instead of scoring every node pair. Default is 1.",
+                    "exclusiveMinimum": 0,
+                    "maximum": 1,
+                    "description": "In (0, 1]. Set < 1 to use approximate kNN search instead of exhaustive search (default: 1).",
                 },
                 "top_k": {
                     "type": "integer",
-                    "description": "For approximate search (sampleRate below 1): number of predicted relationships to output per node. Default is 10.",
+                    "minimum": 1,
+                    "description": "Predicted relationships per node when sample_rate < 1 (default: 10).",
                 },
                 "delta_threshold": {
                     "type": "number",
-                    "description": "For approximate search: early stopping threshold as a fraction of updated potential relationships. Default is 0.001.",
+                    "description": "Early stopping threshold when sample_rate < 1 (default: 0.001).",
                 },
                 "max_iterations": {
                     "type": "integer",
-                    "description": "For approximate search: maximum number of iterations. Default is 100.",
+                    "description": "Maximum iterations when sample_rate < 1 (default: 100).",
                 },
                 "random_joins": {
                     "type": "integer",
-                    "description": "For approximate search: number of random node comparisons per iteration. Default is 10.",
+                    "description": "Random node comparisons per iteration when sample_rate < 1 (default: 10).",
                 },
-                "node_identifier_property": {
-                    "type": "string",
-                    "description": "Property name to use for identifying nodes in stream output (e.g., 'name', 'title'). Use get_node_properties_keys to find available properties.",
-                },
-                "mode": {
-                    "type": "string",
-                    "enum": ["stream", "mutate"],
-                    "description": "Execution mode: 'stream' returns predicted node pairs as a table, 'mutate' writes predicted relationships to the in-memory graph. Default is 'stream'.",
-                },
-                "mutate_relationship_type": {
-                    "type": "string",
-                    "description": "Required when mode is 'mutate'. The relationship type to use for the new predicted relationships.",
-                },
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_relationship_type": MUTATE_REL_TYPE_DESCRIPTION,
                 "mutate_property": {
                     "type": "string",
-                    "description": "In mutate mode, the relationship property to store the predicted probability in. Default is 'probability'.",
+                    "description": "Relationship property to store predicted probabilities in mutate mode (default: 'probability').",
                 },
             },
             "required": ["graph_name", "model_name"],
@@ -334,33 +287,17 @@ ml_pipeline_tool_definitions = [
     ),
     types.Tool(
         name="train_node_regression_model",
-        description="Train a node regression model on a projected graph and store it in the GDS model catalog under modelName. "
-        "Node regression predicts a continuous numeric node property (the targetProperty) from feature properties using supervised machine learning. "
-        "This tool builds a GDS node regression pipeline (node property steps, feature selection, train/test split, model candidates), trains it, "
-        "and cleans up the temporary pipeline. "
-        "The targetProperty and all feature properties must exist in the projected graph "
-        "(either projected from the database or produced by nodePropertySteps). "
-        "Use predict_node_regression to apply the trained model.",
+        description="Train a supervised node regression model to predict a continuous numeric target_property and store it in the model catalog (use predict_node_regression for inference).",
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": {
-                    "type": "string",
-                    "description": "Name of the projected graph to train on. Use project_graph_cypher to create a graph first.",
-                },
-                "model_name": {
-                    "type": "string",
-                    "description": "Unique name for the trained model in the model catalog.",
-                },
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "model_name": _TRAIN_MODEL_NAME_SCHEMA,
                 "target_property": {
                     "type": "string",
-                    "description": "Numeric node property to predict.",
+                    "description": "Continuous numeric node property to predict.",
                 },
-                "feature_properties": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "Node properties to use as model features. Each must exist in the projected graph or be produced by nodePropertySteps.",
-                },
+                "feature_properties": _FEATURE_PROPERTIES_SCHEMA,
                 "node_property_steps": _node_property_steps_schema,
                 "split_config": {
                     "type": "object",
@@ -368,7 +305,7 @@ ml_pipeline_tool_definitions = [
                         "test_fraction": {"type": "number"},
                         "validation_folds": {"type": "integer"},
                     },
-                    "description": "Train/test split configuration, e.g. {testFraction: 0.3, validationFolds: 3}.",
+                    "description": "Train/test split config, e.g. {test_fraction: 0.3, validation_folds: 3}.",
                 },
                 "model_candidates": {
                     "type": "array",
@@ -383,23 +320,16 @@ ml_pipeline_tool_definitions = [
                         },
                         "required": ["method"],
                     },
-                    "description": _model_candidates_description("linear regression"),
+                    "description": _model_candidates_description("linear_regression"),
                 },
                 "auto_tuning_config": _auto_tuning_schema,
                 "metrics": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "Evaluation metrics, e.g. MEAN_SQUARED_ERROR, ROOT_MEAN_SQUARED_ERROR, MEAN_ABSOLUTE_ERROR. Default is [MEAN_SQUARED_ERROR].",
+                    "description": "Evaluation metrics, e.g. MEAN_SQUARED_ERROR, ROOT_MEAN_SQUARED_ERROR, MEAN_ABSOLUTE_ERROR (default: [MEAN_SQUARED_ERROR]).",
                 },
-                "target_node_labels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "Optional node labels to restrict training to.",
-                },
-                "random_seed": {
-                    "type": "integer",
-                    "description": "A random seed for reproducible training.",
-                },
+                "target_node_labels": _TARGET_NODE_LABELS_SCHEMA,
+                "random_seed": RANDOM_SEED_DESCRIPTION,
             },
             "required": [
                 "graph_name",
@@ -411,48 +341,26 @@ ml_pipeline_tool_definitions = [
     ),
     types.Tool(
         name="predict_node_regression",
-        description="Predict numeric values for nodes in a projected graph using a trained node regression model from the model catalog "
-        "(see train_node_regression_model). "
-        "The graph must contain the feature properties the model was trained on. "
-        "Stream mode returns the predicted value per node; mutate mode writes predictions to the in-memory graph.",
+        description="Predict continuous node values using a trained model; the graph must contain the feature properties expected by the model.",
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": {
-                    "type": "string",
-                    "description": "Name of the projected graph to predict on.",
-                },
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "model_name": {
                     "type": "string",
                     "description": "Name of the trained node regression model in the model catalog.",
                 },
-                "target_node_labels": {
-                    "type": "array",
-                    "items": {"type": "string"},
-                    "description": "Optional node labels to restrict prediction to.",
-                },
-                "node_identifier_property": {
-                    "type": "string",
-                    "description": "Property name to use for identifying nodes in stream output (e.g., 'name', 'title'). Use get_node_properties_keys to find available properties.",
-                },
-                "mode": {
-                    "type": "string",
-                    "enum": ["stream", "mutate"],
-                    "description": "Execution mode: 'stream' returns predictions as a table, 'mutate' writes predictions to the in-memory graph as a node property. Default is 'stream'.",
-                },
-                "mutate_property": {
-                    "type": "string",
-                    "description": "Required when mode is 'mutate'. The name of the node property to write predicted values to.",
-                },
+                "target_node_labels": _TARGET_NODE_LABELS_SCHEMA,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_property": MUTATE_NODE_PROPERTY_DESCRIPTION,
             },
             "required": ["graph_name", "model_name"],
         },
     ),
     types.Tool(
         name="list_models",
-        description="List all machine learning models in the GDS model catalog (GraphSAGE, node classification, link prediction, node regression) "
-        "with their type, training configuration, and metrics. "
-        "Models are created by graph_sage_train, train_node_classification_model, train_link_prediction_model, and train_node_regression_model.",
+        description="List all trained ML models in the GDS model catalog (GraphSAGE, node classification, link prediction, node regression) with their configuration and metrics.",
         inputSchema={
             "type": "object",
             "properties": {},
@@ -460,14 +368,13 @@ ml_pipeline_tool_definitions = [
     ),
     types.Tool(
         name="drop_model",
-        description="Remove a trained machine learning model from the GDS model catalog to free memory. "
-        "This does not affect the underlying data in the Neo4j database or any projected graphs.",
+        description="Remove a trained ML model from the GDS model catalog to free memory.",
         inputSchema={
             "type": "object",
             "properties": {
                 "model_name": {
                     "type": "string",
-                    "description": "Name of the model to drop. Use list_models to see available models.",
+                    "description": "Name of the model to drop.",
                 }
             },
             "required": ["model_name"],
