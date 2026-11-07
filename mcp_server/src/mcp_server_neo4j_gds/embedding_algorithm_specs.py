@@ -1,22 +1,25 @@
 from mcp import types
 
 from .common_specs import (
-    GRAPH_NAME_SCHEMA,
-    MODE_SCHEMA,
-    MUTATE_NODE_PROPERTY_SCHEMA,
-    NODE_IDENTIFIER_PROPERTY_SCHEMA,
-    RANDOM_SEED_SCHEMA,
-    RELATIONSHIP_WEIGHT_PROPERTY_SCHEMA,
+    GRAPH_NAME_DESCRIPTION,
+    MODE_DESCRIPTION,
+    MUTATE_NODE_PROPERTY_DESCRIPTION,
+    NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+    RANDOM_SEED_DESCRIPTION,
+    RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
 )
 
 embedding_tool_definitions = [
     types.Tool(
         name="fast_rp",
-        description="Compute fast node embeddings using sparse random projections and neighborhood averaging (optionally blending node feature_properties via property_ratio).",
+        description="""Fast Random Projection (FastRP) is a node embedding algorithm that computes a vector representation for every node in the graph.
+        Embeddings capture graph topology, and can optionally incorporate node properties via propertyRatio and featureProperties.
+        To make embeddings comparable across nodes connected by undirected semantics, project the graph as undirected.
+        """,
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "embedding_dimension": {
                     "type": "integer",
                     "minimum": 1,
@@ -46,11 +49,11 @@ embedding_tool_definitions = [
                     "items": {"type": "string"},
                     "description": "Numeric or numeric-array node properties used as features (requires property_ratio > 0).",
                 },
-                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_SCHEMA,
-                "random_seed": RANDOM_SEED_SCHEMA,
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_property": MUTATE_NODE_PROPERTY_SCHEMA,
+                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
+                "random_seed": RANDOM_SEED_DESCRIPTION,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_property": MUTATE_NODE_PROPERTY_DESCRIPTION,
             },
             "required": ["graph_name", "embedding_dimension"],
         },
@@ -61,7 +64,7 @@ embedding_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "embedding_dimension": {
                     "type": "integer",
                     "description": "Dimension of the computed node embeddings (default: 128).",
@@ -115,22 +118,26 @@ embedding_tool_definitions = [
                     "type": "integer",
                     "description": "Number of random walks buffered before training (default: 1000).",
                 },
-                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_SCHEMA,
-                "random_seed": RANDOM_SEED_SCHEMA,
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_property": MUTATE_NODE_PROPERTY_SCHEMA,
+                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
+                "random_seed": RANDOM_SEED_DESCRIPTION,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_property": MUTATE_NODE_PROPERTY_DESCRIPTION,
             },
             "required": ["graph_name"],
         },
     ),
     types.Tool(
         name="hashgnn",
-        description="Compute fast GNN-like node embeddings via min-hash message passing without training. Requires generate_features, or feature_properties (with binarize_features for non-binary values).",
+        description="""HashGNN is a node embedding algorithm which resembles Graph Neural Networks but does not include a model or require training.
+        It uses hashing functions (min-hash) instead of trained neural network weights, making it orders of magnitude faster than GNNs.
+        Node input features must be binary; provide binary featureProperties, or use binarizeFeatures to binarize numeric properties, or generateFeatures to generate random binary features from topology alone.
+        It supports heterogeneous graphs (set heterogeneous to true) where embeddings distinguish different relationship types.
+        Output embeddings are binary by default; set outputDimension to densify them into float vectors.""",
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "iterations": {
                     "type": "integer",
                     "minimum": 1,
@@ -176,10 +183,10 @@ embedding_tool_definitions = [
                     "type": "integer",
                     "description": "Project binary embeddings into dense float vectors of this dimension.",
                 },
-                "random_seed": RANDOM_SEED_SCHEMA,
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_property": MUTATE_NODE_PROPERTY_SCHEMA,
+                "random_seed": RANDOM_SEED_DESCRIPTION,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_property": MUTATE_NODE_PROPERTY_DESCRIPTION,
             },
             "required": ["graph_name", "iterations", "embedding_density"],
             "oneOf": [
@@ -201,11 +208,15 @@ embedding_tool_definitions = [
     ),
     types.Tool(
         name="graph_sage_train",
-        description="Train an inductive GraphSAGE neural network model on numeric feature_properties and store it in the model catalog for inference with graph_sage_predict.",
+        description="""Trains a GraphSAGE model and stores it in the GDS model catalog under modelName.
+        GraphSAGE is an inductive graph neural network that learns a function to generate node embeddings by sampling and aggregating features from a node's local neighborhood.
+        The graph should be projected with undirected relationships for best results.
+        All featureProperties must exist in the projected graph as numeric properties (use get_graph_info to check).
+        After training, use graph_sage_predict to generate embeddings, list_models to inspect models, and drop_model to free memory.""",
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "model_name": {
                     "type": "string",
                     "description": "Unique name for the trained model in the model catalog.",
@@ -270,8 +281,8 @@ embedding_tool_definitions = [
                     "type": "integer",
                     "description": "Shared feature projection dimension to enable multi-label mode on heterogeneous graphs.",
                 },
-                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_SCHEMA,
-                "random_seed": RANDOM_SEED_SCHEMA,
+                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
+                "random_seed": RANDOM_SEED_DESCRIPTION,
             },
             "required": ["graph_name", "model_name", "feature_properties"],
         },
@@ -282,7 +293,7 @@ embedding_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "model_name": {
                     "type": "string",
                     "description": "Name of the trained GraphSAGE model in the model catalog.",
@@ -291,9 +302,9 @@ embedding_tool_definitions = [
                     "type": "integer",
                     "description": "Nodes per inference batch (default: 100).",
                 },
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_property": MUTATE_NODE_PROPERTY_SCHEMA,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_property": MUTATE_NODE_PROPERTY_DESCRIPTION,
             },
             "required": ["graph_name", "model_name"],
         },

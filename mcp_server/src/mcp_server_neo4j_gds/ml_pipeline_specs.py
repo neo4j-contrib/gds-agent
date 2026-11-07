@@ -1,12 +1,12 @@
 from mcp import types
 
 from .common_specs import (
-    GRAPH_NAME_SCHEMA,
-    MODE_SCHEMA,
-    MUTATE_NODE_PROPERTY_SCHEMA,
-    MUTATE_REL_TYPE_SCHEMA,
-    NODE_IDENTIFIER_PROPERTY_SCHEMA,
-    RANDOM_SEED_SCHEMA,
+    GRAPH_NAME_DESCRIPTION,
+    MODE_DESCRIPTION,
+    MUTATE_NODE_PROPERTY_DESCRIPTION,
+    MUTATE_REL_TYPE_DESCRIPTION,
+    NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+    RANDOM_SEED_DESCRIPTION,
 )
 
 _node_property_steps_schema = {
@@ -64,7 +64,7 @@ ml_pipeline_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "model_name": _TRAIN_MODEL_NAME_SCHEMA,
                 "target_property": {
                     "type": "string",
@@ -106,7 +106,7 @@ ml_pipeline_tool_definitions = [
                     "description": "Evaluation metrics, e.g. ACCURACY, F1_WEIGHTED, F1_MACRO, OUT_OF_BAG_ERROR (default: [ACCURACY]).",
                 },
                 "target_node_labels": _TARGET_NODE_LABELS_SCHEMA,
-                "random_seed": RANDOM_SEED_SCHEMA,
+                "random_seed": RANDOM_SEED_DESCRIPTION,
             },
             "required": [
                 "graph_name",
@@ -122,7 +122,7 @@ ml_pipeline_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "model_name": {
                     "type": "string",
                     "description": "Name of the trained node classification model in the model catalog.",
@@ -132,9 +132,9 @@ ml_pipeline_tool_definitions = [
                     "description": "In stream mode, also return per-class probabilities (default: false).",
                 },
                 "target_node_labels": _TARGET_NODE_LABELS_SCHEMA,
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_property": MUTATE_NODE_PROPERTY_SCHEMA,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_property": MUTATE_NODE_PROPERTY_DESCRIPTION,
                 "predicted_probability_property": {
                     "type": "string",
                     "description": "In mutate mode, optional node property to store per-class probabilities.",
@@ -149,7 +149,7 @@ ml_pipeline_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "model_name": _TRAIN_MODEL_NAME_SCHEMA,
                 "target_relationship_type": {
                     "type": "string",
@@ -221,7 +221,7 @@ ml_pipeline_tool_definitions = [
                     "type": "number",
                     "description": "Relative weight of negative examples in the loss function.",
                 },
-                "random_seed": RANDOM_SEED_SCHEMA,
+                "random_seed": RANDOM_SEED_DESCRIPTION,
             },
             "required": [
                 "graph_name",
@@ -237,7 +237,7 @@ ml_pipeline_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "model_name": {
                     "type": "string",
                     "description": "Name of the trained link prediction model in the model catalog.",
@@ -274,9 +274,9 @@ ml_pipeline_tool_definitions = [
                     "type": "integer",
                     "description": "Random node comparisons per iteration when sample_rate < 1 (default: 10).",
                 },
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_relationship_type": MUTATE_REL_TYPE_SCHEMA,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_relationship_type": MUTATE_REL_TYPE_DESCRIPTION,
                 "mutate_property": {
                     "type": "string",
                     "description": "Relationship property to store predicted probabilities in mutate mode (default: 'probability').",
@@ -291,7 +291,7 @@ ml_pipeline_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "model_name": _TRAIN_MODEL_NAME_SCHEMA,
                 "target_property": {
                     "type": "string",
@@ -329,7 +329,7 @@ ml_pipeline_tool_definitions = [
                     "description": "Evaluation metrics, e.g. MEAN_SQUARED_ERROR, ROOT_MEAN_SQUARED_ERROR, MEAN_ABSOLUTE_ERROR (default: [MEAN_SQUARED_ERROR]).",
                 },
                 "target_node_labels": _TARGET_NODE_LABELS_SCHEMA,
-                "random_seed": RANDOM_SEED_SCHEMA,
+                "random_seed": RANDOM_SEED_DESCRIPTION,
             },
             "required": [
                 "graph_name",
@@ -345,15 +345,15 @@ ml_pipeline_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "model_name": {
                     "type": "string",
                     "description": "Name of the trained node regression model in the model catalog.",
                 },
                 "target_node_labels": _TARGET_NODE_LABELS_SCHEMA,
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_property": MUTATE_NODE_PROPERTY_SCHEMA,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_property": MUTATE_NODE_PROPERTY_DESCRIPTION,
             },
             "required": ["graph_name", "model_name"],
         },

@@ -1,6 +1,6 @@
 from mcp import types
 
-from .common_specs import GRAPH_NAME_SCHEMA
+from .common_specs import GRAPH_NAME_DESCRIPTION
 
 graph_projection_tool_definitions = [
     types.Tool(
@@ -9,7 +9,7 @@ graph_projection_tool_definitions = [
 Only nodes in result rows are projected; use MATCH (n) OPTIONAL MATCH (n)-[r]->(m) to include degree-0 nodes.
 sourceNodeProperties and targetNodeProperties map property names to numeric Cypher expressions.
 
-Plugin (on-prem) mode — call gds.graph.project() with $graph_name as 1st arg, and optional 5th config map for undirected relationships:
+Plugin (on-prem) mode — call gds.graph.project() with $graph_name as first argument:
 MATCH (n:Station)-[r:CONNECTED]->(m:Station)
 RETURN gds.graph.project(
     $graph_name, n, m,
@@ -23,6 +23,7 @@ RETURN gds.graph.project(
     },
     { undirectedRelationshipTypes: ['CONNECTED'] }
 )
+The 5th argument is an optional configuration map; include it with undirectedRelationshipTypes only when the projection must be undirected, otherwise omit it.
 
 Aura session mode — requires session_name (from create_session). Call gds.graph.project.remote(n, m, dataConfig) with NO $graph_name and NO 4th config map; pass undirected types via the undirected_relationship_types tool parameter instead:
 MATCH (n:Station)-[r:CONNECTED]->(m:Station)
@@ -40,7 +41,7 @@ RETURN gds.graph.project.remote(
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "cypher_query": {
                     "type": "string",
                     "description": "Cypher projection query returning gds.graph.project($graph_name, ...) in plugin mode or gds.graph.project.remote(...) in session mode.",
@@ -64,7 +65,7 @@ RETURN gds.graph.project.remote(
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
             },
             "required": ["graph_name"],
         },
@@ -80,7 +81,7 @@ RETURN gds.graph.project.remote(
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
             },
             "required": ["graph_name"],
         },
@@ -91,7 +92,7 @@ RETURN gds.graph.project.remote(
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "node_properties": {
                     "type": ["string", "array"],
                     "items": {"type": "string"},
@@ -117,7 +118,7 @@ RETURN gds.graph.project.remote(
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "relationship_properties": {
                     "type": ["string", "array"],
                     "items": {"type": "string"},
@@ -138,7 +139,7 @@ RETURN gds.graph.project.remote(
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "relationship_types": {
                     "type": ["string", "array"],
                     "items": {"type": "string"},

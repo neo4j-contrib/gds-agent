@@ -1,15 +1,15 @@
 from mcp import types
 
 from .common_specs import (
-    GRAPH_NAME_SCHEMA,
-    MODE_SCHEMA,
-    MUTATE_NODE_PROPERTY_SCHEMA,
-    MUTATE_REL_PROPERTY_SCHEMA,
-    MUTATE_REL_TYPE_SCHEMA,
-    NODE_IDENTIFIER_PROPERTY_SCHEMA,
-    RELATIONSHIP_WEIGHT_PROPERTY_SCHEMA,
-    SOURCE_NODE_SCHEMA,
-    TARGET_NODE_SCHEMA,
+    GRAPH_NAME_DESCRIPTION,
+    MODE_DESCRIPTION,
+    MUTATE_NODE_PROPERTY_DESCRIPTION,
+    MUTATE_REL_PROPERTY_DESCRIPTION,
+    MUTATE_REL_TYPE_DESCRIPTION,
+    NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+    RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
+    SOURCE_NODE_DESCRIPTION,
+    TARGET_NODE_DESCRIPTION,
 )
 
 path_tool_definitions = [
@@ -19,9 +19,9 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_relationship_type": MUTATE_REL_TYPE_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_relationship_type": MUTATE_REL_TYPE_DESCRIPTION,
                 "start_node": {
                     "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Identifier of the starting node (use a JSON number if the identifier property is numeric).",
@@ -30,8 +30,8 @@ path_tool_definitions = [
                     "anyOf": [{"type": "string"}, {"type": "number"}],
                     "description": "Identifier of the ending node (use a JSON number if the identifier property is numeric).",
                 },
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
-                "relationship_property": RELATIONSHIP_WEIGHT_PROPERTY_SCHEMA,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "relationship_property": RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
             },
             "required": [
                 "graph_name",
@@ -47,16 +47,16 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_relationship_type": MUTATE_REL_TYPE_SCHEMA,
-                "source_node": SOURCE_NODE_SCHEMA,
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_relationship_type": MUTATE_REL_TYPE_DESCRIPTION,
+                "source_node": SOURCE_NODE_DESCRIPTION,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
                 "delta": {
                     "type": "number",
                     "description": "Bucket width for grouping nodes with similar tentative distances.",
                 },
-                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_SCHEMA,
+                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
             },
             "required": ["graph_name", "source_node", "node_identifier_property"],
         },
@@ -67,12 +67,12 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_relationship_type": MUTATE_REL_TYPE_SCHEMA,
-                "source_node": SOURCE_NODE_SCHEMA,
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
-                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_relationship_type": MUTATE_REL_TYPE_DESCRIPTION,
+                "source_node": SOURCE_NODE_DESCRIPTION,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
             },
             "required": ["graph_name", "source_node", "node_identifier_property"],
         },
@@ -83,12 +83,12 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_relationship_type": MUTATE_REL_TYPE_SCHEMA,
-                "source_node": SOURCE_NODE_SCHEMA,
-                "target_node": TARGET_NODE_SCHEMA,
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_relationship_type": MUTATE_REL_TYPE_DESCRIPTION,
+                "source_node": SOURCE_NODE_DESCRIPTION,
+                "target_node": TARGET_NODE_DESCRIPTION,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
                 "latitude_property": {
                     "type": "string",
                     "description": "Node property storing latitude.",
@@ -97,7 +97,7 @@ path_tool_definitions = [
                     "type": "string",
                     "description": "Node property storing longitude.",
                 },
-                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_SCHEMA,
+                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
             },
             "required": [
                 "graph_name",
@@ -115,17 +115,17 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_relationship_type": MUTATE_REL_TYPE_SCHEMA,
-                "source_node": SOURCE_NODE_SCHEMA,
-                "target_node": TARGET_NODE_SCHEMA,
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_relationship_type": MUTATE_REL_TYPE_DESCRIPTION,
+                "source_node": SOURCE_NODE_DESCRIPTION,
+                "target_node": TARGET_NODE_DESCRIPTION,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
                 "k": {
                     "type": "integer",
                     "description": "Number of shortest paths to compute.",
                 },
-                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_SCHEMA,
+                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
             },
             "required": [
                 "graph_name",
@@ -141,13 +141,13 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_property": MUTATE_REL_PROPERTY_SCHEMA,
-                "mutate_relationship_type": MUTATE_REL_TYPE_SCHEMA,
-                "source_node": SOURCE_NODE_SCHEMA,
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
-                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_property": MUTATE_REL_PROPERTY_DESCRIPTION,
+                "mutate_relationship_type": MUTATE_REL_TYPE_DESCRIPTION,
+                "source_node": SOURCE_NODE_DESCRIPTION,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
                 "objective": {
                     "type": "string",
                     "enum": ["minimum", "maximum"],
@@ -159,19 +159,21 @@ path_tool_definitions = [
     ),
     types.Tool(
         name="minimum_directed_steiner_tree",
-        description="Compute an approximate minimum-weight directed subtree rooted at source_node that reaches all target_nodes (non-negative weights).",
+        description="""Compute an approximate minimum-weight directed subtree rooted at source_node that reaches all target_nodes (non-negative weights).
+        It is possible to use the tool to find a solution for the more general Minimum Steiner Tree problem by arbitrarily selecting one of the target nodes to fill the role of the source node.
+        """,
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
-                "source_node": SOURCE_NODE_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "source_node": SOURCE_NODE_DESCRIPTION,
                 "target_nodes": {
                     "type": "array",
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "Target node identifiers to connect in the Steiner tree.",
                 },
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
-                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_SCHEMA,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
                 "delta": {
                     "type": "number",
                     "description": "Delta-Stepping bucket width for shortest-path substeps.",
@@ -191,12 +193,16 @@ path_tool_definitions = [
     ),
     types.Tool(
         name="prize_collecting_steiner_tree",
-        description="Compute an approximate spanning tree that maximizes node prizes (prizeProperty) minus relationship weights.",
+        description="""Compute an approximate spanning subtree that maximizes node prizes (prizeProperty) minus relationship weights.
+        The tool implements a practical 2-approximate algorithm from the literature for the prize collecting Steiner tree problem.
+        The tool can handle prizes for relationships through the following transformation: Given a relationship with weight w and prize p, we suggest to replace w with w' = w - p.
+        If needed, this should be done as a pre-processing step prior to projecting the in-memory graph.
+        """,
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
-                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
                 "prize_property": {
                     "type": "string",
                     "description": "Node property holding non-negative node prizes.",
@@ -211,8 +217,8 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
-                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
             },
             "required": ["graph_name"],
         },
@@ -223,15 +229,15 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_property": MUTATE_NODE_PROPERTY_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_property": MUTATE_NODE_PROPERTY_DESCRIPTION,
                 "source_nodes": {
                     "type": "array",
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "Nodes to start random walks from (requires node_identifier_property).",
                 },
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
                 "walk_length": {
                     "type": "integer",
                     "description": "Number of steps in each random walk.",
@@ -266,11 +272,11 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_relationship_type": MUTATE_REL_TYPE_SCHEMA,
-                "source_node": SOURCE_NODE_SCHEMA,
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_relationship_type": MUTATE_REL_TYPE_DESCRIPTION,
+                "source_node": SOURCE_NODE_DESCRIPTION,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
                 "target_nodes": {
                     "type": "array",
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
@@ -290,11 +296,11 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_relationship_type": MUTATE_REL_TYPE_SCHEMA,
-                "source_node": SOURCE_NODE_SCHEMA,
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_relationship_type": MUTATE_REL_TYPE_DESCRIPTION,
+                "source_node": SOURCE_NODE_DESCRIPTION,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
                 "target_nodes": {
                     "type": "array",
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
@@ -314,12 +320,12 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_relationship_type": MUTATE_REL_TYPE_SCHEMA,
-                "source_node": SOURCE_NODE_SCHEMA,
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
-                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_relationship_type": MUTATE_REL_TYPE_DESCRIPTION,
+                "source_node": SOURCE_NODE_DESCRIPTION,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
             },
             "required": ["graph_name", "source_node", "node_identifier_property"],
         },
@@ -330,14 +336,14 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
                 "target_nodes": {
                     "type": "array",
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "Filter results to paths ending at these target nodes (requires node_identifier_property).",
                 },
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
-                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_SCHEMA,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
+                "relationship_weight_property": RELATIONSHIP_WEIGHT_PROPERTY_DESCRIPTION,
             },
             "required": ["graph_name"],
         },
@@ -348,10 +354,10 @@ path_tool_definitions = [
         inputSchema={
             "type": "object",
             "properties": {
-                "graph_name": GRAPH_NAME_SCHEMA,
-                "mode": MODE_SCHEMA,
-                "mutate_property": MUTATE_REL_PROPERTY_SCHEMA,
-                "mutate_relationship_type": MUTATE_REL_TYPE_SCHEMA,
+                "graph_name": GRAPH_NAME_DESCRIPTION,
+                "mode": MODE_DESCRIPTION,
+                "mutate_property": MUTATE_REL_PROPERTY_DESCRIPTION,
+                "mutate_relationship_type": MUTATE_REL_TYPE_DESCRIPTION,
                 "source_nodes": {
                     "type": "array",
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
@@ -362,7 +368,7 @@ path_tool_definitions = [
                     "items": {"anyOf": [{"type": "string"}, {"type": "number"}]},
                     "description": "Target node identifiers where flow terminates.",
                 },
-                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_SCHEMA,
+                "node_identifier_property": NODE_IDENTIFIER_PROPERTY_DESCRIPTION,
                 "capacity_property": {
                     "type": "string",
                     "description": "Relationship property specifying maximum flow capacity per edge.",
