@@ -73,6 +73,58 @@ async def test_read_only_hides_write_tool(monkeypatch):
         base_gds.close()
 
 
+@pytest.mark.asyncio
+async def test_read_neo4j_cypher_enforces_timeout(monkeypatch):
+    captured = {}
+
+    class FakeSession:
+        def __enter__(self):
+            return self
+
+        def __exit__(self, *args):
+            pass
+
+        def run(self, query, params=None):
+            captured["query"] = query
+            captured["params"] = params
+            return []
+
+    class FakeDriver:
+        def session(self, database=None, default_access_mode=None):
+            captured["database"] = database
+            captured["access_mode"] = default_access_mode
+            return FakeSession()
+
+    class FakeGDS(server_module.Neo4jDriverConnection):
+        def __init__(self):
+            self._driver = FakeDriver()
+            self._database = "neo4j"
+
+        def run_cypher(self, query):
+            raise RuntimeError("no sessions")
+
+        def close(self):
+            pass
+
+    monkeypatch.setattr(server_module, "create_base_gds", lambda *args: FakeGDS())
+
+    mcp_server, session_manager, base_gds = server_module.create_mcp_server(
+        "bolt://example", "neo4j", "password", read_timeout=12.5
+    )
+
+    try:
+        async with Client(mcp_server, raise_exceptions=True) as client:
+            call_result = await client.call_tool(
+                "read_neo4j_cypher", {"query": "RETURN 1 AS x"}
+            )
+            assert call_result.content[0].text == "[]"
+            assert captured["query"].text == "RETURN 1 AS x"
+            assert captured["query"].timeout == 12.5
+    finally:
+        session_manager.close()
+        base_gds.close()
+
+
 def test_streamable_http_app_mounts_normalized_path():
     app = server_module.create_streamable_http_app(
         Server("test", version="1"), "api/mcp"
@@ -117,7 +169,9 @@ async def test_main_dispatches_http_transport_and_closes_resources(monkeypatch):
     fake_session_manager = Closable()
     fake_base_gds = Closable()
 
-    def fake_create_mcp_server(db_url, username, password, database, allow_writes=True):
+    def fake_create_mcp_server(
+        db_url, username, password, database, allow_writes=True, **kwargs
+    ):
         calls["create"] = (db_url, username, password, database)
         return fake_server, fake_session_manager, fake_base_gds
 
@@ -159,7 +213,9 @@ async def test_main_treats_stdio_broken_resource_as_disconnect(monkeypatch):
         def close(self):
             calls["closed"] = calls.get("closed", 0) + 1
 
-    def fake_create_mcp_server(db_url, username, password, database, allow_writes=True):
+    def fake_create_mcp_server(
+        db_url, username, password, database, allow_writes=True, **kwargs
+    ):
         return fake_server, Closable(), Closable()
 
     async def fake_run_stdio_server(server):
@@ -182,7 +238,9 @@ async def test_main_defaults_to_stdio_transport(monkeypatch):
         def close(self):
             calls["closed"] = calls.get("closed", 0) + 1
 
-    def fake_create_mcp_server(db_url, username, password, database, allow_writes=True):
+    def fake_create_mcp_server(
+        db_url, username, password, database, allow_writes=True, **kwargs
+    ):
         return fake_server, Closable(), Closable()
 
     async def fake_run_streamable_http_server(server, host, port, path):
