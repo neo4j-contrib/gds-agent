@@ -14,10 +14,6 @@ async def test_list_tools(mcp_client):
     # Expected tools (based on server.py imports)
     expected_tools = [
         # Basic tools
-        "get_node_properties_keys",
-        "get_relationship_properties_keys",
-        "get_node_labels",
-        "get_relationship_types",
         "read_neo4j_cypher",
         "write_neo4j_cypher",
         "get_neo4j_schema",
@@ -100,59 +96,6 @@ async def test_list_tools(mcp_client):
         assert expected_tool in tool_names, (
             f"Expected tool '{expected_tool}' not found in tool list"
         )
-
-
-@pytest.mark.asyncio
-async def test_get_node_properties_keys(mcp_client):
-    result = await mcp_client.call_tool("get_node_properties_keys")
-
-    assert len(result) == 1
-    result_text = result[0]["text"]
-    properties_keys = json.loads(result_text)
-
-    assert properties_keys == [
-        "zone",
-        "rail",
-        "latitude",
-        "name",
-        "total_lines",
-        "id",
-        "display_name",
-        "longitude",
-    ]
-
-
-@pytest.mark.asyncio
-async def test_get_relationship_properties_keys(mcp_client):
-    result = await mcp_client.call_tool("get_relationship_properties_keys")
-
-    assert len(result) == 1
-    result_text = result[0]["text"]
-    properties_keys = json.loads(result_text)
-
-    assert properties_keys == ["distance", "line", "time"]
-
-
-@pytest.mark.asyncio
-async def test_get_node_labels(mcp_client):
-    result = await mcp_client.call_tool("get_node_labels")
-
-    assert len(result) == 1
-    result_text = result[0]["text"]
-    properties_keys = json.loads(result_text)
-
-    assert properties_keys == ["UndergroundStation"]
-
-
-@pytest.mark.asyncio
-async def test_get_relationship_types(mcp_client):
-    result = await mcp_client.call_tool("get_relationship_types")
-
-    assert len(result) == 1
-    result_text = result[0]["text"]
-    properties_keys = json.loads(result_text)
-
-    assert properties_keys == ["LINK"]
 
 
 @pytest.mark.asyncio

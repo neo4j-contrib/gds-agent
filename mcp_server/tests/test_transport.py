@@ -28,7 +28,11 @@ async def test_create_mcp_server_exposes_tools_through_mcp_handlers(monkeypatch)
             pass
 
     monkeypatch.setattr(server_module, "create_base_gds", lambda *args: FakeGDS())
-    monkeypatch.setattr(server_module, "get_node_labels", lambda gds: ["Station"])
+    monkeypatch.setattr(
+        server_module,
+        "read_cypher",
+        lambda gds, query, params, timeout: [{"name": "Station"}],
+    )
 
     mcp_server, session_manager, base_gds = server_module.create_mcp_server(
         "bolt://example", "neo4j", "password"
@@ -38,10 +42,15 @@ async def test_create_mcp_server_exposes_tools_through_mcp_handlers(monkeypatch)
         async with Client(mcp_server, raise_exceptions=True) as client:
             tools_result = await client.list_tools()
             tool_names = {tool.name for tool in tools_result.tools}
-            assert "get_node_labels" in tool_names
+            assert "get_neo4j_schema" in tool_names
+            assert "read_neo4j_cypher" in tool_names
 
-            call_result = await client.call_tool("get_node_labels", {})
-            assert call_result.content[0].text == '[\n  "Station"\n]'
+            call_result = await client.call_tool(
+                "read_neo4j_cypher", {"query": "RETURN 'Station' AS name"}
+            )
+            assert (
+                call_result.content[0].text == '[\n  {\n    "name": "Station"\n  }\n]'
+            )
     finally:
         session_manager.close()
         base_gds.close()

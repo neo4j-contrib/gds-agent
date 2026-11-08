@@ -19,12 +19,6 @@ from neo4j import READ_ACCESS, WRITE_ACCESS, GraphDatabase, Query
 from .centrality_algorithm_specs import centrality_tool_definitions
 from .community_algorithm_specs import community_tool_definitions
 from .embedding_algorithm_specs import embedding_tool_definitions
-from .gds import (
-    get_node_labels,
-    get_node_properties_keys,
-    get_relationship_properties_keys,
-    get_relationship_types,
-)
 from .graph_projection_handlers import (
     DropGraphHandler,
     GraphInfoHandler,
@@ -313,34 +307,6 @@ Session names are prefixed with 'mcp_' if not already; the returned session_name
 
             cypher_tools = [
                 types.Tool(
-                    name="get_node_properties_keys",
-                    description="""Get all node properties keys in the database""",
-                    inputSchema={
-                        "type": "object",
-                    },
-                ),
-                types.Tool(
-                    name="get_relationship_properties_keys",
-                    description="""Get all relationship properties keys in the database""",
-                    inputSchema={
-                        "type": "object",
-                    },
-                ),
-                types.Tool(
-                    name="get_node_labels",
-                    description="""Get all node labels in the database""",
-                    inputSchema={
-                        "type": "object",
-                    },
-                ),
-                types.Tool(
-                    name="get_relationship_types",
-                    description="""Get relationship types in the database.""",
-                    inputSchema={
-                        "type": "object",
-                    },
-                ),
-                types.Tool(
                     name="read_neo4j_cypher",
                     description="""Execute a read Cypher query on the neo4j database.""",
                     inputSchema={
@@ -587,21 +553,7 @@ Session names are prefixed with 'mcp_' if not already; the returned session_name
 
             active_gds = get_gds_for_graph(graph_name)
 
-            if name == "get_node_properties_keys":
-                result = get_node_properties_keys(active_gds)
-                return [types.TextContent(type="text", text=serialize_result(result))]
-
-            elif name == "get_relationship_properties_keys":
-                result = get_relationship_properties_keys(active_gds)
-                return [types.TextContent(type="text", text=serialize_result(result))]
-            elif name == "get_node_labels":
-                result = get_node_labels(active_gds)
-                return [types.TextContent(type="text", text=serialize_result(result))]
-            elif name == "get_relationship_types":
-                result = get_relationship_types(active_gds)
-                return [types.TextContent(type="text", text=serialize_result(result))]
-
-            elif name == "drop_graph":
+            if name == "drop_graph":
                 handler = DropGraphHandler(active_gds)
                 result = handler.execute(arguments)
                 if mode == GdsMode.SESSION:

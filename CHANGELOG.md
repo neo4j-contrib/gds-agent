@@ -4,7 +4,7 @@
 ### Breaking Changes
 
 - The Claude Code plugin and the Gemini extension no longer start a separate `mcp-neo4j-cypher` server. `read_neo4j_cypher`, `write_neo4j_cypher`, and `get_neo4j_schema` are tools on `gds-agent`.
-- `get_neo4j_schema` no longer uses APOC and has a slightly different output format.
+- `get_neo4j_schema` no longer uses APOC and has a slightly different output format, and replaces the older `get_node_labels`, `get_relationship_types`, `get_node_properties_keys`, and `get_relationship_properties_keys` tools.
 - All tool parameter names are now `snake_case` (e.g. `graphName` → `graph_name`, `dampingFactor` → `damping_factor`).
 
 ### New Features
