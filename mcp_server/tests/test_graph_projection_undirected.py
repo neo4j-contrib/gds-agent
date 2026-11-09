@@ -6,6 +6,10 @@ from graphdatascience.session.aura_graph_data_science import AuraGraphDataScienc
 from src.mcp_server_neo4j_gds.graph_projection_handlers import (
     ProjectGraphCypherHandler,
 )
+from src.mcp_server_neo4j_gds.graph_projection_specs import (
+    get_graph_projection_tool_definitions,
+)
+from src.mcp_server_neo4j_gds.session_manager import GdsMode
 
 CYPHER = (
     "MATCH (n)-[r:LINK]->(m) RETURN gds.graph.project.remote(n, m, "
@@ -58,3 +62,32 @@ def test_plugin_mode_rejects_undirected_relationship_types():
             }
         )
     gds.graph.project.cypher.assert_not_called()
+
+
+def test_project_graph_cypher_spec_differs_by_mode():
+    plugin_tool = get_graph_projection_tool_definitions(GdsMode.PLUGIN)[0]
+    session_tool = get_graph_projection_tool_definitions(GdsMode.SESSION)[0]
+
+    assert plugin_tool.name == "project_graph_cypher"
+    assert set(plugin_tool.input_schema["properties"]) == {
+        "graph_name",
+        "cypher_query",
+    }
+    assert plugin_tool.input_schema["required"] == ["graph_name", "cypher_query"]
+    assert "gds.graph.project(" in plugin_tool.description
+    assert "gds.graph.project.remote" not in plugin_tool.description
+
+    assert session_tool.name == "project_graph_cypher"
+    assert set(session_tool.input_schema["properties"]) == {
+        "graph_name",
+        "cypher_query",
+        "session_name",
+        "undirected_relationship_types",
+    }
+    assert session_tool.input_schema["required"] == [
+        "graph_name",
+        "cypher_query",
+        "session_name",
+    ]
+    assert "gds.graph.project.remote(" in session_tool.description
+    assert "gds.graph.project(" not in session_tool.description

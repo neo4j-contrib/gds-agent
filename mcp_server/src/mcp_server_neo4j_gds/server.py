@@ -28,7 +28,7 @@ from .graph_projection_handlers import (
     StreamRelationshipPropertiesHandler,
     StreamRelationshipsHandler,
 )
-from .graph_projection_specs import graph_projection_tool_definitions
+from .graph_projection_specs import get_graph_projection_tool_definitions
 from .ml_pipeline_handlers import DropModelHandler, ListModelsHandler
 from .ml_pipeline_specs import ml_pipeline_tool_definitions
 from .path_algorithm_specs import path_tool_definitions
@@ -357,7 +357,7 @@ Session names are prefixed with 'mcp_' if not already; the returned session_name
             tools = (
                 cypher_tools
                 + session_tools
-                + graph_projection_tool_definitions
+                + get_graph_projection_tool_definitions(mode)
                 + centrality_tool_definitions
                 + community_tool_definitions
                 + path_tool_definitions
