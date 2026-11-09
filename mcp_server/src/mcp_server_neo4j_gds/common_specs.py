@@ -27,7 +27,7 @@ MUTATE_REL_TYPE_DESCRIPTION = {
 NODE_IDENTIFIER_PROPERTY_DESCRIPTION = {
     "type": "string",
     "pattern": "^[A-Za-z_][A-Za-z0-9_]*$",
-    "description": "Node property used for readable identifiers; inspect with get_node_properties_keys or get_neo4j_schema.",
+    "description": "Node property used for readable identifiers; inspect with get_neo4j_schema.",
 }
 
 NODES_FILTER_DESCRIPTION = {

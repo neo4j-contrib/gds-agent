@@ -102,6 +102,14 @@ def main():
         action="store_true",
         help="Do not expose write_neo4j_cypher. This is the default; set NEO4J_READ_ONLY=false to expose it.",
     )
+    parser.add_argument(
+        "--read-timeout",
+        type=float,
+        default=float(
+            env_value("NEO4J_READ_TIMEOUT", default=server.DEFAULT_READ_TIMEOUT)
+        ),
+        help="Timeout in seconds for read_neo4j_cypher queries (default: 120).",
+    )
 
     args = parser.parse_args()
     allow_writes = (
@@ -120,6 +128,7 @@ def main():
             port=args.port,
             path=args.path,
             allow_writes=allow_writes,
+            read_timeout=args.read_timeout,
         )
     )
 

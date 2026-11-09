@@ -34,3 +34,32 @@ def test_empty_aura_credentials_rejected(monkeypatch):
 
     with pytest.raises(ValueError, match="Missing Aura API credentials"):
         SessionManager()._ensure_sessions_client()
+
+
+@pytest.mark.asyncio
+async def test_all_tool_schemas_are_top_level_objects_without_combinators(monkeypatch):
+    from mcp import Client
+
+    class FakeGDS:
+        def run_cypher(self, query):
+            return None
+
+        def close(self):
+            pass
+
+    monkeypatch.setattr(server_module, "create_base_gds", lambda *args: FakeGDS())
+    mcp_server, session_manager, base_gds = server_module.create_mcp_server(
+        "bolt://example", "neo4j", "password", allow_writes=True
+    )
+
+    forbidden_top_level_keys = {"oneOf", "anyOf", "allOf", "enum", "const", "not"}
+    try:
+        async with Client(mcp_server, raise_exceptions=True) as client:
+            tools_result = await client.list_tools()
+            for tool in tools_result.tools:
+                schema = tool.input_schema
+                assert schema.get("type") == "object", tool.name
+                assert not (forbidden_top_level_keys & set(schema.keys())), tool.name
+    finally:
+        session_manager.close()
+        base_gds.close()

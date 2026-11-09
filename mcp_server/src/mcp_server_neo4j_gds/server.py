@@ -14,17 +14,11 @@ from graphdatascience.query_runner.query_mode import QueryMode
 from mcp import types
 from mcp.server import NotificationOptions, Server
 from mcp.server.models import InitializationOptions
-from neo4j import READ_ACCESS, WRITE_ACCESS, GraphDatabase
+from neo4j import READ_ACCESS, WRITE_ACCESS, GraphDatabase, Query
 
 from .centrality_algorithm_specs import centrality_tool_definitions
 from .community_algorithm_specs import community_tool_definitions
 from .embedding_algorithm_specs import embedding_tool_definitions
-from .gds import (
-    get_node_labels,
-    get_node_properties_keys,
-    get_relationship_properties_keys,
-    get_relationship_types,
-)
 from .graph_projection_handlers import (
     DropGraphHandler,
     GraphInfoHandler,
@@ -65,6 +59,7 @@ except PackageNotFoundError:
 DEFAULT_HTTP_HOST = "127.0.0.1"
 DEFAULT_HTTP_PORT = 8000
 DEFAULT_HTTP_PATH = "/mcp"
+DEFAULT_READ_TIMEOUT = 120
 STDIO_TRANSPORT = "stdio"
 HTTP_TRANSPORT = "streamable-http"
 TRANSPORT_ALIASES = {
@@ -98,6 +93,24 @@ class Neo4jDriverConnection:
 
     def close(self):
         self._driver.close()
+
+
+def read_cypher(
+    connection,
+    query: str,
+    params: dict[str, Any] | None = None,
+    timeout: float = DEFAULT_READ_TIMEOUT,
+) -> list[dict[str, Any]]:
+    params = params or {}
+    if isinstance(connection, Neo4jDriverConnection):
+        driver, database = connection._driver, connection._database
+    else:
+        runner = connection._query_runner
+        driver, database = runner._driver, runner._database
+
+    with driver.session(database=database, default_access_mode=READ_ACCESS) as session:
+        result = session.run(Query(query, timeout=float(timeout)), params)
+        return [record.data() for record in result]
 
 
 def write_cypher(connection, query: str, params: dict[str, Any] | None = None) -> dict:
@@ -208,6 +221,7 @@ def create_mcp_server(
     password: str,
     database: str | None = None,
     allow_writes: bool = False,
+    read_timeout: float = DEFAULT_READ_TIMEOUT,
 ) -> tuple[Server, SessionManager, GraphDataScience | Neo4jDriverConnection]:
     logger.info(f"Starting MCP Server for {db_url} with username {username}")
     if database:
@@ -292,34 +306,6 @@ Session names are prefixed with 'mcp_' if not already; the returned session_name
                 ]
 
             cypher_tools = [
-                types.Tool(
-                    name="get_node_properties_keys",
-                    description="""Get all node properties keys in the database""",
-                    inputSchema={
-                        "type": "object",
-                    },
-                ),
-                types.Tool(
-                    name="get_relationship_properties_keys",
-                    description="""Get all relationship properties keys in the database""",
-                    inputSchema={
-                        "type": "object",
-                    },
-                ),
-                types.Tool(
-                    name="get_node_labels",
-                    description="""Get all node labels in the database""",
-                    inputSchema={
-                        "type": "object",
-                    },
-                ),
-                types.Tool(
-                    name="get_relationship_types",
-                    description="""Get relationship types in the database.""",
-                    inputSchema={
-                        "type": "object",
-                    },
-                ),
                 types.Tool(
                     name="read_neo4j_cypher",
                     description="""Execute a read Cypher query on the neo4j database.""",
@@ -432,15 +418,16 @@ Session names are prefixed with 'mcp_' if not already; the returned session_name
             arguments = arguments or {}
 
             if name == "read_neo4j_cypher":
-                result = base_gds.run_cypher(
+                result = read_cypher(
+                    base_gds,
                     arguments.get("query"),
-                    arguments.get("params") or {},
-                    mode=QueryMode.READ,
+                    arguments.get("params"),
+                    timeout=read_timeout,
                 )
                 return [
                     types.TextContent(
                         type="text",
-                        text=serialize_result(result.to_dict(orient="records")),
+                        text=serialize_result(result),
                     )
                 ]
 
@@ -566,21 +553,7 @@ Session names are prefixed with 'mcp_' if not already; the returned session_name
 
             active_gds = get_gds_for_graph(graph_name)
 
-            if name == "get_node_properties_keys":
-                result = get_node_properties_keys(active_gds)
-                return [types.TextContent(type="text", text=serialize_result(result))]
-
-            elif name == "get_relationship_properties_keys":
-                result = get_relationship_properties_keys(active_gds)
-                return [types.TextContent(type="text", text=serialize_result(result))]
-            elif name == "get_node_labels":
-                result = get_node_labels(active_gds)
-                return [types.TextContent(type="text", text=serialize_result(result))]
-            elif name == "get_relationship_types":
-                result = get_relationship_types(active_gds)
-                return [types.TextContent(type="text", text=serialize_result(result))]
-
-            elif name == "drop_graph":
+            if name == "drop_graph":
                 handler = DropGraphHandler(active_gds)
                 result = handler.execute(arguments)
                 if mode == GdsMode.SESSION:
@@ -741,10 +714,16 @@ async def main(
     port: int = DEFAULT_HTTP_PORT,
     path: str = DEFAULT_HTTP_PATH,
     allow_writes: bool = False,
+    read_timeout: float = DEFAULT_READ_TIMEOUT,
 ):
     transport_mode = normalize_transport(transport)
     server, session_manager, base_gds = create_mcp_server(
-        db_url, username, password, database, allow_writes=allow_writes
+        db_url,
+        username,
+        password,
+        database,
+        allow_writes=allow_writes,
+        read_timeout=read_timeout,
     )
     try:
         if transport_mode == HTTP_TRANSPORT:
@@ -790,6 +769,12 @@ if __name__ == "__main__":
         action="store_true",
         help="Do not expose write_neo4j_cypher. This is the default; set NEO4J_READ_ONLY=false to expose it.",
     )
+    parser.add_argument(
+        "--read-timeout",
+        type=float,
+        default=float(os.environ.get("NEO4J_READ_TIMEOUT") or DEFAULT_READ_TIMEOUT),
+        help="Timeout in seconds for read_neo4j_cypher queries (default: 120).",
+    )
     args = parser.parse_args()
     allow_writes = (
         not args.read_only
@@ -807,5 +792,6 @@ if __name__ == "__main__":
             port=args.port,
             path=args.path,
             allow_writes=allow_writes,
+            read_timeout=args.read_timeout,
         )
     )

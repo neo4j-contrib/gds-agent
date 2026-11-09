@@ -8,7 +8,7 @@ Two artifacts: the `.mcpb` bundle provides the tools, the skill zip provides the
 2. Download `gds-agent-<version>.mcpb` from the [GitHub releases page](https://github.com/neo4j-contrib/gds-agent/releases).
 3. Double-click the file (or drag it into Claude Desktop → Settings → Extensions) and click **Install**.
 4. Fill in the configuration form: Neo4j URI, username, password (stored in the OS keychain), optional database name, and optional Aura API credentials for Aura Graph Analytics session mode.
-5. Verify: in a new chat, the tools menu should list `gds-agent` tools such as `get_node_labels`.
+5. Verify: in a new chat, the tools menu should list `gds-agent` tools such as `get_neo4j_schema`.
 
 ## Knowledge: skill upload
 

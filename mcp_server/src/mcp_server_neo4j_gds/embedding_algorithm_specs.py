@@ -151,7 +151,7 @@ embedding_tool_definitions = [
                 "feature_properties": {
                     "type": "array",
                     "items": {"type": "string"},
-                    "description": "Node properties used as input features (must be binary unless binarize_features is set).",
+                    "description": "Node properties used as input features (must be binary unless binarize_features is set). Provide either feature_properties or generate_features.",
                 },
                 "generate_features": {
                     "type": "object",
@@ -160,7 +160,7 @@ embedding_tool_definitions = [
                         "density_level": {"type": "integer", "minimum": 1},
                     },
                     "required": ["dimension", "density_level"],
-                    "description": "Generate random binary features from topology alone ({dimension, density_level}); mutually exclusive with feature_properties.",
+                    "description": "Generate random binary features from topology alone ({dimension, density_level}); mutually exclusive with feature_properties and binarize_features.",
                 },
                 "binarize_features": {
                     "type": "object",
@@ -189,21 +189,6 @@ embedding_tool_definitions = [
                 "mutate_property": MUTATE_NODE_PROPERTY_DESCRIPTION,
             },
             "required": ["graph_name", "iterations", "embedding_density"],
-            "oneOf": [
-                {
-                    "required": ["feature_properties"],
-                    "not": {"required": ["generate_features"]},
-                },
-                {
-                    "required": ["generate_features"],
-                    "not": {
-                        "anyOf": [
-                            {"required": ["feature_properties"]},
-                            {"required": ["binarize_features"]},
-                        ]
-                    },
-                },
-            ],
         },
     ),
     types.Tool(

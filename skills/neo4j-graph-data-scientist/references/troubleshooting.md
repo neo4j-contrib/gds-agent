@@ -25,4 +25,4 @@ If a call fails with out-of-memory or `Memory required to run … exceeds availa
 | Error | Cause -> Fix |
 |---|---|
 |Algorithm requires UNDIRECTED graphs|The algorithm received a directed projection -> Re-project the graph as undirected, following the mode-specific `project_graph_cypher` schema.|
-|Node/relationship has wrong label/type or properties|The requested schema element does not exist -> Inspect it with `get_neo4j_schema`, the property-key tools, or `read_neo4j_cypher`, then correct the call.|
+|Node/relationship has wrong label/type or properties|The requested schema element does not exist -> Inspect it with `get_neo4j_schema` or `read_neo4j_cypher`, then correct the call.|
