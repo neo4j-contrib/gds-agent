@@ -773,7 +773,7 @@ if __name__ == "__main__":
         "--read-timeout",
         type=float,
         default=float(os.environ.get("NEO4J_READ_TIMEOUT") or DEFAULT_READ_TIMEOUT),
-        help="Timeout in seconds for read_neo4j_cypher queries (default: 30).",
+        help="Timeout in seconds for read_neo4j_cypher queries (default: 120).",
     )
     args = parser.parse_args()
     allow_writes = (
