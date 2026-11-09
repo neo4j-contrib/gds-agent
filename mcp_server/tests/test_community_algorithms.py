@@ -239,6 +239,7 @@ async def test_local_clustering_coefficient_mutate(
             "graph_name": projected_undirected_graph,
             "mode": "mutate",
             "mutate_property": "lcc",
+            "triangle_count_property": "total_lines",
         },
     )
 
