@@ -548,7 +548,7 @@ Session names are prefixed with 'mcp_' if not already; the returned session_name
                 handler = ProjectGraphCypherHandler(project_gds)
                 result = handler.execute(arguments)
                 if mode == GdsMode.SESSION:
-                    session_manager.record_graph(result["graph_name"], target_session)
+                    session_manager.record_graph(result["graphName"], target_session)
                 return [types.TextContent(type="text", text=serialize_result(result))]
 
             active_gds = get_gds_for_graph(graph_name)
@@ -617,7 +617,7 @@ Session names are prefixed with 'mcp_' if not already; the returned session_name
                 return [
                     types.TextContent(
                         type="text",
-                        text=f"Error: Model '{arguments.get('modelName')}' not found in any active session",
+                        text=f"Error: Model '{arguments.get('model_name')}' not found in any active session",
                     )
                 ]
 

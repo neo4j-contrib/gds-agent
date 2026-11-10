@@ -22,7 +22,7 @@ def test_normalize_transport_rejects_unsupported_transport():
 async def test_create_mcp_server_exposes_tools_through_mcp_handlers(monkeypatch):
     class FakeGDS:
         def run_cypher(self, query):
-            raise RuntimeError("no sessions")
+            return None
 
         def close(self):
             pass
@@ -33,10 +33,16 @@ async def test_create_mcp_server_exposes_tools_through_mcp_handlers(monkeypatch)
         "read_cypher",
         lambda gds, query, params, timeout: [{"name": "Station"}],
     )
+    monkeypatch.setattr(
+        server_module.ProjectGraphCypherHandler,
+        "execute",
+        lambda self, args: {"graphName": args["graph_name"]},
+    )
 
     mcp_server, session_manager, base_gds = server_module.create_mcp_server(
         "bolt://example", "neo4j", "password"
     )
+    monkeypatch.setattr(session_manager, "get_session", lambda name: FakeGDS())
 
     try:
         async with Client(mcp_server, raise_exceptions=True) as client:
@@ -51,6 +57,16 @@ async def test_create_mcp_server_exposes_tools_through_mcp_handlers(monkeypatch)
             assert (
                 call_result.content[0].text == '[\n  {\n    "name": "Station"\n  }\n]'
             )
+
+            proj_result = await client.call_tool(
+                "project_graph_cypher",
+                {"graph_name": "g1", "session_name": "s1", "cypher_query": "RETURN 1"},
+            )
+            assert '"graphName": "g1"' in proj_result.content[0].text
+            assert session_manager.graph_sessions["g1"] == "mcp_s1"
+
+            drop_result = await client.call_tool("drop_model", {"model_name": "m1"})
+            assert "Model 'm1' not found" in drop_result.content[0].text
     finally:
         session_manager.close()
         base_gds.close()

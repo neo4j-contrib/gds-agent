@@ -239,7 +239,7 @@ class LocalClusteringCoefficientHandler(AlgorithmHandler):
             graph_name=arguments.get("graph_name"),
             mode=arguments.get("mode"),
             mutate_property=arguments.get("mutate_property"),
-            triangle_countProperty=arguments.get("triangle_countProperty"),
+            triangle_count_property=arguments.get("triangle_count_property"),
             node_identifier_property=arguments.get("node_identifier_property"),
             nodes=arguments.get("nodes"),
         )
