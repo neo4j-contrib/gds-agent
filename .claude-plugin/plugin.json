@@ -1,7 +1,7 @@
 {
   "name": "gds-agent",
   "displayName": "Neo4j GDS Agent",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Neo4j Graph Data Science MCP server + graph-analysis skill",
   "author": {
     "name": "Neo4j",

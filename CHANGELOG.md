@@ -1,4 +1,4 @@
-# Changelog - [1.2.1] - 2026-11-10
+# Changelog - [1.2.2] - 2026-11-11
 
 
 ### Breaking Changes
@@ -8,4 +8,4 @@
 
 
 ### Bug Fixes
-1. Fix graph_name in projection on GDS sessions, triangle_count and model_name previously not returned in tool output even when execution is successful.
+1. Bump certifi version from 2026.7.22 to >=2026.10.18 for a security fix.
