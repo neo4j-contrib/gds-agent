@@ -1,6 +1,6 @@
 [project]
 name = "gds-agent"
-version = "1.2.1"
+version = "1.2.2"
 description = "Neo4j GDS MCP Server"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -44,6 +44,7 @@ dev = [
     "pytest-docker>=3.2.3",
     "neo4j>=5.0.0",
     "twine>=6.1.0",
+    "certifi>=2026.10.18",
 ]
 
 [tool.pytest.ini_options]
