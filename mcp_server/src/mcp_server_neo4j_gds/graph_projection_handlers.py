@@ -108,9 +108,12 @@ class GraphInfoHandler(AlgorithmHandler):
         if not exists:
             return {"graphName": graph_name, "exists": False}
 
+        # Graph objects have no database(); read it from the graph catalog listing.
+        databases = {i.graph_name: i.database for i in self.gds.graph.list()}
+
         return {
             "graphName": G.name(),
-            "database": G.database(),
+            "database": databases.get(graph_name),
             "exists": exists,
             "nodeCount": G.node_count(),
             "relationshipCount": G.relationship_count(),

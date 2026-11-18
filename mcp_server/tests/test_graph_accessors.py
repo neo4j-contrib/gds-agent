@@ -1,3 +1,5 @@
+from types import SimpleNamespace
+
 import pandas as pd
 
 from mcp_server_neo4j_gds.graph_projection_handlers import (
@@ -11,9 +13,6 @@ from mcp_server_neo4j_gds.graph_projection_handlers import (
 class FakeGraph:
     def name(self):
         return "g"
-
-    def database(self):
-        return "neo4j"
 
     def exists(self):
         return True
@@ -67,6 +66,9 @@ class FakeRunner:
         self.calls.append(("get", graph_name))
         return self.graph
 
+    def list(self):
+        return [SimpleNamespace(graph_name="g", database="neo4j")]
+
 
 class FakeStreamRunner:
     def __init__(self, calls, name):
@@ -94,6 +96,7 @@ def test_graph_info_handler_returns_graph_metadata():
     result = GraphInfoHandler(FakeGds()).execute({"graph_name": "g"})
 
     assert result["graphName"] == "g"
+    assert result["database"] == "neo4j"
     assert result["nodeLabels"] == ["Person"]
     assert result["nodeProperties"] == {"Person": ["score"]}
     assert result["relationshipProperties"] == {"KNOWS": ["weight"]}

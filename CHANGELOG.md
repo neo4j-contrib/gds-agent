@@ -1,4 +1,4 @@
-# Changelog - [1.2.2] - 2026-11-11
+# Changelog - [1.2.3] - yyyy-MM-dd
 
 
 ### Breaking Changes
@@ -8,4 +8,4 @@
 
 
 ### Bug Fixes
-1. Bump certifi version from 2026.7.22 to >=2026.10.18 for a security fix.
+1. Fix `get_graph_info` failing with `'Graph' object has no attribute 'database'` on `graphdatascience` 2.3. The `database` field is now read from the graph catalog listing.
